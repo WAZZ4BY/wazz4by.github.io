@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ViewToggle from '../../components/ViewToggle.astro';
+import ProjectsGrid from '../../components/ProjectsGrid.astro';
+import ProjectsList from '../../components/ProjectsList.astro';
+
+// Mock data
+const projects = [
+  { title: 'Project One', type: 'Branding', year: '2024', image: '/images/project-1.jpg' },
+  { title: 'Project Two', type: 'Web Design', year: '2024', image: '/images/project-2.jpg' },
+  { title: 'Project Three', type: 'Print', year: '2023', image: '/images/project-3.jpg' },
+  { title: 'Project Four', type: 'Branding', year: '2023', image: '/images/project-4.jpg' },
+  { title: 'Project Five', type: 'Web Design', year: '2023', image: '/images/project-5.jpg' },
+  { title: 'Project Six', type: 'Print', year: '2022', image: '/images/project-6.jpg' },
+  { title: 'Project Seven', type: 'Branding', year: '2022', image: '/images/project-7.jpg' },
+  { title: 'Project Eight', type: 'Web Design', year: '2022', image: '/images/project-8.jpg' },
+  { title: 'Project Nine', type: 'Print', year: '2021', image: '/images/project-9.jpg' },
+];
+
+const base = import.meta.env.BASE_URL;
+const url = Astro.url;
+const viewParam = url.searchParams.get('view') || 'grid';
+const currentView = viewParam === 'list' ? 'list' : 'grid';
+---
+
+<BaseLayout title="Index" variant="inner">
+  <main class="works-page">
+    <div class="container">
+      <div class="works-page__header">
+        <h1>Index</h1>
+        <ViewToggle currentView={currentView} base={base} />
+      </div>
+
+      {currentView === 'grid' ? (
+        <ProjectsGrid projects={projects} base={base} />
+      ) : (
+        <ProjectsList projects={projects} base={base} />
+      )}
+    </div>
+  </main>
+</BaseLayout>

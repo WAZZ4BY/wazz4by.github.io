@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Me">
+<BaseLayout title="Me" variant="inner">
   <main class="me-page">
     <div class="container">
       <div class="me-content">
@@ -25,33 +25,3 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </main>
 </BaseLayout>
-
-<style>
-  .me-page {
-    padding-top: 6rem;
-    padding-bottom: 4rem;
-  }
-
-  .me-content {
-    max-width: 800px;
-  }
-
-  .me-content h1 {
-    margin-bottom: 2rem;
-  }
-
-  .me-text {
-    font-size: 1.125rem;
-    line-height: 1.8;
-  }
-
-  .me-text p {
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .me-page {
-      padding-top: 5rem;
-    }
-  }
-</style>

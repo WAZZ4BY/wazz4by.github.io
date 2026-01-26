@@ -1,0 +1,21 @@
+---
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  projects: Array<{
+    title: string;
+    type: string;
+    year: string;
+    image?: string;
+  }>;
+  base: string;
+}
+
+const { projects, base } = Astro.props;
+---
+
+<div class="works-grid">
+  {projects.map((project) => (
+    <ProjectCard project={project} view="grid" base={base} />
+  ))}
+</div>

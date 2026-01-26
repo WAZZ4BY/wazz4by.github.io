@@ -1,10 +1,10 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
+// Для user/organization pages (username.github.io) base должен быть '/'
+// Для project pages (username.github.io/repo-name) base должен быть '/repo-name'
 export default defineConfig({
-  integrations: [tailwind()],
   output: 'static',
-  site: 'https://yourusername.github.io',
-  base: '/Site',
+  site: 'https://wazz4by.github.io',
+  base: '/',
 });

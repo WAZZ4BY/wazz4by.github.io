@@ -1,0 +1,26 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: "projects"
+    label: "Проекты"
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Название", name: "title", widget: "string", required: true }
+      - { label: "Slug", name: "slug", widget: "string", required: true, hint: "Уникальный идентификатор проекта (например: project-1)" }
+      - { label: "Обложка", name: "cover", widget: "image", required: true }
+      - label: "Блоки"
+        name: "blocks"
+        widget: "list"
+        fields:
+          - { label: "Тип блока", name: "type", widget: "select", options: ["image", "text", "p5"], required: true }
+          - { label: "Изображение (src)", name: "src", widget: "string", required: false, hint: "Путь к изображению (для типа image)" }
+          - { label: "Ширина", name: "width", widget: "select", options: [6, 12], required: false, hint: "Количество колонок (для типа image)" }
+          - { label: "Текст (Markdown)", name: "content", widget: "markdown", required: false, hint: "Markdown контент (для типа text)" }
+          - { label: "URL iframe", name: "url", widget: "string", required: false, hint: "URL для iframe (для типа p5, по умолчанию /sketches/{slug}/index.html)" }

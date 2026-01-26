@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
 import ProjectBlocks from '../../components/ProjectBlocks.astro';
 
@@ -18,7 +18,7 @@ interface Props {
 const { project } = Astro.props;
 ---
 
-<Layout title={project.data.title}>
+<BaseLayout title={project.data.title} variant="inner">
   <main class="project-page">
     <div class="container mx-auto px-4 py-8">
       <a href="/" class="back-link">← Назад к проектам</a>
@@ -30,7 +30,7 @@ const { project } = Astro.props;
       </div>
     </div>
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   .project-page {

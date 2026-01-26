@@ -2,17 +2,26 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Home" isHome={true}>
+<BaseLayout title="Home" variant="home">
   <main class="home-page">
-    <!-- Home page content -->
+    <h1 class="sr-only">Vasily Aleev - Portfolio</h1>
   </main>
 </BaseLayout>
 
 <style>
   .home-page {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  }
+  
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 </style>

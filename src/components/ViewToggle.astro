@@ -1,0 +1,24 @@
+---
+interface Props {
+  currentView: 'grid' | 'list';
+  base: string;
+}
+
+const { currentView, base } = Astro.props;
+---
+
+<div class="view-toggle">
+  <a 
+    href={`${base}index?view=grid`}
+    class={`view-toggle__btn ${currentView === 'grid' ? 'active' : ''}`}
+  >
+    Grid
+  </a>
+  <span class="view-toggle__separator">/</span>
+  <a 
+    href={`${base}index?view=list`}
+    class={`view-toggle__btn ${currentView === 'list' ? 'active' : ''}`}
+  >
+    List
+  </a>
+</div>

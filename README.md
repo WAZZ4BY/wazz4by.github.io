@@ -1,6 +1,6 @@
 # Портфолио графического дизайнера
 
-Статический сайт портфолио на Astro с управлением контентом через Decap CMS.
+Статический сайт портфолио на Astro.
 
 ## Установка
 
@@ -29,25 +29,89 @@ npm run build
 ```
 ├── src/
 │   ├── components/      # Компоненты Astro
-│   ├── content/         # Контент (JSON проекты)
-│   │   └── projects/
+│   │   ├── SiteHeader.astro
+│   │   ├── ViewToggle.astro
+│   │   ├── ProjectsGrid.astro
+│   │   ├── ProjectsList.astro
+│   │   └── ProjectCard.astro
 │   ├── layouts/         # Шаблоны страниц
-│   └── pages/           # Страницы
-│       ├── index.astro  # Главная страница
-│       └── project/     # Страницы проектов
+│   │   └── BaseLayout.astro
+│   ├── pages/           # Страницы
+│   │   ├── index.astro  # Главная страница
+│   │   ├── works/       # Страница Works (Index)
+│   │   ├── research.astro
+│   │   └── me.astro
+│   └── styles/
+│       └── global.css
 ├── public/
-│   ├── admin/           # Decap CMS
 │   ├── images/          # Изображения
-│   └── sketches/        # p5 проекты
+│   └── uploads/         # Загруженные файлы
 └── dist/                # Собранный сайт
 ```
 
-## Управление контентом
+## Маршруты
 
-Админ-панель Decap CMS доступна по адресу `/admin/`
+- `/` - Главная страница (Home)
+- `/index` - Index/Works
+- `/research` - Research
+- `/me` - Me
 
-## GitHub Pages
+## Деплой на GitHub Pages
 
-1. Настройте `site` и `base` в `astro.config.mjs`
-2. Соберите проект: `npm run build`
-3. Загрузите содержимое `dist/` в ветку `gh-pages` или используйте GitHub Actions
+Проект настроен для деплоя на GitHub Pages. Конфигурация находится в `astro.config.mjs`:
+
+```js
+export default defineConfig({
+  output: 'static',
+  site: 'https://wazz4by.github.io',
+  base: '/',
+});
+```
+
+### Автоматический деплой через GitHub Actions
+
+1. Создайте файл `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/deploy-pages@v4
+```
+
+2. В настройках репозитория GitHub включите GitHub Pages (Settings → Pages → Source: GitHub Actions)
+
+### Ручной деплой
+
+1. Соберите проект: `npm run build`
+2. Загрузите содержимое папки `dist/` в ветку `gh-pages` или используйте GitHub Actions

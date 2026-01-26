@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Временные данные для примера
+// Mock data
 const researchItems = [
   { id: 1, image: '/images/research-1.jpg', title: 'Research 1' },
   { id: 2, image: '/images/research-2.jpg', title: 'Research 2' },
@@ -16,7 +16,7 @@ const researchItems = [
 ];
 ---
 
-<BaseLayout title="Research">
+<BaseLayout title="Research" variant="inner">
   <main class="research-page">
     <div class="container">
       <h1>Research</h1>
@@ -33,55 +33,3 @@ const researchItems = [
     </div>
   </main>
 </BaseLayout>
-
-<style>
-  .research-page {
-    padding-top: 6rem;
-    padding-bottom: 4rem;
-  }
-
-  .research-page h1 {
-    margin-bottom: 3rem;
-  }
-
-  .research-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-  }
-
-  .research-card {
-    width: 100%;
-  }
-
-  .research-card__image {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    background: #f0f0f0;
-  }
-
-  .research-card__image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  @media (max-width: 1200px) {
-    .research-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media (max-width: 900px) {
-    .research-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (max-width: 600px) {
-    .research-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-</style>
