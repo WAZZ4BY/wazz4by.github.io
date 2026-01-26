@@ -1,0 +1,113 @@
+---
+interface Props {
+  isHome?: boolean;
+}
+
+const { isHome = false } = Astro.props;
+const currentPath = Astro.url.pathname.replace(/^\/Site/, '') || '/';
+---
+
+<header class={`site-header ${isHome ? 'is-home' : 'is-inner'}`}>
+  <div class="site-header__content">
+    <div class="site-header__left">
+      <a href="/">Vasily Aleev</a>
+    </div>
+    
+    <nav class="site-header__center">
+      <a href="/works" class={currentPath === '/works' || currentPath.startsWith('/works') ? 'active' : ''}>Index</a>
+      <a href="/research" class={currentPath === '/research' || currentPath.startsWith('/research') ? 'active' : ''}>Research</a>
+      <a href="/me" class={currentPath === '/me' ? 'active' : ''}>Me</a>
+    </nav>
+    
+    <div class="site-header__right">
+      <span>SCHK</span>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .site-header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1.5rem 2rem;
+    pointer-events: auto;
+  }
+
+  /* Home mode: элементы по центру по вертикали */
+  .site-header.is-home .site-header__content {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    padding: 0 2rem;
+  }
+
+  /* Inner pages: элементы сверху */
+  .site-header.is-inner .site-header__content {
+    position: relative;
+    top: 0;
+    transform: none;
+  }
+
+  .site-header__left,
+  .site-header__center,
+  .site-header__right {
+    flex: 1;
+  }
+
+  .site-header__left {
+    text-align: left;
+  }
+
+  .site-header__center {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .site-header__right {
+    text-align: right;
+  }
+
+  .site-header__center a {
+    transition: opacity 0.2s;
+  }
+
+  .site-header__center a:hover {
+    opacity: 0.6;
+  }
+
+  .site-header__center a.active {
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .site-header__content {
+      padding: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .site-header.is-home .site-header__content {
+      padding: 0 1rem;
+    }
+
+    .site-header__center {
+      order: 3;
+      width: 100%;
+      margin-top: 1rem;
+      gap: 1rem;
+    }
+  }
+</style>

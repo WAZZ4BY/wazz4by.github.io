@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Временные данные для примера
+const researchItems = [
+  { id: 1, image: '/images/research-1.jpg', title: 'Research 1' },
+  { id: 2, image: '/images/research-2.jpg', title: 'Research 2' },
+  { id: 3, image: '/images/research-3.jpg', title: 'Research 3' },
+  { id: 4, image: '/images/research-4.jpg', title: 'Research 4' },
+  { id: 5, image: '/images/research-5.jpg', title: 'Research 5' },
+  { id: 6, image: '/images/research-6.jpg', title: 'Research 6' },
+  { id: 7, image: '/images/research-7.jpg', title: 'Research 7' },
+  { id: 8, image: '/images/research-8.jpg', title: 'Research 8' },
+  { id: 9, image: '/images/research-9.jpg', title: 'Research 9' },
+  { id: 10, image: '/images/research-10.jpg', title: 'Research 10' },
+];
+---
+
+<BaseLayout title="Research">
+  <main class="research-page">
+    <div class="container">
+      <h1>Research</h1>
+      
+      <div class="research-grid">
+        {researchItems.map((item) => (
+          <div class="research-card">
+            <div class="research-card__image">
+              <img src={item.image} alt={item.title} loading="lazy" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .research-page {
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+  }
+
+  .research-page h1 {
+    margin-bottom: 3rem;
+  }
+
+  .research-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+  }
+
+  .research-card {
+    width: 100%;
+  }
+
+  .research-card__image {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+
+  .research-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1200px) {
+    .research-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .research-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .research-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

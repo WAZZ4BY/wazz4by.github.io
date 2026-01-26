@@ -1,0 +1,114 @@
+---
+import { marked } from 'marked';
+
+interface Props {
+  blocks: Array<{
+    type: 'image' | 'text' | 'p5';
+    src?: string;
+    width?: 6 | 12;
+    content?: string;
+    url?: string;
+  }>;
+  slug: string;
+}
+
+const { blocks, slug } = Astro.props;
+---
+
+{blocks.map((block, index) => {
+  if (block.type === 'image') {
+    const width = block.width || 12;
+    return (
+      <div class={`block-image block-width-${width}`}>
+        <img src={block.src} alt={`Image ${index + 1}`} loading="lazy" />
+      </div>
+    );
+  }
+  
+  if (block.type === 'text') {
+    const htmlContent = block.content ? marked.parse(block.content) : '';
+    return (
+      <div class="block-text" set:html={htmlContent} />
+    );
+  }
+  
+  if (block.type === 'p5') {
+    const iframeUrl = block.url || `/sketches/${slug}/index.html`;
+    return (
+      <div class="block-p5 block-width-12">
+        <iframe 
+          src={iframeUrl}
+          frameborder="0"
+          allowfullscreen
+          class="p5-iframe"
+        ></iframe>
+      </div>
+    );
+  }
+  
+  return null;
+})}
+
+<style>
+  .block-image,
+  .block-text,
+  .block-p5 {
+    grid-column: span 12;
+  }
+
+  .block-width-6 {
+    grid-column: span 6;
+  }
+
+  .block-width-12 {
+    grid-column: span 12;
+  }
+
+  .block-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .block-text {
+    grid-column: span 12;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .block-text :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .block-text :global(h1),
+  .block-text :global(h2),
+  .block-text :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-text :global(ul),
+  .block-text :global(ol) {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-p5 {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .p5-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  @media (max-width: 768px) {
+    .block-width-6 {
+      grid-column: span 12;
+    }
+  }
+</style>

@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection, getEntry } from 'astro:content';
+import ProjectBlocks from '../../components/ProjectBlocks.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.data.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: any;
+}
+
+const { project } = Astro.props;
+---
+
+<Layout title={project.data.title}>
+  <main class="project-page">
+    <div class="container mx-auto px-4 py-8">
+      <a href="/" class="back-link">← Назад к проектам</a>
+      
+      <h1 class="project-title">{project.data.title}</h1>
+      
+      <div class="project-grid">
+        <ProjectBlocks blocks={project.data.blocks} slug={project.data.slug} />
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .project-page {
+    min-height: 100vh;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #000;
+  }
+
+  .project-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .project-title {
+      font-size: 1.75rem;
+    }
+  }
+</style>
