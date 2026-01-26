@@ -8,13 +8,14 @@ const { currentView, base } = Astro.props;
 ---
 
 <div class="view-toggle">
+  <span class="view-toggle__label">View: </span>
   <a 
     href={`${base}index?view=grid`}
     class={`view-toggle__btn ${currentView === 'grid' ? 'active' : ''}`}
   >
     Grid
   </a>
-  <span class="view-toggle__separator">/</span>
+  <span class="view-toggle__separator"> / </span>
   <a 
     href={`${base}index?view=list`}
     class={`view-toggle__btn ${currentView === 'list' ? 'active' : ''}`}

@@ -25,17 +25,24 @@ const currentView = viewParam === 'list' ? 'list' : 'grid';
 
 <BaseLayout title="Index" variant="inner">
   <main class="works-page">
-    <div class="container">
-      <div class="works-page__header">
-        <h1>Index</h1>
-        <ViewToggle currentView={currentView} base={base} />
-      </div>
-
-      {currentView === 'grid' ? (
+    {currentView === 'grid' ? (
+      <div class="works-page-grid">
+        <div class="works-page-grid__view-toggle">
+          <ViewToggle currentView={currentView} base={base} />
+        </div>
+        <div class="works-page-grid__description">
+          Some sort of my works that are little more than just a draw
+        </div>
         <ProjectsGrid projects={projects} base={base} />
-      ) : (
+      </div>
+    ) : (
+      <div class="container">
+        <div class="works-page__header">
+          <h1>Index</h1>
+          <ViewToggle currentView={currentView} base={base} />
+        </div>
         <ProjectsList projects={projects} base={base} />
-      )}
-    </div>
+      </div>
+    )}
   </main>
 </BaseLayout>

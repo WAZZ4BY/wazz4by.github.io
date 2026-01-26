@@ -15,12 +15,11 @@ const { project, view, base } = Astro.props;
 
 {view === 'grid' ? (
   <a href={`${base}project/${project.title.toLowerCase().replace(/\s+/g, '-')}`} class="project-card project-card--grid">
-    {project.image && (
-      <div class="project-card__image">
+    <div class="project-card__image">
+      {project.image ? (
         <img src={project.image} alt={project.title} loading="lazy" />
-      </div>
-    )}
-    <h3 class="project-card__title">{project.title}</h3>
+      ) : null}
+    </div>
   </a>
 ) : (
   <a href={`${base}project/${project.title.toLowerCase().replace(/\s+/g, '-')}`} class="project-card project-card--list">

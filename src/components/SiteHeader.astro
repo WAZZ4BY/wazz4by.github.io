@@ -17,26 +17,28 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
     <nav class="site-header__center">
       <a 
         href={`${base}index`} 
-        class={currentPath === '/index' || currentPath.startsWith('/index') ? 'active' : ''}
+        class={`nav-link ${currentPath === '/index' || currentPath.startsWith('/index') ? 'active' : ''}`}
       >
         Index
       </a>
+      <span class="nav-separator">, </span>
       <a 
         href={`${base}research`} 
-        class={currentPath === '/research' || currentPath.startsWith('/research') ? 'active' : ''}
+        class={`nav-link ${currentPath === '/research' || currentPath.startsWith('/research') ? 'active' : ''}`}
       >
         Research
       </a>
+      <span class="nav-separator">, </span>
       <a 
         href={`${base}me`} 
-        class={currentPath === '/me' ? 'active' : ''}
+        class={`nav-link ${currentPath === '/me' ? 'active' : ''}`}
       >
         Me
       </a>
     </nav>
     
     <div class="site-header__right">
-      <span>SCHK</span>
+      <span>schk</span>
     </div>
   </div>
 </header>
@@ -54,7 +56,7 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 1.5rem 2rem;
+    padding: 0;
     pointer-events: none;
   }
 
@@ -67,28 +69,56 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
 
   .site-header__left {
     text-align: left;
+    padding-left: 30px;
+  }
+
+  .site-header__left a {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
   }
 
   .site-header__center {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    align-items: center;
+    gap: 0;
+  }
+
+  .site-header__center .nav-link {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    transition: opacity 0.2s;
+  }
+
+  .site-header__center .nav-link.active {
+    font-family: 'ORG66', sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .site-header__center .nav-link:hover {
+    opacity: 0.6;
+  }
+
+  .site-header__center .nav-separator {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
   }
 
   .site-header__right {
     text-align: right;
+    padding-right: 30px;
   }
 
-  .site-header__center a {
-    transition: opacity 0.2s;
-  }
-
-  .site-header__center a:hover {
-    opacity: 0.6;
-  }
-
-  .site-header__center a.active {
-    font-weight: 600;
+  .site-header__right span {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    text-transform: lowercase;
   }
 
   @media (max-width: 768px) {
@@ -98,9 +128,14 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
       padding: 1rem;
     }
 
+    .site-header__left {
+      padding-left: 0;
+      width: 100%;
+      text-align: center;
+    }
 
-    .site-header__left,
     .site-header__right {
+      padding-right: 0;
       width: 100%;
       text-align: center;
     }
@@ -109,7 +144,7 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
       order: 2;
       width: 100%;
       justify-content: center;
-      gap: 1rem;
+      gap: 0;
     }
   }
 </style>
