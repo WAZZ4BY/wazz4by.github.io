@@ -53,11 +53,13 @@
   {
     "id": "hoja-sagrada",
     "title": "Hoja Sagrada Yerba Mate Tea",
-    "description": "Package design for yerba mate tea.",
     "type": "Package",
     "year": "2025",
+    "description": "Package design for yerba mate tea.",
     "images": [
-      "/images/hoja-sagrada-1.jpg"
+      "/images/test1.png",
+      "/images/test2.png",
+      "/images/test3.gif"
     ]
   },
   {
