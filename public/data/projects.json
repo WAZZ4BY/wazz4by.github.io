@@ -63,9 +63,13 @@
   {
     "id": "test",
     "title": "test",
-    "description": "test",
     "type": "test",
     "year": "2026",
-    "images": []
+    "description": "test",
+    "images": [
+      "https://github.com/WAZZ4BY/wazz4by.github.io/blob/main/images/test1.png",
+      "https://github.com/WAZZ4BY/wazz4by.github.io/blob/main/images/test2.png",
+      "https://github.com/WAZZ4BY/wazz4by.github.io/blob/main/images/test3.png"
+    ]
   }
 ]
