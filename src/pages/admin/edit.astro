@@ -1,0 +1,240 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<AdminLayout title="Редактировать проект">
+  <div id="admin-edit-root">
+    <div id="gate" class="gate">
+      <h1>Вход в админку</h1>
+      <input type="password" id="password" placeholder="Пароль" />
+      <button type="button" id="loginBtn" class="primary">Войти</button>
+      <p id="gateError" class="error" style="display:none;"></p>
+    </div>
+
+    <div id="app" style="display:none;">
+      <h1>Редактировать проект</h1>
+      <p><a href="" id="backToList">← К списку проектов</a></p>
+      <p id="loadStatus" class="status">Загрузка…</p>
+
+      <section class="admin-section" id="editSection" style="display:none;">
+        <form id="editForm">
+          <label>Название проекта</label>
+          <input type="text" id="editTitle" required />
+          <label>Тип проекта</label>
+          <input type="text" id="editType" />
+          <label>Год</label>
+          <input type="text" id="editYear" />
+          <label>Описание</label>
+          <textarea id="editDescription"></textarea>
+          <label>Изображения (сетка — добавление, удаление, перетаскивание для смены порядка)</label>
+          <div class="img-grid" id="imgGrid"></div>
+          <button type="button" class="secondary" id="addImageBtn">+ Добавить изображение</button>
+          <div style="margin-top:1rem;">
+            <button type="submit" class="primary">Сохранить изменения</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script define:vars={{ base }}>
+    (function () {
+      const STORAGE_KEY = 'admin_authed';
+      const PASSWORD = 'admin';
+      const EDITED_PROJECTS_KEY = 'admin_edited_projects';
+
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const passwordInput = document.getElementById('password');
+      const gateError = document.getElementById('gateError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function checkAuth() {
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+          gate.style.display = 'none';
+          app.style.display = 'block';
+          initApp();
+          return;
+        }
+        gate.style.display = 'block';
+        app.style.display = 'none';
+      }
+
+      loginBtn.addEventListener('click', function () {
+        gateError.style.display = 'none';
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEY, '1');
+          checkAuth();
+        } else {
+          gateError.textContent = 'Неверный пароль.';
+          gateError.style.display = 'block';
+        }
+      });
+
+      passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loginBtn.click(); });
+
+      const params = new URLSearchParams(window.location.search);
+      const projectId = params.get('id');
+
+      function dataUrl() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/projects.json';
+      }
+
+      function getBase() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return basePath.endsWith('/') ? basePath : basePath + '/';
+      }
+
+      let project = null;
+      let allProjects = [];
+      let images = [];
+
+      function getEditedProjects() {
+        try {
+          const raw = sessionStorage.getItem(EDITED_PROJECTS_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (_) { return {}; }
+      }
+
+      function setEditedProject(id, data) {
+        const edited = getEditedProjects();
+        edited[id] = data;
+        sessionStorage.setItem(EDITED_PROJECTS_KEY, JSON.stringify(edited));
+      }
+
+      function renderImageGrid() {
+        const grid = document.getElementById('imgGrid');
+        grid.innerHTML = '';
+        function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        images.forEach(function (url, index) {
+          const item = document.createElement('div');
+          item.className = 'img-grid__item';
+          item.draggable = true;
+          item.dataset.index = String(index);
+          const isExternal = (url || '').startsWith('http');
+          const imgSrc = url ? (isExternal ? url : (getBase() + url.replace(/^\//, ''))) : '';
+          item.innerHTML =
+            '<div class="img-grid__actions"><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-img" title="Удалить">×</button></div>' +
+            (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.parentElement.classList.add(\'img-error\')" />' : '<div class="img-grid__placeholder">URL ниже</div>') +
+            '<input type="text" class="img-grid__url" value="' + esc(url) + '" placeholder="/images/photo.jpg" />';
+          grid.appendChild(item);
+
+          item.querySelector('.remove-img').addEventListener('click', function () {
+            images.splice(index, 1);
+            renderImageGrid();
+          });
+          item.querySelector('.move-up').addEventListener('click', function () {
+            if (index === 0) return;
+            images.splice(index - 1, 0, images.splice(index, 1)[0]);
+            renderImageGrid();
+          });
+          item.querySelector('.move-down').addEventListener('click', function () {
+            if (index >= images.length - 1) return;
+            images.splice(index + 1, 0, images.splice(index, 1)[0]);
+            renderImageGrid();
+          });
+          item.querySelector('.img-grid__url').addEventListener('change', function () {
+            images[index] = this.value.trim();
+          });
+
+          item.addEventListener('dragstart', function (e) {
+            e.dataTransfer.setData('text/plain', index);
+            item.classList.add('dragging');
+          });
+          item.addEventListener('dragend', function () { item.classList.remove('dragging'); });
+          item.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            item.classList.add('drag-over');
+          });
+          item.addEventListener('dragleave', function () { item.classList.remove('drag-over'); });
+          item.addEventListener('drop', function (e) {
+            e.preventDefault();
+            item.classList.remove('drag-over');
+            const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
+            if (isNaN(from) || from === index) return;
+            const val = images[from];
+            images.splice(from, 1);
+            const newIndex = from < index ? index - 1 : index;
+            images.splice(newIndex, 0, val);
+            renderImageGrid();
+          });
+        });
+      }
+
+      document.getElementById('addImageBtn').addEventListener('click', function () {
+        images.push('');
+        renderImageGrid();
+      });
+
+      document.getElementById('editForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!project) return;
+        const edited = {
+          id: project.id,
+          title: document.getElementById('editTitle').value.trim(),
+          type: document.getElementById('editType').value.trim(),
+          year: document.getElementById('editYear').value.trim(),
+          description: document.getElementById('editDescription').value.trim(),
+          images: images.filter(function (u) { return u.trim(); })
+        };
+        setEditedProject(project.id, edited);
+        document.getElementById('loadStatus').textContent = 'Изменения сохранены в черновик. Перейдите в список проектов и нажмите «Сохранить в GitHub».';
+        document.getElementById('loadStatus').className = 'status ok';
+      });
+
+      async function loadAndShow() {
+        const statusEl = document.getElementById('loadStatus');
+        const section = document.getElementById('editSection');
+        const backLink = document.getElementById('backToList');
+        backLink.href = getBase() + 'admin/';
+
+        if (!projectId) {
+          statusEl.textContent = 'Укажите проект: ?id=slug';
+          statusEl.className = 'status err';
+          return;
+        }
+
+        try {
+          const res = await fetch(dataUrl(), { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.statusText);
+          allProjects = await res.json();
+          if (!Array.isArray(allProjects)) allProjects = [];
+          const edited = getEditedProjects();
+          if (edited[projectId]) {
+            project = edited[projectId];
+            images = (project.images || []).slice();
+          } else {
+            project = allProjects.find(function (p) { return p.id === projectId; });
+            if (!project) {
+              statusEl.textContent = 'Проект не найден: ' + projectId;
+              statusEl.className = 'status err';
+              return;
+            }
+            images = (project.images || []).slice();
+          }
+
+          document.getElementById('editTitle').value = project.title || '';
+          document.getElementById('editType').value = project.type || '';
+          document.getElementById('editYear').value = project.year || '';
+          document.getElementById('editDescription').value = project.description || '';
+          renderImageGrid();
+          section.style.display = 'block';
+          statusEl.textContent = '';
+        } catch (e) {
+          statusEl.textContent = 'Ошибка загрузки: ' + e.message;
+          statusEl.className = 'status err';
+        }
+      }
+
+      function initApp() {
+        loadAndShow();
+      }
+
+      checkAuth();
+    })();
+  </script>
+</AdminLayout>

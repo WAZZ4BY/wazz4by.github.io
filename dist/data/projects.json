@@ -5,7 +5,10 @@
     "description": "Type design project about visual culture of waste.",
     "type": "Type design",
     "year": "2025",
-    "images": ["/images/trash-aesthetics-1.jpg", "/images/trash-aesthetics-2.jpg"]
+    "images": [
+      "/images/trash-aesthetics-1.jpg",
+      "/images/trash-aesthetics-2.jpg"
+    ]
   },
   {
     "id": "crypto-anarchist",
@@ -13,7 +16,9 @@
     "description": "Motion design project.",
     "type": "Motion",
     "year": "2025",
-    "images": ["/images/crypto-anarchist-1.jpg"]
+    "images": [
+      "/images/crypto-anarchist-1.jpg"
+    ]
   },
   {
     "id": "chaos-construction",
@@ -21,7 +26,9 @@
     "description": "Identity design for demoscene festival.",
     "type": "Identity",
     "year": "2025",
-    "images": ["/images/chaos-construction-1.jpg"]
+    "images": [
+      "/images/chaos-construction-1.jpg"
+    ]
   },
   {
     "id": "last-days-sababa",
@@ -29,7 +36,9 @@
     "description": "Photo and zine project.",
     "type": "Photo, Zine",
     "year": "2025",
-    "images": ["/images/last-days-sababa-1.jpg"]
+    "images": [
+      "/images/last-days-sababa-1.jpg"
+    ]
   },
   {
     "id": "snve-periodical",
@@ -37,7 +46,9 @@
     "description": "Identity for periodical.",
     "type": "Identity",
     "year": "2025",
-    "images": ["/images/snve-periodical-1.jpg"]
+    "images": [
+      "/images/snve-periodical-1.jpg"
+    ]
   },
   {
     "id": "hoja-sagrada",
@@ -45,6 +56,16 @@
     "description": "Package design for yerba mate tea.",
     "type": "Package",
     "year": "2025",
-    "images": ["/images/hoja-sagrada-1.jpg"]
+    "images": [
+      "/images/hoja-sagrada-1.jpg"
+    ]
+  },
+  {
+    "id": "test",
+    "title": "test",
+    "description": "test",
+    "type": "test",
+    "year": "2026",
+    "images": []
   }
 ]

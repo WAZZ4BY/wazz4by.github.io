@@ -1,0 +1,114 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<AdminLayout title="Добавить проект">
+  <div id="admin-add-root">
+    <div id="gate" class="gate">
+      <h1>Вход в админку</h1>
+      <input type="password" id="password" placeholder="Пароль" />
+      <button type="button" id="loginBtn" class="primary">Войти</button>
+      <p id="gateError" class="error" style="display:none;"></p>
+    </div>
+
+    <div id="app" style="display:none;">
+      <h1>Добавить проект</h1>
+      <p><a href={`${base}admin/`}>← К списку проектов</a></p>
+
+      <section class="admin-section">
+        <form id="addForm">
+          <label>Название проекта</label>
+          <input type="text" id="addTitle" placeholder="Название" required />
+          <label>Тип проекта</label>
+          <input type="text" id="addType" placeholder="Type design, Motion, Identity…" />
+          <label>Год</label>
+          <input type="text" id="addYear" placeholder="2025" />
+          <label>Описание</label>
+          <textarea id="addDescription" placeholder="Краткое описание"></textarea>
+          <label>Изображения (URL, по одному на строку или поле)</label>
+          <div class="images-grid-editor" id="addImagesEditor">
+            <div class="images-grid-editor__list" id="addImagesList"></div>
+            <button type="button" class="secondary" id="addImageBtn">+ Добавить изображение</button>
+          </div>
+          <button type="submit" class="primary">Сохранить проект</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script define:vars={{ base }}>
+    (function () {
+      const STORAGE_KEY = 'admin_authed';
+      const PASSWORD = 'admin';
+      const NEW_PROJECT_KEY = 'admin_new_project';
+
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const passwordInput = document.getElementById('password');
+      const gateError = document.getElementById('gateError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function checkAuth() {
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+          gate.style.display = 'none';
+          app.style.display = 'block';
+          return;
+        }
+        gate.style.display = 'block';
+        app.style.display = 'none';
+      }
+
+      loginBtn.addEventListener('click', function () {
+        gateError.style.display = 'none';
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEY, '1');
+          checkAuth();
+        } else {
+          gateError.textContent = 'Неверный пароль.';
+          gateError.style.display = 'block';
+        }
+      });
+
+      passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loginBtn.click(); });
+
+      function slugify(s) {
+        return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      }
+
+      function addImageRow(container, value) {
+        const div = document.createElement('div');
+        div.className = 'image-row';
+        div.innerHTML = '<input type="text" class="img-url" placeholder="/images/example.jpg" value="' + (value || '') + '" /><button type="button" class="remove-img secondary">−</button>';
+        container.appendChild(div);
+        div.querySelector('.remove-img').addEventListener('click', function () { div.remove(); });
+      }
+
+      document.getElementById('addImageBtn').addEventListener('click', function () {
+        addImageRow(document.getElementById('addImagesList'), '');
+      });
+
+      document.getElementById('addForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const title = document.getElementById('addTitle').value.trim();
+        if (!title) return;
+        const inputs = document.querySelectorAll('#addImagesList .img-url');
+        const images = [];
+        inputs.forEach(function (inp) { const v = inp.value.trim(); if (v) images.push(v); });
+        const newProject = {
+          id: slugify(title),
+          title,
+          description: document.getElementById('addDescription').value.trim(),
+          type: document.getElementById('addType').value.trim(),
+          year: document.getElementById('addYear').value.trim(),
+          images
+        };
+        sessionStorage.setItem(NEW_PROJECT_KEY, JSON.stringify(newProject));
+        window.location.href = base + 'admin/';
+      });
+
+      addImageRow(document.getElementById('addImagesList'), '');
+      checkAuth();
+    })();
+  </script>
+</AdminLayout>

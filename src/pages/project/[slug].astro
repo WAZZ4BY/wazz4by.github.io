@@ -21,7 +21,8 @@ const base = import.meta.env.BASE_URL;
 <BaseLayout title={project.title} variant="inner">
   <main class="project-page">
     <div class="project-page__wrap">
-      <a href={`${base}index`} class="back-link">← Back to Index</a>
+      <a href={`${base}index/`} class="back-link">← Back to Index</a>
+      <a href={`${base}admin/edit/?id=${encodeURIComponent(project.id)}`} class="project-page__edit">Редактировать</a>
       <h1 class="project-title">{project.title}</h1>
       {project.description && (
         <p class="project-description">{project.description}</p>
@@ -60,6 +61,17 @@ const base = import.meta.env.BASE_URL;
   }
 
   .back-link:hover {
+    color: #000;
+  }
+
+  .project-page__edit {
+    display: inline-block;
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .project-page__edit:hover {
     color: #000;
   }
 
