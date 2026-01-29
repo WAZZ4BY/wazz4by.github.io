@@ -62,11 +62,11 @@ npm run build
 - Данные проектов хранятся в `public/data/projects.json`.
 - Админка: **https://ваш-сайт/admin/** — форма входа по паролю (по умолчанию: `admin`; пароль можно изменить в `public/admin/index.html`, переменная `PASSWORD`).
 - В админке можно: добавить проект (название, описание, тип, год, список URL изображений из `/images/`), редактировать выбранный проект, удалить проект.
-- После изменений нажмите **«Скачать projects.json»**, замените им файл `public/data/projects.json` в репозитории, выполните сборку и деплой — изменения появятся на сайте.
+- После изменений нажмите **«Скачать projects.json»**, замените им файл `public/data/projects.json` в репозитории и запушьте в `main` — GitHub Actions соберёт проект и задеплоит на GitHub Pages. Либо локально: `node scripts/update-projects-and-deploy.js путь/к/projects.json --deploy`.
 
 ## Деплой на GitHub Pages
 
-Проект настроен для деплоя на GitHub Pages. Конфигурация находится в `astro.config.mjs`:
+Проект настроен для деплоя на GitHub Pages. Конфигурация в `astro.config.mjs`:
 
 ```js
 export default defineConfig({
@@ -76,50 +76,54 @@ export default defineConfig({
 });
 ```
 
-### Автоматический деплой через GitHub Actions
+### 1. Обновление `projects.json` и сборка (локально)
 
-1. Создайте файл `.github/workflows/deploy.yml`:
+Скрипт копирует новый `projects.json` в `public/data/`, собирает проект и опционально деплоит в ветку `gh-pages`:
 
-```yaml
-name: Deploy to GitHub Pages
+```bash
+# Только скопировать файл и собрать проект (деплой не выполняется)
+node scripts/update-projects-and-deploy.js путь/к/projects.json
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/deploy-pages@v4
+# То же + задеплоить в ветку gh-pages
+node scripts/update-projects-and-deploy.js путь/к/projects.json --deploy
 ```
 
-2. В настройках репозитория GitHub включите GitHub Pages (Settings → Pages → Source: GitHub Actions)
+Или через npm:
 
-### Ручной деплой
+```bash
+npm run update-and-deploy -- путь/к/projects.json
+npm run update-and-deploy -- путь/к/projects.json -- --deploy
+```
 
-1. Соберите проект: `npm run build`
-2. Загрузите содержимое папки `dist/` в ветку `gh-pages` или используйте GitHub Actions
+Если путь не указан, копирование пропускается, выполняется только `npm run build`.
+
+### 2. Автоматический деплой через GitHub Actions
+
+Workflow `.github/workflows/deploy.yml`:
+
+- **Запускается** при пуше в `main`, если изменились:
+  - `public/data/projects.json`
+  - файлы в `src/`, `public/`
+  - `astro.config.mjs`, `package.json`, `package-lock.json`
+- **Действия:** сборка (`npm run build`), публикация папки `dist/` в ветку **`gh-pages`** (action `peaceiris/actions-gh-pages`).
+
+Ручной запуск: в репозитории **Actions** → **Deploy Astro to GitHub Pages** → **Run workflow**.
+
+### 3. Секреты и токены
+
+- **В GitHub Actions** дополнительных секретов создавать не нужно. Используется встроенный `GITHUB_TOKEN` (доступен как `secrets.GITHUB_TOKEN`), его выдаёт GitHub для каждого запуска workflow.
+- **Локальный деплой** (`npm run deploy` или скрипт с `--deploy`) требует прав на запись в репозиторий: либо вы залогинены через `gh auth login` / `git` с учётными данными, либо нужен [Personal Access Token (classic)](https://github.com/settings/tokens) с правом `repo` для HTTPS.
+
+### 4. Настройка GitHub Pages в репозитории
+
+Чтобы сайт открывался из ветки `gh-pages`:
+
+1. **Settings** → **Pages**.
+2. **Source:** выберите **Deploy from a branch**.
+3. **Branch:** `gh-pages`, папка **/ (root)**.
+4. Сохраните. После первого успешного деплоя сайт будет доступен по адресу вида `https://<username>.github.io/<repo>/` (для репозитория `username.github.io` — по корневому URL).
+
+### Ручной деплой (без скрипта)
+
+1. Сборка: `npm run build`
+2. Публикация в `gh-pages`: `npm run deploy` (пакет `gh-pages` зальёт содержимое `dist/` в ветку `gh-pages`)
