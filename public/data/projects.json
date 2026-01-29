@@ -65,9 +65,11 @@
   {
     "id": "test",
     "title": "test",
-    "description": "test",
     "type": "test",
     "year": "2026",
-    "images": []
+    "description": "test",
+    "images": [
+      "/images/test1.png"
+    ]
   }
 ]
