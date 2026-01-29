@@ -5,13 +5,15 @@ interface Props {
 
 const { variant = 'inner' } = Astro.props;
 const base = import.meta.env.BASE_URL;
-const currentPath = Astro.url.pathname.replace(base, '') || '/';
+const pathname = Astro.url.pathname;
+const pathWithoutBase = pathname.replace(new RegExp('^' + base.replace(/\/$/, '') + '\\/?'), '') || '';
+const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
 ---
 
 <header class="site-header">
   <div class="site-header__container">
     <div class="site-header__left">
-      <a href={`${base}`}>Vasily Aleev</a>
+      <a href={base === '/' ? '/' : base}>Vasily Aleev</a>
     </div>
     
     <nav class="site-header__center">
@@ -27,21 +29,21 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
         <>
           <a 
             href={`${base}index`} 
-            class={`nav-link ${currentPath === '/index' || currentPath.startsWith('/index') ? 'active' : ''}`}
+            class={`nav-link ${currentPath === 'index' || currentPath.startsWith('index/') ? 'active' : ''}`}
           >
             Index
           </a>
           <span class="nav-separator">, </span>
           <a 
             href={`${base}research`} 
-            class={`nav-link ${currentPath === '/research' || currentPath.startsWith('/research') ? 'active' : ''}`}
+            class={`nav-link ${currentPath === 'research' || currentPath.startsWith('research/') ? 'active' : ''}`}
           >
             Research
           </a>
           <span class="nav-separator">, </span>
           <a 
             href={`${base}me`} 
-            class={`nav-link ${currentPath === '/me' ? 'active' : ''}`}
+            class={`nav-link ${currentPath === 'me' ? 'active' : ''}`}
           >
             Me
           </a>
