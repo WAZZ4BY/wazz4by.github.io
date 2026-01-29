@@ -1,14 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ViewToggle from '../../components/ViewToggle.astro';
-import ProjectsGrid from '../../components/ProjectsGrid.astro';
 import { getProjects } from '../../lib/projects';
 
 const base = import.meta.env.BASE_URL;
-const url = Astro.url;
-const viewParam = url.searchParams.get('view') || 'list';
-const currentView = viewParam === 'grid' ? 'grid' : 'list';
-
 const projectsData = getProjects();
 const projects = projectsData.map((p) => ({
   title: p.title,
@@ -21,36 +15,21 @@ const projects = projectsData.map((p) => ({
 
 <BaseLayout title="Index" variant="inner">
   <main class="works-page">
-    {currentView === 'list' ? (
-      <div class="index-list-wrap">
-        <div class="index-list">
-          <div class="index-list__header">
-            <span class="col-project">Project</span>
-            <span class="col-type">Type</span>
-            <span class="col-year">Year</span>
-          </div>
-          {projects.map((project) => (
-            <div class="index-list__row">
-              <a href={`${base}project/${project.slug}`} class="col-project">{project.title}</a>
-              <span class="col-type">{project.type}</span>
-              <span class="col-year">{project.year}</span>
-            </div>
-          ))}
+    <div class="index-list-wrap">
+      <div class="index-list">
+        <div class="index-list__header">
+          <span class="col-project">Project</span>
+          <span class="col-type">Type</span>
+          <span class="col-year">Year</span>
         </div>
-        <div class="index-page__view-toggle">
-          <ViewToggle currentView={currentView} base={base} />
-        </div>
+        {projects.map((project) => (
+          <a href={`${base}project/${project.slug}/`} class="index-list__row">
+            <span class="col-project">{project.title}</span>
+            <span class="col-type">{project.type}</span>
+            <span class="col-year">{project.year}</span>
+          </a>
+        ))}
       </div>
-    ) : (
-      <div class="works-page-grid">
-        <div class="works-page-grid__view-toggle">
-          <ViewToggle currentView={currentView} base={base} />
-        </div>
-        <div class="works-page-grid__description">
-          Some sort of my works that are little more than just a draw
-        </div>
-        <ProjectsGrid projects={projects} base={base} />
-      </div>
-    )}
+    </div>
   </main>
 </BaseLayout>

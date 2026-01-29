@@ -298,14 +298,8 @@ body.is-inner .works-page {
   padding-bottom: 4rem;
 }
 
-.index-page__view-toggle {
-  position: absolute;
-  left: var(--grid-margin);
-  top: 404px;
-}
-
 .index-list {
-  padding-top: 97px;
+  padding-top: 25px;
   padding-left: 0;
   padding-right: 0;
 }
@@ -314,7 +308,7 @@ body.is-inner .works-page {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   gap: 0 var(--grid-gutter);
-  margin-bottom: 57px;
+  margin-bottom: 15px;
   font-family: 'ORG66', sans-serif;
   font-style: italic;
   font-weight: 700;
@@ -329,21 +323,21 @@ body.is-inner .works-page {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   gap: 0 var(--grid-gutter);
-  margin-bottom: 51px;
+  margin-bottom: 15px;
   font-family: 'SuisseIntl', sans-serif;
   font-weight: 400;
-  font-size: 24px;
-  opacity: 0.5;
-}
-
-.index-list__row a {
-  color: inherit;
+  font-size: 28px;
+  color: #696969;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: color 0.2s;
 }
 
-.index-list__row a:hover {
-  opacity: 1;
+.index-list__row:first-of-type {
+  margin-top: calc(50vh - 25px - 20px - 15px);
+}
+
+.index-list__row:hover {
+  color: #000;
 }
 
 .index-list__row .col-project { grid-column: 1 / span 5; }
