@@ -19,30 +19,30 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
     <nav class="site-header__center">
       {variant === 'home' ? (
         <>
-          <a href={`${base}index`} class="nav-link nav-link--home">Index</a>
+          <a href={`${base}index/`} class="nav-link nav-link--home">Index</a>
           <span class="nav-separator">, </span>
-          <a href={`${base}research`} class="nav-link nav-link--home">Research</a>
+          <a href={`${base}research/`} class="nav-link nav-link--home">Research</a>
           <span class="nav-separator">, </span>
-          <a href={`${base}me`} class="nav-link nav-link--home">Me</a>
+          <a href={`${base}me/`} class="nav-link nav-link--home">Me</a>
         </>
       ) : (
         <>
           <a 
-            href={`${base}index`} 
+            href={`${base}index/`} 
             class={`nav-link ${currentPath === 'index' || currentPath.startsWith('index/') ? 'active' : ''}`}
           >
             Index
           </a>
           <span class="nav-separator">, </span>
           <a 
-            href={`${base}research`} 
+            href={`${base}research/`} 
             class={`nav-link ${currentPath === 'research' || currentPath.startsWith('research/') ? 'active' : ''}`}
           >
             Research
           </a>
           <span class="nav-separator">, </span>
           <a 
-            href={`${base}me`} 
+            href={`${base}me/`} 
             class={`nav-link ${currentPath === 'me' ? 'active' : ''}`}
           >
             Me
