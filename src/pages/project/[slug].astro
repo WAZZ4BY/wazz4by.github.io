@@ -1,33 +1,40 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, getEntry } from 'astro:content';
-import ProjectBlocks from '../../components/ProjectBlocks.astro';
+import { getProjects, getProjectBySlug } from '../../lib/projects';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
+  const projects = getProjects();
   return projects.map((project) => ({
-    params: { slug: project.data.slug },
+    params: { slug: project.id },
     props: { project },
   }));
 }
 
 interface Props {
-  project: any;
+  project: import('../../lib/projects').Project;
 }
 
 const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={project.data.title} variant="inner">
+<BaseLayout title={project.title} variant="inner">
   <main class="project-page">
-    <div class="container mx-auto px-4 py-8">
-      <a href="/" class="back-link">← Назад к проектам</a>
-      
-      <h1 class="project-title">{project.data.title}</h1>
-      
-      <div class="project-grid">
-        <ProjectBlocks blocks={project.data.blocks} slug={project.data.slug} />
-      </div>
+    <div class="project-page__wrap">
+      <a href={`${base}index`} class="back-link">← Back to Index</a>
+      <h1 class="project-title">{project.title}</h1>
+      {project.description && (
+        <p class="project-description">{project.description}</p>
+      )}
+      {project.images && project.images.length > 0 && (
+        <div class="project-gallery">
+          {project.images.map((src) => (
+            <div class="project-gallery__item">
+              <img src={src} alt={project.title} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   </main>
 </BaseLayout>
@@ -35,6 +42,12 @@ const { project } = Astro.props;
 <style>
   .project-page {
     min-height: 100vh;
+    padding: 6rem var(--grid-margin) 4rem;
+    background: #FBFBFB;
+  }
+
+  .project-page__wrap {
+    max-width: 100%;
   }
 
   .back-link {
@@ -53,23 +66,34 @@ const { project } = Astro.props;
   .project-title {
     font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
   }
 
-  .project-grid {
+  .project-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .project-gallery {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-gallery__item {
+    width: 100%;
+    overflow: hidden;
+    background: #D9D9D9;
+  }
+
+  .project-gallery__item img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   @media (max-width: 768px) {
-    .project-grid {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
     .project-title {
       font-size: 1.75rem;
     }

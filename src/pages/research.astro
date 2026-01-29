@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Mock data
 const researchItems = [
   { id: 1, image: '/images/research-1.jpg', title: 'Research 1' },
   { id: 2, image: '/images/research-2.jpg', title: 'Research 2' },
@@ -13,23 +12,25 @@ const researchItems = [
   { id: 8, image: '/images/research-8.jpg', title: 'Research 8' },
   { id: 9, image: '/images/research-9.jpg', title: 'Research 9' },
   { id: 10, image: '/images/research-10.jpg', title: 'Research 10' },
+  { id: 11, image: '/images/research-1.jpg', title: 'Research 11' },
+  { id: 12, image: '/images/research-2.jpg', title: 'Research 12' },
+  { id: 13, image: '/images/research-3.jpg', title: 'Research 13' },
+  { id: 14, image: '/images/research-4.jpg', title: 'Research 14' },
+  { id: 15, image: '/images/research-5.jpg', title: 'Research 15' },
 ];
 ---
 
 <BaseLayout title="Research" variant="inner">
   <main class="research-page">
-    <div class="container">
-      <h1>Research</h1>
-      
-      <div class="research-grid">
-        {researchItems.map((item) => (
-          <div class="research-card">
-            <div class="research-card__image">
-              <img src={item.image} alt={item.title} loading="lazy" />
-            </div>
+    <h1 class="research-page__title">Experiments, Research & Development</h1>
+    <div class="research-grid">
+      {researchItems.map((item) => (
+        <div class="research-card">
+          <div class="research-card__image">
+            <img src={item.image} alt={item.title} loading="lazy" />
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   </main>
 </BaseLayout>

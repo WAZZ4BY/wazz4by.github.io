@@ -1,24 +1,324 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Content Manager</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <title>Admin — Projects</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 2rem; background: #f5f5f5; }
+    h1 { margin-top: 0; }
+    .gate { max-width: 320px; margin: 4rem auto; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .gate input { width: 100%; padding: 0.5rem; margin-bottom: 1rem; font-size: 1rem; }
+    .gate button { width: 100%; padding: 0.6rem; font-size: 1rem; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    .gate button:hover { background: #333; }
+    .gate .error { color: #c00; font-size: 0.9rem; margin-top: 0.5rem; }
+    section { background: #fff; padding: 1.5rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 640px; }
+    section h2 { margin-top: 0; font-size: 1.25rem; }
+    label { display: block; margin-bottom: 0.25rem; font-weight: 500; }
+    input[type="text"], textarea, select { width: 100%; padding: 0.5rem; margin-bottom: 1rem; font-size: 1rem; }
+    textarea { min-height: 80px; resize: vertical; }
+    button { padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; border-radius: 4px; }
+    button.primary { background: #000; color: #fff; border: none; }
+    button.primary:hover { background: #333; }
+    button.danger { background: #c00; color: #fff; border: none; }
+    button.danger:hover { background: #a00; }
+    .images-list { margin-bottom: 1rem; }
+    .images-list .row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .images-list input { flex: 1; margin-bottom: 0; }
+    .images-list button { flex-shrink: 0; }
+    .add-img { margin-bottom: 1rem; }
+    .logout { margin-bottom: 2rem; }
+    .download-hint { font-size: 0.9rem; color: #666; margin-top: 1rem; }
+    .status { font-size: 0.9rem; margin-top: 0.5rem; }
+    .status.ok { color: #080; }
+    .status.err { color: #c00; }
+  </style>
 </head>
 <body>
-  <!-- Include the script that builds the page and powers Decap CMS -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <div id="gate" class="gate">
+    <h1>Admin</h1>
+    <p>Введите пароль для входа. По умолчанию: <code>admin</code> (измените в коде страницы при необходимости).</p>
+    <input type="password" id="password" placeholder="Пароль" autocomplete="current-password" />
+    <button type="button" id="loginBtn">Войти</button>
+    <p id="gateError" class="error" style="display:none;"></p>
+  </div>
+
+  <div id="app" style="display:none;">
+    <p class="logout"><button type="button" id="logoutBtn">Выйти</button></p>
+    <h1>Управление проектами</h1>
+    <p id="loadStatus" class="status">Загрузка…</p>
+
+    <section>
+      <h2>Добавить проект</h2>
+      <label>Название проекта</label>
+      <input type="text" id="addTitle" placeholder="Название" />
+      <label>Описание</label>
+      <textarea id="addDescription" placeholder="Описание"></textarea>
+      <label>Тип (например: Type design, Motion)</label>
+      <input type="text" id="addType" placeholder="Type" />
+      <label>Год</label>
+      <input type="text" id="addYear" placeholder="2025" />
+      <label>Изображения (URL в папке /images/)</label>
+      <div class="images-list" id="addImagesList">
+        <div class="row">
+          <input type="text" class="img-url" placeholder="/images/example.jpg" />
+          <button type="button" class="removeImg">−</button>
+        </div>
+      </div>
+      <button type="button" class="add-img" id="addImageRow">+ Добавить URL изображения</button>
+      <button type="button" class="primary" id="addBtn">Добавить проект</button>
+    </section>
+
+    <section>
+      <h2>Редактировать проект</h2>
+      <label>Выберите проект</label>
+      <select id="editSelect">
+        <option value="">— Выберите —</option>
+      </select>
+      <div id="editForm" style="display:none;">
+        <label>Название</label>
+        <input type="text" id="editTitle" />
+        <label>Описание</label>
+        <textarea id="editDescription"></textarea>
+        <label>Тип</label>
+        <input type="text" id="editType" />
+        <label>Год</label>
+        <input type="text" id="editYear" />
+        <label>Изображения</label>
+        <div class="images-list" id="editImagesList"></div>
+        <button type="button" class="add-img" id="editImageRow">+ Добавить URL</button>
+        <button type="button" class="primary" id="saveEditBtn">Сохранить</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Удалить проект</h2>
+      <label>Выберите проект</label>
+      <select id="deleteSelect">
+        <option value="">— Выберите —</option>
+      </select>
+      <button type="button" class="danger" id="deleteBtn" style="margin-top:1rem;">Удалить проект</button>
+    </section>
+
+    <section>
+      <h2>Скачать данные</h2>
+      <p>После изменений скачайте <code>projects.json</code> и замените им файл <code>public/data/projects.json</code> в репозитории, затем выполните сборку и деплой.</p>
+      <button type="button" class="primary" id="downloadBtn">Скачать projects.json</button>
+      <p class="download-hint">Файл сохранится в папку загрузок.</p>
+    </section>
+  </div>
+
   <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
+    (function () {
+      const STORAGE_KEY = 'admin_authed';
+      const PASSWORD = 'admin';
+
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const passwordInput = document.getElementById('password');
+      const gateError = document.getElementById('gateError');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      function checkAuth() {
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+          gate.style.display = 'none';
+          app.style.display = 'block';
+          initApp();
+          return;
+        }
+        gate.style.display = 'block';
+        app.style.display = 'none';
+      }
+
+      loginBtn.addEventListener('click', function () {
+        gateError.style.display = 'none';
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEY, '1');
+          checkAuth();
+        } else {
+          gateError.textContent = 'Неверный пароль.';
+          gateError.style.display = 'block';
         }
       });
-    }
+
+      passwordInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') loginBtn.click();
+      });
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+          sessionStorage.removeItem(STORAGE_KEY);
+          gate.style.display = 'block';
+          app.style.display = 'none';
+          passwordInput.value = '';
+        });
+      }
+
+      let projects = [];
+
+      function dataUrl() {
+        var path = window.location.pathname;
+        if (path.indexOf('/admin') !== -1) {
+          return path.replace(/\/admin\/?.*$/, '') + '/data/projects.json';
+        }
+        return '/data/projects.json';
+      }
+
+      async function loadProjects() {
+        const status = document.getElementById('loadStatus');
+        try {
+          const res = await fetch(dataUrl(), { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.statusText);
+          projects = await res.json();
+          if (!Array.isArray(projects)) projects = [];
+          status.textContent = 'Загружено проектов: ' + projects.length;
+          status.className = 'status ok';
+          fillSelects();
+          return projects;
+        } catch (e) {
+          status.textContent = 'Ошибка загрузки: ' + e.message;
+          status.className = 'status err';
+          projects = [];
+          return [];
+        }
+      }
+
+      function slugify(s) {
+        return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      }
+
+      function fillSelects() {
+        const editSelect = document.getElementById('editSelect');
+        const deleteSelect = document.getElementById('deleteSelect');
+        editSelect.innerHTML = '<option value="">— Выберите —</option>';
+        deleteSelect.innerHTML = '<option value="">— Выберите —</option>';
+        projects.forEach(function (p) {
+          editSelect.innerHTML += '<option value="' + p.id + '">' + (p.title || p.id) + '</option>';
+          deleteSelect.innerHTML += '<option value="' + p.id + '">' + (p.title || p.id) + '</option>';
+        });
+      }
+
+      function addImageRow(container, onRemove) {
+        const div = document.createElement('div');
+        div.className = 'row';
+        div.innerHTML = '<input type="text" class="img-url" placeholder="/images/example.jpg" /><button type="button" class="removeImg">−</button>';
+        container.appendChild(div);
+        div.querySelector('.removeImg').addEventListener('click', function () {
+          div.remove();
+          if (onRemove) onRemove();
+        });
+      }
+
+      document.getElementById('addImageRow').addEventListener('click', function () {
+        addImageRow(document.getElementById('addImagesList'));
+      });
+
+      document.getElementById('addBtn').addEventListener('click', function () {
+        const title = document.getElementById('addTitle').value.trim();
+        if (!title) {
+          alert('Введите название проекта.');
+          return;
+        }
+        const description = document.getElementById('addDescription').value.trim();
+        const type = document.getElementById('addType').value.trim();
+        const year = document.getElementById('addYear').value.trim();
+        const inputs = document.querySelectorAll('#addImagesList .img-url');
+        const images = [];
+        inputs.forEach(function (inp) {
+          const v = inp.value.trim();
+          if (v) images.push(v);
+        });
+        const id = slugify(title);
+        const newProject = { id, title, description, type, year, images };
+        projects.push(newProject);
+        document.getElementById('addTitle').value = '';
+        document.getElementById('addDescription').value = '';
+        document.getElementById('addType').value = '';
+        document.getElementById('addYear').value = '';
+        const list = document.getElementById('addImagesList');
+        list.innerHTML = '<div class="row"><input type="text" class="img-url" placeholder="/images/example.jpg" /><button type="button" class="removeImg">−</button></div>';
+        fillSelects();
+        document.getElementById('loadStatus').textContent = 'Добавлен проект. Скачайте projects.json и обновите репозиторий.';
+      });
+
+      const editForm = document.getElementById('editForm');
+      const editSelect = document.getElementById('editSelect');
+      editSelect.addEventListener('change', function () {
+        const id = editSelect.value;
+        if (!id) {
+          editForm.style.display = 'none';
+          return;
+        }
+        const p = projects.find(function (x) { return x.id === id; });
+        if (!p) return;
+        document.getElementById('editTitle').value = p.title || '';
+        document.getElementById('editDescription').value = p.description || '';
+        document.getElementById('editType').value = p.type || '';
+        document.getElementById('editYear').value = p.year || '';
+        const list = document.getElementById('editImagesList');
+        list.innerHTML = '';
+        (p.images || []).forEach(function (url) {
+          addImageRow(list, null);
+          list.querySelector('.row:last-child .img-url').value = url;
+        });
+        if (!(p.images && p.images.length)) addImageRow(list, null);
+        editForm.style.display = 'block';
+      });
+
+      document.getElementById('editImageRow').addEventListener('click', function () {
+        addImageRow(document.getElementById('editImagesList'));
+      });
+
+      document.getElementById('saveEditBtn').addEventListener('click', function () {
+        const id = editSelect.value;
+        if (!id) return;
+        const p = projects.find(function (x) { return x.id === id; });
+        if (!p) return;
+        p.title = document.getElementById('editTitle').value.trim() || p.title;
+        p.description = document.getElementById('editDescription').value.trim();
+        p.type = document.getElementById('editType').value.trim();
+        p.year = document.getElementById('editYear').value.trim();
+        const inputs = document.querySelectorAll('#editImagesList .img-url');
+        p.images = [];
+        inputs.forEach(function (inp) {
+          const v = inp.value.trim();
+          if (v) p.images.push(v);
+        });
+        document.getElementById('loadStatus').textContent = 'Изменения сохранены в списке. Скачайте projects.json и обновите репозиторий.';
+      });
+
+      document.getElementById('deleteBtn').addEventListener('click', function () {
+        const id = document.getElementById('deleteSelect').value;
+        if (!id) {
+          alert('Выберите проект.');
+          return;
+        }
+        if (!confirm('Удалить проект «' + (projects.find(function (p) { return p.id === id; })?.title || id) + '»?')) return;
+        projects = projects.filter(function (p) { return p.id !== id; });
+        fillSelects();
+        document.getElementById('editForm').style.display = 'none';
+        document.getElementById('editSelect').value = '';
+        document.getElementById('loadStatus').textContent = 'Проект удалён из списка. Скачайте projects.json и обновите репозиторий.';
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', function () {
+        const json = JSON.stringify(projects, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'projects.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      function initApp() {
+        loadProjects();
+      }
+
+      checkAuth();
+    })();
   </script>
 </body>
 </html>

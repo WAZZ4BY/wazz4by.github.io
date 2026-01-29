@@ -15,30 +15,42 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
     </div>
     
     <nav class="site-header__center">
-      <a 
-        href={`${base}index`} 
-        class={`nav-link ${currentPath === '/index' || currentPath.startsWith('/index') ? 'active' : ''}`}
-      >
-        Index
-      </a>
-      <span class="nav-separator">, </span>
-      <a 
-        href={`${base}research`} 
-        class={`nav-link ${currentPath === '/research' || currentPath.startsWith('/research') ? 'active' : ''}`}
-      >
-        Research
-      </a>
-      <span class="nav-separator">, </span>
-      <a 
-        href={`${base}me`} 
-        class={`nav-link ${currentPath === '/me' ? 'active' : ''}`}
-      >
-        Me
-      </a>
+      {variant === 'home' ? (
+        <>
+          <a href={`${base}index`} class="nav-link nav-link--home">Index</a>
+          <span class="nav-separator">, </span>
+          <a href={`${base}research`} class="nav-link nav-link--home">Research</a>
+          <span class="nav-separator">, </span>
+          <a href={`${base}me`} class="nav-link nav-link--home">Me</a>
+        </>
+      ) : (
+        <>
+          <a 
+            href={`${base}index`} 
+            class={`nav-link ${currentPath === '/index' || currentPath.startsWith('/index') ? 'active' : ''}`}
+          >
+            Index
+          </a>
+          <span class="nav-separator">, </span>
+          <a 
+            href={`${base}research`} 
+            class={`nav-link ${currentPath === '/research' || currentPath.startsWith('/research') ? 'active' : ''}`}
+          >
+            Research
+          </a>
+          <span class="nav-separator">, </span>
+          <a 
+            href={`${base}me`} 
+            class={`nav-link ${currentPath === '/me' ? 'active' : ''}`}
+          >
+            Me
+          </a>
+        </>
+      )}
     </nav>
     
     <div class="site-header__right">
-      <span>schk</span>
+      <a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer" class="site-header__right-link">SCHK</a>
     </div>
   </div>
 </header>
@@ -60,36 +72,62 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
     pointer-events: none;
   }
 
-  .site-header__left,
-  .site-header__center,
-  .site-header__right {
-    flex: 1;
-    pointer-events: auto;
-  }
-
   .site-header__left {
+    flex: 0 0 auto;
+    pointer-events: auto;
     text-align: left;
     padding-left: 30px;
   }
 
-  .site-header__left a {
-    font-family: 'SuisseIntl', sans-serif;
-    font-weight: bold;
-    font-size: 16px;
-  }
-
   .site-header__center {
+    flex: 1;
+    pointer-events: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0;
   }
+
+  .site-header__right {
+    flex: 0 0 auto;
+    pointer-events: auto;
+    text-align: right;
+    padding-right: 30px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .site-header__left a {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  /* Home page specific styles */
+  body.is-home .site-header__left a {
+    font-size: 24px;
+    font-weight: 400;
+  }
+
 
   .site-header__center .nav-link {
     font-family: 'SuisseIntl', sans-serif;
     font-weight: 400;
     font-size: 16px;
-    transition: opacity 0.2s;
+    transition: font-family 0.2s, font-style 0.2s, font-weight 0.2s;
+  }
+
+  .site-header__center .nav-link--home {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: black;
+  }
+
+  .site-header__center .nav-link--home:hover {
+    font-family: 'ORG66', sans-serif;
+    font-style: italic;
+    font-weight: 700;
   }
 
   .site-header__center .nav-link.active {
@@ -99,7 +137,7 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
     font-size: 16px;
   }
 
-  .site-header__center .nav-link:hover {
+  .site-header__center .nav-link:not(.nav-link--home):hover {
     opacity: 0.6;
   }
 
@@ -109,16 +147,24 @@ const currentPath = Astro.url.pathname.replace(base, '') || '/';
     font-size: 16px;
   }
 
-  .site-header__right {
-    text-align: right;
-    padding-right: 30px;
-  }
 
-  .site-header__right span {
+  .site-header__right-link {
     font-family: 'SuisseIntl', sans-serif;
     font-weight: 400;
     font-size: 16px;
-    text-transform: lowercase;
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .site-header__right-link:hover {
+    opacity: 0.7;
+  }
+
+  /* Home page specific styles */
+  body.is-home .site-header__right-link {
+    font-size: 24px;
+    font-weight: 400;
   }
 
   @media (max-width: 768px) {

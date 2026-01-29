@@ -2,30 +2,46 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ViewToggle from '../../components/ViewToggle.astro';
 import ProjectsGrid from '../../components/ProjectsGrid.astro';
-import ProjectsList from '../../components/ProjectsList.astro';
-
-// Mock data
-const projects = [
-  { title: 'Project One', type: 'Branding', year: '2024', image: '/images/project-1.jpg' },
-  { title: 'Project Two', type: 'Web Design', year: '2024', image: '/images/project-2.jpg' },
-  { title: 'Project Three', type: 'Print', year: '2023', image: '/images/project-3.jpg' },
-  { title: 'Project Four', type: 'Branding', year: '2023', image: '/images/project-4.jpg' },
-  { title: 'Project Five', type: 'Web Design', year: '2023', image: '/images/project-5.jpg' },
-  { title: 'Project Six', type: 'Print', year: '2022', image: '/images/project-6.jpg' },
-  { title: 'Project Seven', type: 'Branding', year: '2022', image: '/images/project-7.jpg' },
-  { title: 'Project Eight', type: 'Web Design', year: '2022', image: '/images/project-8.jpg' },
-  { title: 'Project Nine', type: 'Print', year: '2021', image: '/images/project-9.jpg' },
-];
+import { getProjects } from '../../lib/projects';
 
 const base = import.meta.env.BASE_URL;
 const url = Astro.url;
-const viewParam = url.searchParams.get('view') || 'grid';
-const currentView = viewParam === 'list' ? 'list' : 'grid';
+const viewParam = url.searchParams.get('view') || 'list';
+const currentView = viewParam === 'grid' ? 'grid' : 'list';
+
+const projectsData = getProjects();
+const projects = projectsData.map((p) => ({
+  title: p.title,
+  type: p.type || '',
+  year: p.year || '',
+  slug: p.id,
+  image: p.images?.[0],
+}));
 ---
 
 <BaseLayout title="Index" variant="inner">
   <main class="works-page">
-    {currentView === 'grid' ? (
+    {currentView === 'list' ? (
+      <div class="index-list-wrap">
+        <div class="index-list">
+          <div class="index-list__header">
+            <span class="col-project">Project</span>
+            <span class="col-type">Type</span>
+            <span class="col-year">Year</span>
+          </div>
+          {projects.map((project) => (
+            <div class="index-list__row">
+              <a href={`${base}project/${project.slug}`} class="col-project">{project.title}</a>
+              <span class="col-type">{project.type}</span>
+              <span class="col-year">{project.year}</span>
+            </div>
+          ))}
+        </div>
+        <div class="index-page__view-toggle">
+          <ViewToggle currentView={currentView} base={base} />
+        </div>
+      </div>
+    ) : (
       <div class="works-page-grid">
         <div class="works-page-grid__view-toggle">
           <ViewToggle currentView={currentView} base={base} />
@@ -34,14 +50,6 @@ const currentView = viewParam === 'list' ? 'list' : 'grid';
           Some sort of my works that are little more than just a draw
         </div>
         <ProjectsGrid projects={projects} base={base} />
-      </div>
-    ) : (
-      <div class="container">
-        <div class="works-page__header">
-          <h1>Index</h1>
-          <ViewToggle currentView={currentView} base={base} />
-        </div>
-        <ProjectsList projects={projects} base={base} />
       </div>
     )}
   </main>

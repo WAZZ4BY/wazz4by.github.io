@@ -1,0 +1,50 @@
+[
+  {
+    "id": "trash-aesthetics",
+    "title": "Trash aesthetics. Visual culture of waste",
+    "description": "Type design project about visual culture of waste.",
+    "type": "Type design",
+    "year": "2025",
+    "images": ["/images/trash-aesthetics-1.jpg", "/images/trash-aesthetics-2.jpg"]
+  },
+  {
+    "id": "crypto-anarchist",
+    "title": "The Crypto Anarchist Manifesto",
+    "description": "Motion design project.",
+    "type": "Motion",
+    "year": "2025",
+    "images": ["/images/crypto-anarchist-1.jpg"]
+  },
+  {
+    "id": "chaos-construction",
+    "title": "Chaos Construction | Demoscene Fest",
+    "description": "Identity design for demoscene festival.",
+    "type": "Identity",
+    "year": "2025",
+    "images": ["/images/chaos-construction-1.jpg"]
+  },
+  {
+    "id": "last-days-sababa",
+    "title": "The Last Days Of Sababa",
+    "description": "Photo and zine project.",
+    "type": "Photo, Zine",
+    "year": "2025",
+    "images": ["/images/last-days-sababa-1.jpg"]
+  },
+  {
+    "id": "snve-periodical",
+    "title": "SNVE Pereodical",
+    "description": "Identity for periodical.",
+    "type": "Identity",
+    "year": "2025",
+    "images": ["/images/snve-periodical-1.jpg"]
+  },
+  {
+    "id": "hoja-sagrada",
+    "title": "Hoja Sagrada Yerba Mate Tea",
+    "description": "Package design for yerba mate tea.",
+    "type": "Package",
+    "year": "2025",
+    "images": ["/images/hoja-sagrada-1.jpg"]
+  }
+]
