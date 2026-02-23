@@ -7,6 +7,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "predeploy": "node -e \"try{require('gh-pages').clean()}catch(e){}\"",
     "deploy": "gh-pages -d dist",
     "update-and-deploy": "node scripts/update-projects-and-deploy.js",
     "astro": "astro"
