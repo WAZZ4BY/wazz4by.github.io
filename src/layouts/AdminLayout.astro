@@ -60,6 +60,26 @@ const base = import.meta.env.BASE_URL;
       .admin-page .img-grid__item.drag-over { border: 2px dashed #000; }
       .admin-page .img-grid__placeholder { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 0.8rem; color: #999; }
       .admin-page .img-grid__item.img-error img { opacity: 0.5; }
+      .admin-page .admin-hint { font-size: 0.85rem; color: #666; margin: -0.5rem 0 0.75rem; }
+      .admin-page .admin-color-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+      .admin-page .admin-color-row input[type="color"] { width: 48px; height: 38px; padding: 2px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; }
+      .admin-page .admin-color-row input[type="text"] { flex: 1; margin-bottom: 0; }
+      .admin-page .content-blocks-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem; }
+      .admin-page .content-blocks-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+      .admin-page .content-block-card { padding: 1rem; background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px; }
+      .admin-page .content-block-card__row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+      .admin-page .content-block-card__type { font-weight: 600; font-size: 0.9rem; flex: 1; }
+      .admin-page .content-block-card__textarea { width: 100%; margin-bottom: 0; min-height: 60px; }
+      .admin-page .content-block-card__url { width: 100%; margin-bottom: 0.5rem; }
+      .admin-page .content-block-card__url:last-of-type { margin-bottom: 0; }
+      .admin-page .content-block-card__split-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+      .admin-page .content-block-card .move-up, .admin-page .content-block-card .move-down, .admin-page .content-block-card .remove-block { padding: 4px 8px; font-size: 0.8rem; min-width: auto; }
+      .admin-page .content-block-card__preview { margin-top: 0.5rem; max-height: 200px; border-radius: 6px; overflow: hidden; background: #eee; display: flex; align-items: center; justify-content: center; min-height: 80px; }
+      .admin-page .content-block-card__preview img { max-width: 100%; max-height: 200px; width: auto; height: auto; display: block; object-fit: contain; }
+      .admin-page .content-block-card__preview-img--error { opacity: 0.4; }
+      .admin-page .content-block-card__preview--split { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+      .admin-page .content-block-card__preview-item { max-height: 160px; background: #eee; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 60px; }
+      .admin-page .content-block-card__preview-item img { max-width: 100%; max-height: 160px; width: auto; height: auto; object-fit: contain; }
     </style>
   </head>
   <body>

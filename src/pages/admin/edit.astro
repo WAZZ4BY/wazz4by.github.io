@@ -25,11 +25,20 @@ const base = import.meta.env.BASE_URL;
           <input type="text" id="editType" />
           <label>Год</label>
           <input type="text" id="editYear" />
-          <label>Описание</label>
-          <textarea id="editDescription"></textarea>
-          <label>Изображения (сетка — добавление, удаление, перетаскивание для смены порядка)</label>
-          <div class="img-grid" id="imgGrid"></div>
-          <button type="button" class="secondary" id="addImageBtn">+ Добавить изображение</button>
+          <label>Цвет фона страницы</label>
+          <div class="admin-color-row">
+            <input type="color" id="editBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
+            <input type="text" id="editBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
+          </div>
+          <label>Контент (блоки)</label>
+          <p class="admin-hint">Текст — колонки 5–12, стиль как в футере. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — вставьте embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
+          <div id="contentBlocksList" class="content-blocks-list"></div>
+          <div class="content-blocks-actions">
+            <button type="button" class="secondary" id="addBlockText">+ Текст</button>
+            <button type="button" class="secondary" id="addBlockImage">+ Изображение</button>
+            <button type="button" class="secondary" id="addBlockSplit">+ Сплит</button>
+            <button type="button" class="secondary" id="addBlockVideo">+ Видео (Vimeo)</button>
+          </div>
           <div style="margin-top:1rem;">
             <button type="submit" class="primary">Сохранить изменения</button>
           </div>
@@ -91,7 +100,7 @@ const base = import.meta.env.BASE_URL;
 
       let project = null;
       let allProjects = [];
-      let images = [];
+      let contentBlocks = [];
 
       function getEditedProjects() {
         try {
@@ -106,80 +115,142 @@ const base = import.meta.env.BASE_URL;
         sessionStorage.setItem(EDITED_PROJECTS_KEY, JSON.stringify(edited));
       }
 
-      function renderImageGrid() {
-        const grid = document.getElementById('imgGrid');
-        grid.innerHTML = '';
-        function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-        images.forEach(function (url, index) {
-          const item = document.createElement('div');
-          item.className = 'img-grid__item';
-          item.draggable = true;
-          item.dataset.index = String(index);
-          const isExternal = (url || '').startsWith('http');
-          const imgSrc = url ? (isExternal ? url : (getBase() + url.replace(/^\//, ''))) : '';
-          item.innerHTML =
-            '<div class="img-grid__actions"><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-img" title="Удалить">×</button></div>' +
-            (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.parentElement.classList.add(\'img-error\')" />' : '<div class="img-grid__placeholder">URL ниже</div>') +
-            '<input type="text" class="img-grid__url" value="' + esc(url) + '" placeholder="/images/photo.jpg" />';
-          grid.appendChild(item);
+      function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-          item.querySelector('.remove-img').addEventListener('click', function () {
-            images.splice(index, 1);
-            renderImageGrid();
+      function resolveImgUrl(url) {
+        const u = (url || '').trim();
+        if (!u) return '';
+        if (u.startsWith('http')) return u;
+        return getBase() + u.replace(/^\//, '');
+      }
+
+      function renderBlocks() {
+        const list = document.getElementById('contentBlocksList');
+        list.innerHTML = '';
+        contentBlocks.forEach(function (block, index) {
+          const card = document.createElement('div');
+          card.className = 'content-block-card';
+          card.dataset.index = String(index);
+          let inner = '';
+          if (block.type === 'text') {
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Текст</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea" rows="3" placeholder="Текст (колонки 5–12)">' + esc(block.content || '') + '</textarea>';
+          } else if (block.type === 'image') {
+            const imgSrc = resolveImgUrl(block.src || '');
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Изображение</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><input type="text" class="content-block-card__url" value="' + esc(block.src || '') + '" placeholder="/images/photo.jpg" /><div class="content-block-card__preview">' + (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div>';
+          } else if (block.type === 'split') {
+            const leftSrc = resolveImgUrl(block.left || '');
+            const rightSrc = resolveImgUrl(block.right || '');
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Сплит</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><div class="content-block-card__split-fields"><input type="text" class="content-block-card__url" value="' + esc(block.left || '') + '" placeholder="Левое изображение" data-side="left" /><input type="text" class="content-block-card__url" value="' + esc(block.right || '') + '" placeholder="Правое изображение" data-side="right" /></div><div class="content-block-card__preview content-block-card__preview--split"><div class="content-block-card__preview-item">' + (leftSrc ? '<img src="' + esc(leftSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div><div class="content-block-card__preview-item">' + (rightSrc ? '<img src="' + esc(rightSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div></div>';
+          } else if (block.type === 'video') {
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Видео (Vimeo)</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea content-block-card__textarea--embed" rows="4" placeholder="Вставьте embed-код (iframe) с Vimeo">' + esc(block.embed || '') + '</textarea>';
+          }
+          card.innerHTML = inner;
+
+          card.querySelector('.remove-block').addEventListener('click', function () {
+            contentBlocks.splice(index, 1);
+            renderBlocks();
           });
-          item.querySelector('.move-up').addEventListener('click', function () {
+          card.querySelector('.move-up').addEventListener('click', function () {
             if (index === 0) return;
-            images.splice(index - 1, 0, images.splice(index, 1)[0]);
-            renderImageGrid();
+            contentBlocks.splice(index - 1, 0, contentBlocks.splice(index, 1)[0]);
+            renderBlocks();
           });
-          item.querySelector('.move-down').addEventListener('click', function () {
-            if (index >= images.length - 1) return;
-            images.splice(index + 1, 0, images.splice(index, 1)[0]);
-            renderImageGrid();
-          });
-          item.querySelector('.img-grid__url').addEventListener('change', function () {
-            images[index] = this.value.trim();
+          card.querySelector('.move-down').addEventListener('click', function () {
+            if (index >= contentBlocks.length - 1) return;
+            contentBlocks.splice(index + 1, 0, contentBlocks.splice(index, 1)[0]);
+            renderBlocks();
           });
 
-          item.addEventListener('dragstart', function (e) {
-            e.dataTransfer.setData('text/plain', index);
-            item.classList.add('dragging');
-          });
-          item.addEventListener('dragend', function () { item.classList.remove('dragging'); });
-          item.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            item.classList.add('drag-over');
-          });
-          item.addEventListener('dragleave', function () { item.classList.remove('drag-over'); });
-          item.addEventListener('drop', function (e) {
-            e.preventDefault();
-            item.classList.remove('drag-over');
-            const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
-            if (isNaN(from) || from === index) return;
-            const val = images[from];
-            images.splice(from, 1);
-            const newIndex = from < index ? index - 1 : index;
-            images.splice(newIndex, 0, val);
-            renderImageGrid();
-          });
+          if (block.type === 'text') {
+            card.querySelector('.content-block-card__textarea').addEventListener('input', function () {
+              contentBlocks[index].content = this.value;
+            });
+          } else if (block.type === 'image') {
+            const urlInput = card.querySelector('.content-block-card__url');
+            const previewWrap = card.querySelector('.content-block-card__preview');
+            function updateImagePreview() {
+              contentBlocks[index].src = urlInput.value.trim();
+              const src = resolveImgUrl(urlInput.value.trim());
+              if (!previewWrap) return;
+              if (src) {
+                let img = previewWrap.querySelector('img');
+                if (!img) { img = document.createElement('img'); img.alt = ''; img.onerror = function () { this.classList.add('content-block-card__preview-img--error'); }; img.onload = function () { this.classList.remove('content-block-card__preview-img--error'); }; previewWrap.appendChild(img); }
+                img.src = src;
+                img.classList.remove('content-block-card__preview-img--error');
+              } else {
+                previewWrap.innerHTML = '';
+              }
+            }
+            urlInput.addEventListener('input', updateImagePreview);
+            urlInput.addEventListener('change', updateImagePreview);
+          } else if (block.type === 'split') {
+            const leftInput = card.querySelector('input[data-side="left"]');
+            const rightInput = card.querySelector('input[data-side="right"]');
+            const previewWrap = card.querySelector('.content-block-card__preview--split');
+            function updateSplitPreviews() {
+              contentBlocks[index].left = leftInput.value.trim();
+              contentBlocks[index].right = rightInput.value.trim();
+              if (!previewWrap) return;
+              const items = previewWrap.querySelectorAll('.content-block-card__preview-item');
+              [leftInput.value.trim(), rightInput.value.trim()].forEach(function (val, i) {
+                const src = resolveImgUrl(val);
+                const item = items[i];
+                if (!item) return;
+                if (src) {
+                  let img = item.querySelector('img');
+                  if (!img) { img = document.createElement('img'); img.alt = ''; img.onerror = function () { this.classList.add('content-block-card__preview-img--error'); }; img.onload = function () { this.classList.remove('content-block-card__preview-img--error'); }; item.appendChild(img); }
+                  img.src = src;
+                  img.classList.remove('content-block-card__preview-img--error');
+                } else {
+                  item.innerHTML = '';
+                }
+              });
+            }
+            leftInput.addEventListener('input', updateSplitPreviews);
+            leftInput.addEventListener('change', updateSplitPreviews);
+            rightInput.addEventListener('input', updateSplitPreviews);
+            rightInput.addEventListener('change', updateSplitPreviews);
+          } else if (block.type === 'video') {
+            card.querySelector('.content-block-card__textarea--embed').addEventListener('input', function () {
+              contentBlocks[index].embed = this.value;
+            });
+          }
+
+          list.appendChild(card);
         });
       }
 
-      document.getElementById('addImageBtn').addEventListener('click', function () {
-        images.push('');
-        renderImageGrid();
+      document.getElementById('addBlockText').addEventListener('click', function () {
+        contentBlocks.push({ type: 'text', content: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockImage').addEventListener('click', function () {
+        contentBlocks.push({ type: 'image', src: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockSplit').addEventListener('click', function () {
+        contentBlocks.push({ type: 'split', left: '', right: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockVideo').addEventListener('click', function () {
+        contentBlocks.push({ type: 'video', embed: '' });
+        renderBlocks();
       });
 
       document.getElementById('editForm').addEventListener('submit', function (e) {
         e.preventDefault();
         if (!project) return;
+        const bgHex = document.getElementById('editBackgroundColorHex').value.trim();
+        const bgColor = document.getElementById('editBackgroundColor').value;
         const edited = {
           id: project.id,
           title: document.getElementById('editTitle').value.trim(),
           type: document.getElementById('editType').value.trim(),
           year: document.getElementById('editYear').value.trim(),
-          description: document.getElementById('editDescription').value.trim(),
-          images: images.filter(function (u) { return u.trim(); })
+          description: project.description || '',
+          images: project.images || [],
+          contentBlocks: contentBlocks.slice(),
+          backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined
         };
         setEditedProject(project.id, edited);
         document.getElementById('loadStatus').textContent = 'Изменения сохранены в черновик. Перейдите в список проектов и нажмите «Сохранить в GitHub».';
@@ -206,7 +277,7 @@ const base = import.meta.env.BASE_URL;
           const edited = getEditedProjects();
           if (edited[projectId]) {
             project = edited[projectId];
-            images = (project.images || []).slice();
+            contentBlocks = (project.contentBlocks || []).map(function (b) { return { ...b }; });
           } else {
             project = allProjects.find(function (p) { return p.id === projectId; });
             if (!project) {
@@ -214,14 +285,44 @@ const base = import.meta.env.BASE_URL;
               statusEl.className = 'status err';
               return;
             }
-            images = (project.images || []).slice();
+            if (project.contentBlocks && project.contentBlocks.length > 0) {
+              contentBlocks = project.contentBlocks.map(function (b) { return { ...b }; });
+            } else {
+              contentBlocks = [];
+              if (project.description && project.description.trim()) {
+                contentBlocks.push({ type: 'text', content: project.description.trim() });
+              }
+              (project.images || []).forEach(function (src) {
+                if (src && src.trim()) contentBlocks.push({ type: 'image', src: src.trim() });
+              });
+            }
           }
 
           document.getElementById('editTitle').value = project.title || '';
           document.getElementById('editType').value = project.type || '';
           document.getElementById('editYear').value = project.year || '';
-          document.getElementById('editDescription').value = project.description || '';
-          renderImageGrid();
+          const bg = (project.backgroundColor || '').trim();
+          if (bg && /^#[0-9A-Fa-f]{6}$/.test(bg)) {
+            document.getElementById('editBackgroundColor').value = bg.slice(1);
+            document.getElementById('editBackgroundColorHex').value = bg;
+          } else if (bg) {
+            document.getElementById('editBackgroundColorHex').value = bg;
+            document.getElementById('editBackgroundColor').value = 'FBFBFB';
+          } else {
+            document.getElementById('editBackgroundColor').value = 'FBFBFB';
+            document.getElementById('editBackgroundColorHex').value = '';
+          }
+          if (!window._editColorListeners) {
+            window._editColorListeners = true;
+            document.getElementById('editBackgroundColor').addEventListener('input', function () {
+              document.getElementById('editBackgroundColorHex').value = '#' + this.value;
+            });
+            document.getElementById('editBackgroundColorHex').addEventListener('input', function () {
+              const v = this.value.trim();
+              if (/^#[0-9A-Fa-f]{6}$/.test(v)) document.getElementById('editBackgroundColor').value = v.slice(1);
+            });
+          }
+          renderBlocks();
           section.style.display = 'block';
           statusEl.textContent = '';
         } catch (e) {

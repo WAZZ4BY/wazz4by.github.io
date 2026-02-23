@@ -145,12 +145,13 @@ body.is-inner {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 0 var(--grid-gutter);
-  background: #FBFBFB;
+  background: transparent;
   padding: 30px var(--grid-margin) 12px;
   font-family: 'SuisseIntl', sans-serif;
   font-size: 16px;
   font-weight: normal;
-  color: black;
+  color: white;
+  mix-blend-mode: difference;
   box-sizing: border-box;
 }
 .page-header__vasily { grid-column: 1; padding-top: 0; }

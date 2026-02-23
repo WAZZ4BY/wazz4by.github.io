@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InnerPageHeader from '../../components/InnerPageHeader.astro';
-import { getProjects, getProjectBySlug } from '../../lib/projects';
+import { getProjects, getContentBlocks } from '../../lib/projects';
 
 export async function getStaticPaths() {
   const projects = getProjects();
@@ -17,11 +17,13 @@ interface Props {
 
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const blocks = getContentBlocks(project);
+const bgColor = project.backgroundColor || '#FBFBFB';
 ---
 
 <BaseLayout title={project.title} variant="inner" bodyClass="page-project" hideHeader>
-  <div class="inner-page">
-    <main class="project-page">
+  <div class="inner-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
+    <main class="project-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
       <div class="project-page__grid">
         <InnerPageHeader activePage="project" />
         <a href={`${base}admin/edit/?id=${encodeURIComponent(project.id)}`} class="project-page__edit">Редактировать</a>
@@ -34,18 +36,38 @@ const base = import.meta.env.BASE_URL;
         </div>
         <hr class="project-title-line" aria-hidden="true" />
         <div class="project-page__content">
-          {project.description && (
-            <p class="project-description">{project.description}</p>
-          )}
-          {project.images && project.images.length > 0 && (
-            <div class="project-gallery">
-              {project.images.map((src) => (
-                <div class="project-gallery__item">
-                  <img src={src} alt={project.title} loading="lazy" />
+          {blocks.map((block) => {
+            if (block.type === 'image') {
+              return (
+                <div class="content-block content-block--image">
+                  <img src={block.src} alt={project.title} loading="lazy" />
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            }
+            if (block.type === 'text') {
+              return (
+                <div class="content-block content-block--text">
+                  <p>{block.text}</p>
+                </div>
+              );
+            }
+            if (block.type === 'split') {
+              return (
+                <div class="content-block content-block--split">
+                  <img src={block.left} alt={project.title} loading="lazy" />
+                  <img src={block.right} alt={project.title} loading="lazy" />
+                </div>
+              );
+            }
+            if (block.type === 'video') {
+              return (
+                <div class="content-block content-block--video">
+                  <div class="video-wrap" set:html={block.embed} />
+                </div>
+              );
+            }
+            return null;
+          })}
         </div>
         <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
         <div class="index-footer__name">Vasily Aleev</div>
@@ -144,6 +166,74 @@ const base = import.meta.env.BASE_URL;
   .project-page__content {
     grid-column: 1 / -1;
     grid-row: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .content-block {
+    width: 100%;
+  }
+
+  .content-block--image {
+    grid-column: 1 / -1;
+    margin-top: 70px;
+    margin-bottom: 70px;
+  }
+
+  .content-block--image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .content-block--text {
+    margin-top: 70px;
+    margin-bottom: 70px;
+    grid-column: 5 / 13;
+  }
+
+  .content-block--text p {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .content-block--split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--grid-gutter);
+    margin-top: 70px;
+    margin-bottom: 70px;
+  }
+
+  .content-block--split img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .content-block--video {
+    margin-top: 70px;
+    margin-bottom: 70px;
+  }
+
+  .content-block--video .video-wrap {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+  }
+
+  .content-block--video .video-wrap iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
   .project-description {

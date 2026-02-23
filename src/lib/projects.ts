@@ -1,6 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 
+export type ContentBlock =
+  | { type: 'image'; src: string }
+  | { type: 'text'; content: string }
+  | { type: 'split'; left: string; right: string }
+  | { type: 'video'; embed: string };
+
 export interface Project {
   id: string;
   title: string;
@@ -8,6 +14,8 @@ export interface Project {
   type?: string;
   year?: string;
   images: string[];
+  contentBlocks?: ContentBlock[];
+  backgroundColor?: string;
 }
 
 let cached: Project[] | null = null;
@@ -23,4 +31,19 @@ export function getProjects(): Project[] {
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return getProjects().find((p) => p.id === slug);
+}
+
+/** Возвращает контент-блоки: либо contentBlocks, либо собранные из description + images для обратной совместимости. */
+export function getContentBlocks(project: Project): ContentBlock[] {
+  if (project.contentBlocks && project.contentBlocks.length > 0) {
+    return project.contentBlocks;
+  }
+  const blocks: ContentBlock[] = [];
+  if (project.description && project.description.trim()) {
+    blocks.push({ type: 'text', content: project.description.trim() });
+  }
+  (project.images || []).forEach((src) => {
+    blocks.push({ type: 'image', src });
+  });
+  return blocks;
 }

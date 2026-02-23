@@ -23,7 +23,7 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
           <span class="nav-separator">, </span>
           <a href={`${base}research/`} class="nav-link nav-link--home">Research</a>
           <span class="nav-separator">, </span>
-          <a href={`${base}me/`} class="nav-link nav-link--home">Info</a>
+          <a href={`${base}info/`} class="nav-link nav-link--home">Info</a>
         </>
       ) : (
         <>
@@ -42,8 +42,8 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
           </a>
           <span class="nav-separator">, </span>
           <a 
-            href={`${base}me/`} 
-            class={`nav-link ${currentPath === 'me' ? 'active' : ''}`}
+            href={`${base}info/`} 
+            class={`nav-link ${currentPath === 'info' ? 'active' : ''}`}
           >
             Info
           </a>
