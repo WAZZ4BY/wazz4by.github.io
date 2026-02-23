@@ -216,8 +216,10 @@ const bgColor = project.backgroundColor || '#FBFBFB';
   }
 
   .content-block--video {
-    margin-top: 70px;
-    margin-bottom: 70px;
+    width: 100%;
+    grid-column: 1 / -1;
+    margin-top: 50px;
+    margin-bottom: 50px;
   }
 
   .content-block--video .video-wrap {
@@ -227,7 +229,7 @@ const bgColor = project.backgroundColor || '#FBFBFB';
     overflow: hidden;
   }
 
-  .content-block--video .video-wrap iframe {
+  .content-block--video .video-wrap :global(iframe) {
     position: absolute;
     top: 0;
     left: 0;
