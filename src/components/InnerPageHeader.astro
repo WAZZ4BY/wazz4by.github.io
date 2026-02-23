@@ -1,6 +1,6 @@
 ---
 interface Props {
-  activePage: 'index' | 'research' | 'info';
+  activePage: 'index' | 'research' | 'info' | 'project';
 }
 
 const { activePage } = Astro.props;
@@ -8,12 +8,10 @@ const base = import.meta.env.BASE_URL;
 ---
 
 <header class="page-header">
-  <div class="page-header__vasily"><a href={base}>Vasily Aleev</a></div>
+  <div class="page-header__vasily"><b><a href={base}>Vasily Aleev</a></b></div>
   <div class="page-header__nav">
-    {activePage === 'index' ? <b><a href={`${base}index/`}>Index</a></b> : <a href={`${base}index/`}>Index</a>}
-    <span class="page-header__sep">,</span>
-    {activePage === 'research' ? <b><a href={`${base}research/`}>Research</a></b> : <a href={`${base}research/`}>Research</a>}
-    <span class="page-header__sep">,</span>
+    {activePage === 'index' ? <b><a href={`${base}index/`}>Index</a></b> : <a href={`${base}index/`}>Index</a>}<span class="page-header__sep">,</span>
+    {activePage === 'research' ? <b><a href={`${base}research/`}>Research</a></b> : <a href={`${base}research/`}>Research</a>}<span class="page-header__sep">,</span>
     {activePage === 'info' ? <b><a href={`${base}me/`}>Info</a></b> : <a href={`${base}me/`}>Info</a>}
   </div>
   <div class="page-header__schk"><a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">SchK</a></div>

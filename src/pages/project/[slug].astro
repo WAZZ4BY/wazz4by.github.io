@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import InnerPageHeader from '../../components/InnerPageHeader.astro';
 import { getProjects, getProjectBySlug } from '../../lib/projects';
 
 export async function getStaticPaths() {
@@ -18,55 +19,69 @@ const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={project.title} variant="inner">
-  <main class="project-page">
-    <div class="project-page__wrap">
-      <a href={`${base}index/`} class="back-link">← Back to Index</a>
-      <a href={`${base}admin/edit/?id=${encodeURIComponent(project.id)}`} class="project-page__edit">Редактировать</a>
-      <h1 class="project-title">{project.title}</h1>
-      {project.description && (
-        <p class="project-description">{project.description}</p>
-      )}
-      {project.images && project.images.length > 0 && (
-        <div class="project-gallery">
-          {project.images.map((src) => (
-            <div class="project-gallery__item">
-              <img src={src} alt={project.title} loading="lazy" />
-            </div>
-          ))}
+<BaseLayout title={project.title} variant="inner" bodyClass="page-project" hideHeader>
+  <div class="inner-page">
+    <main class="project-page">
+      <div class="project-page__grid">
+        <InnerPageHeader activePage="project" />
+        <a href={`${base}admin/edit/?id=${encodeURIComponent(project.id)}`} class="project-page__edit">Редактировать</a>
+        <h1 class="project-title">{project.title}</h1>
+        <div class="project-meta">
+          <span class="project-meta__label">Type</span>
+          <span class="project-meta__value">{project.type || '—'}</span>
+          <span class="project-meta__label">Year</span>
+          <span class="project-meta__value">{project.year || '—'}</span>
         </div>
-      )}
-    </div>
-  </main>
+        <hr class="project-title-line" aria-hidden="true" />
+        <div class="project-page__content">
+          {project.description && (
+            <p class="project-description">{project.description}</p>
+          )}
+          {project.images && project.images.length > 0 && (
+            <div class="project-gallery">
+              {project.images.map((src) => (
+                <div class="project-gallery__item">
+                  <img src={src} alt={project.title} loading="lazy" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
+        <div class="index-footer__name">Vasily Aleev</div>
+        <div class="index-footer__links"><a href="https://www.instagram.com/wazz4by" target="_blank" rel="noopener noreferrer">Ig</a><br/><a href="https://t.me/waz4by" target="_blank" rel="noopener noreferrer">Tg</a><br/><a href="https://www.behance.net/wazz4by/" target="_blank" rel="noopener noreferrer">Be</a></div>
+      </div>
+    </main>
+  </div>
 </BaseLayout>
 
 <style>
   .project-page {
     min-height: 100vh;
-    padding: 6rem var(--grid-margin) 4rem;
+    padding: 0 var(--grid-margin) 4rem;
     background: #FBFBFB;
   }
 
-  .project-page__wrap {
+  .project-page__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto auto auto auto 1fr auto;
+    gap: 0 var(--grid-gutter);
     max-width: 100%;
+    min-height: calc(100vh - var(--page-header-height, 62px));
   }
 
-  .back-link {
-    display: inline-block;
-    margin-bottom: 2rem;
-    color: #666;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
-  }
-
-  .back-link:hover {
-    color: #000;
+  :global(body.page-project .project-page__grid .page-header) {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 
   .project-page__edit {
+    grid-column: 1 / -1;
+    grid-row: 2;
     display: inline-block;
     margin-left: 1rem;
+    margin-bottom: 0;
     font-size: 0.9rem;
     color: #666;
   }
@@ -76,14 +91,65 @@ const base = import.meta.env.BASE_URL;
   }
 
   .project-title {
-    font-size: 2.5rem;
+    grid-column: 1 / 7;
+    grid-row: 3;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 64px;
     font-weight: 700;
-    margin-bottom: 1rem;
+    letter-spacing: -3px;
+    margin-top: 290px;
+    margin-bottom: 0;
+    line-height: 1;
+  }
+
+  .project-meta {
+    grid-column: 7 / 9;
+    grid-row: 3;
+    align-self: start;
+    margin-top: 290px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25em var(--grid-gutter);
+    align-items: baseline;
+  }
+
+  /* Колонка 7: подписи как в заголовке списка проектов (12px) */
+  .project-meta__label {
+    grid-column: 1;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+  }
+
+  /* Колонка 8: значения как в списке проектов (28px) */
+  .project-meta__value {
+    grid-column: 2;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    color: black;
+  }
+
+  .project-title-line {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin: 100px 0;
+    border: none;
+    border-bottom: 1.5pt solid black;
+    opacity: 0.5;
+  }
+
+  .project-page__content {
+    grid-column: 1 / -1;
+    grid-row: 5;
   }
 
   .project-description {
     font-size: 1rem;
     line-height: 1.6;
+    margin-top: 2rem;
     margin-bottom: 2rem;
   }
 
@@ -105,9 +171,50 @@ const base = import.meta.env.BASE_URL;
     display: block;
   }
 
+  /* Футер как на index: колонки 7–11 (текст), 11 (имя), 12 (ссылки) */
+  :global(body.page-project .project-page__grid .index-footer__text) {
+    grid-column: 7 / 11;
+    grid-row: 6;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+    opacity: 1;
+    line-height: 1;
+  }
+  :global(body.page-project .project-page__grid .index-footer__name) {
+    grid-column: 11;
+    grid-row: 6;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    color: black;
+    line-height: 1;
+  }
+  :global(body.page-project .project-page__grid .index-footer__links) {
+    grid-column: 12;
+    grid-row: 6;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    color: black;
+    text-align: right;
+    line-height: 1;
+  }
+
   @media (max-width: 768px) {
     .project-title {
-      font-size: 1.75rem;
+      font-size: 2.5rem;
+      letter-spacing: -0.02em;
+    }
+    .project-meta {
+      margin-top: 2rem;
     }
   }
 </style>

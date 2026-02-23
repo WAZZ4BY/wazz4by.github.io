@@ -4,7 +4,13 @@ import InnerPageHeader from '../../components/InnerPageHeader.astro';
 import { getProjects } from '../../lib/projects';
 
 const base = import.meta.env.BASE_URL;
-const projects = getProjects();
+const projects = getProjects()
+  .slice()
+  .sort((a, b) => {
+    const yA = parseInt(String(a.year || ''), 10) || 0;
+    const yB = parseInt(String(b.year || ''), 10) || 0;
+    return yB - yA; // newest first, как при первой загрузке в скрипте
+  });
 ---
 
 <BaseLayout title="Index" variant="inner" bodyClass="page-index" hideHeader>
@@ -23,16 +29,19 @@ const projects = getProjects();
         </a>
       ))}
       </div>
+      <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
+      <div class="index-footer__name">Vasily Aleev</div>
+      <div class="index-footer__links"><a href="https://www.instagram.com/wazz4by" target="_blank" rel="noopener noreferrer">Ig</a><br/><a href="https://t.me/waz4by" target="_blank" rel="noopener noreferrer">Tg</a><br/><a href="https://www.behance.net/wazz4by/" target="_blank" rel="noopener noreferrer">Be</a></div>
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  /* Index: 12 колонок, 3 ряда — шапка → Name/Type/Year в одной строке → список */
+  /* Index: 12 колонок, 4 ряда — шапка → Name/Type/Year → список → футер */
   :global(body.page-index .index2__grid) {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto 1fr auto;
     gap: 0 var(--grid-gutter);
     position: relative;
   }
@@ -46,22 +55,59 @@ const projects = getProjects();
     padding-top: 0;
   }
 
+  /* Футер под списком: отступ от списка 70px, от низа 30px */
+  :global(body.page-index .index2__grid .index-footer__text) {
+    grid-column: 7 / 11;
+    grid-row: 4;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+    opacity: 1;
+    line-height: 1;
+  }
+  :global(body.page-index .index2__grid .index-footer__name) {
+    grid-column: 11;
+    grid-row: 4;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    color: black;
+    line-height: 1;
+  }
+  :global(body.page-index .index2__grid .index-footer__links) {
+    grid-column: 12;
+    grid-row: 4;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    color: black;
+    text-align: right;
+    line-height: 1;
+  }
+
   /* Name, Type, Year — одна строка (row 2), разные колонки */
   :global(body.page-index .index2__grid .index-labels-name) {
     grid-column: 1;
     grid-row: 2;
-    margin-top: 180px;
+    margin-top: 220px;
   }
   :global(body.page-index .index2__grid .index-labels-type) {
     grid-column: 7;
     grid-row: 2;
-    margin-top: 180px;
+    margin-top: 220px;
   }
   :global(body.page-index .index2__grid .index-labels-year) {
     grid-column: 12;
     grid-row: 2;
     justify-self: end;
-    margin-top: 180px;
+    margin-top: 220px;
   }
 
   .name, .type, .year {
