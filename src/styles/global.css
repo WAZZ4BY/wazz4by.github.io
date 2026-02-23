@@ -1,0 +1,740 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Fonts */
+@font-face {
+  font-family: 'SuisseIntl';
+  src: url('/fonts/SuisseIntl-Book.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SuisseIntl';
+  src: url('/fonts/SuisseIntl-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SuisseIntl';
+  src: url('/fonts/SuisseIntl-SemiBold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ORG66';
+  src: url('/fonts/ORG66.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ORG66';
+  src: url('/fonts/ORG66.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* 12-column grid: margin 30, gutter 20 */
+  --grid-cols: 12;
+  --grid-margin: 30px;
+  --grid-gutter: 20px;
+  
+  /* Typography */
+  --font-base: 'SuisseIntl', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-bold: 'SuisseIntl', sans-serif;
+  --font-accent: 'ORG66', sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+  
+  /* Colors */
+  --color-text: #000;
+  --color-bg: #fff;
+}
+
+html {
+  font-size: var(--font-size-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #FBFBFB;
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: 1rem;
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+/* Home page background */
+body.is-home {
+  background: #FBFBFB;
+}
+
+/* Inner pages (Index, Research, Info): фон и при overscroll — один цвет, без белой полосы */
+body.is-inner {
+  background: #FBFBFB;
+}
+
+/* Container: 12-col grid, margin 30, gutter 20 */
+.container,
+.grid-9-wrap,
+.grid-12-wrap {
+  width: 100%;
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
+}
+
+.grid-9 {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 0 var(--grid-gutter);
+  max-width: 100%;
+}
+
+.grid-9 .col-1 { grid-column: span 1; }
+.grid-9 .col-2 { grid-column: span 2; }
+.grid-9 .col-3 { grid-column: span 3; }
+.grid-9 .col-4 { grid-column: span 4; }
+.grid-9 .col-5 { grid-column: span 5; }
+.grid-9 .col-6 { grid-column: span 6; }
+.grid-9 .col-7 { grid-column: span 7; }
+.grid-9 .col-8 { grid-column: span 8; }
+.grid-9 .col-9 { grid-column: span 9; }
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0 var(--grid-gutter);
+  max-width: 100%;
+}
+
+.grid-12 .col-1 { grid-column: span 1; }
+.grid-12 .col-2 { grid-column: span 2; }
+.grid-12 .col-3 { grid-column: span 3; }
+.grid-12 .col-4 { grid-column: span 4; }
+.grid-12 .col-5 { grid-column: span 5; }
+.grid-12 .col-6 { grid-column: span 6; }
+.grid-12 .col-7 { grid-column: span 7; }
+.grid-12 .col-8 { grid-column: span 8; }
+.grid-12 .col-9 { grid-column: span 9; }
+.grid-12 .col-10 { grid-column: span 10; }
+.grid-12 .col-11 { grid-column: span 11; }
+.grid-12 .col-12 { grid-column: span 12; }
+
+/* Inner page header — жёстко закреплён, не двигается при overscroll */
+.page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0 var(--grid-gutter);
+  background: transparent;
+  padding: 30px var(--grid-margin) 12px;
+  font-family: 'SuisseIntl', sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  color: white;
+  mix-blend-mode: difference;
+  box-sizing: border-box;
+}
+.page-header__vasily { grid-column: 1; padding-top: 0; }
+.page-header__nav { grid-column: 7 / 12; padding-top: 5px; }
+.page-header__schk { grid-column: 12; justify-self: end; padding-top: 5px; text-align: right; }
+.page-header__sep { font-weight: normal; }
+.page-header a { color: inherit; text-decoration: none; }
+.page-header a:hover { font-weight: 600; opacity: 0.9; }
+.page-header__schk a:hover { font-weight: 600; opacity: 0.9; }
+
+/* Высота шапки для отступа контента (padding-top + строка нава + padding-bottom) */
+:root {
+  --page-header-height: 62px;
+}
+
+/* Inner page layout: контент начинается под фиксированной шапкой */
+.inner-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #FBFBFB;
+  padding: var(--page-header-height) var(--grid-margin) 0;
+  box-sizing: border-box;
+}
+.inner-page__grid {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  position: relative;
+}
+.inner-page__main { position: relative; }
+.inner-page .research-page,
+.inner-page .me-page {
+  padding-left: 0;
+  padding-right: 0;
+  background: transparent;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Active links use ORG66 font (except Vasily Aleev which uses SuisseIntl-Bold) */
+a.active {
+  font-family: var(--font-accent, 'ORG66', sans-serif);
+  font-weight: normal;
+}
+
+/* SiteHeader styles */
+/* HOME: по вертикали — по центру экрана; по горизонтали — Vasily слева по колонке, nav по центру, SchK справа по колонке */
+body.is-home .site-header__container {
+  position: absolute !important;
+  top: 50% !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: translateY(-50%) !important;
+  align-items: center !important;
+}
+
+body.is-home .site-header__left,
+body.is-home .site-header__center,
+body.is-home .site-header__right {
+  display: flex;
+  align-items: center;
+}
+
+/* INNER mode: хедер сверху */
+body.is-inner .site-header__container {
+  position: absolute !important;
+  top: 33px !important;
+  left: 0 !important;
+  right: 0 !important;
+  align-items: flex-start !important;
+  padding-top: 0 !important;
+}
+
+/* Index page: навигация по 12-колоночной сетке (margin 30, gutter 20) */
+/* Vasily — кол. 1, top 30px; Index — кол. 4; Research — кол. 6; Info — кол. 8; SchK — кол. 12 справа, top 35px */
+body.page-index .site-header__container {
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
+}
+
+body.page-index .site-header__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0 var(--grid-gutter);
+  max-width: 100%;
+  align-items: start;
+}
+
+body.page-index .site-header__left {
+  grid-column: 1;
+  padding-top: 30px;
+}
+
+body.page-index .site-header__center {
+  grid-column: 4 / span 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0;
+  padding-top: 35px;
+}
+
+body.page-index .site-header__center .nav-link {
+  display: block;
+}
+body.page-index .site-header__center .nav-link:nth-child(1) { grid-column: 1; }
+body.page-index .site-header__center .nav-link:nth-child(3) { grid-column: 3; }
+body.page-index .site-header__center .nav-link:nth-child(5) { grid-column: 5; }
+
+body.page-index .site-header__right {
+  grid-column: 12;
+  justify-self: end;
+  padding-top: 35px;
+}
+
+body.page-index .site-header__left a,
+body.page-index .site-header__center .nav-link,
+body.page-index .site-header__right-link {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+body.page-index .site-header__center .nav-separator {
+  display: none;
+}
+
+.is-inner main {
+  padding-top: 0;
+  padding-bottom: 4rem;
+}
+
+/* Index page background */
+body.is-inner .works-page {
+  background: #FBFBFB;
+  min-height: 100vh;
+}
+
+/* Works page styles */
+.works-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 24px;
+  opacity: 0.5;
+}
+
+.view-toggle__label {
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+}
+
+.view-toggle__btn {
+  transition: opacity 0.2s;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+}
+
+.view-toggle__btn:hover {
+  opacity: 0.6;
+}
+
+.view-toggle__btn.active {
+  font-family: 'ORG66', sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.view-toggle__separator {
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+}
+
+/* Works page grid layout */
+.works-page-grid {
+  position: relative;
+  padding-top: 218px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 4rem;
+}
+
+.works-page-grid__view-toggle {
+  position: absolute;
+  left: 30px;
+  top: 218px;
+}
+
+.works-page-grid__description {
+  position: absolute;
+  left: 50%;
+  top: 218px;
+  transform: translateX(-50%);
+  width: 333px;
+  text-align: center;
+  font-family: 'ORG66', sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 24px;
+  opacity: 0.5;
+  color: black;
+}
+
+/* Works Grid View */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 398px);
+  gap: 340px 333px;
+  justify-content: start;
+  margin-top: 197px;
+  max-width: 1920px;
+}
+
+.project-card--grid {
+  width: 398px;
+  height: 220px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s;
+  background: #D9D9D9;
+  display: block;
+}
+
+.project-card--grid:hover {
+  opacity: 0.8;
+}
+
+.project-card__image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #D9D9D9;
+}
+
+.project-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-card__title {
+  display: none;
+}
+
+/* Index list view: 9-col grid — col 1-5 Project, 6-7 Type, 8-9 Year */
+.index-list-wrap {
+  position: relative;
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
+  padding-bottom: 4rem;
+}
+
+.index-list {
+  padding-top: 25px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.index-list__header {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 0 var(--grid-gutter);
+  margin-bottom: 15px;
+  font-family: 'ORG66', sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.index-list__header .col-project { grid-column: 1 / span 5; }
+.index-list__header .col-type { grid-column: 6 / span 2; }
+.index-list__header .col-year { grid-column: 8 / span 2; }
+
+.index-list__row {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 0 var(--grid-gutter);
+  margin-bottom: 15px;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: #696969;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.index-list__row:first-of-type {
+  margin-top: 20px;
+}
+
+.index-list__row:hover {
+  color: #000;
+}
+
+.index-list__row .col-project { grid-column: 1 / span 5; }
+.index-list__row .col-type { grid-column: 6 / span 2; }
+.index-list__row .col-year { grid-column: 8 / span 2; }
+
+/* Research page: 9-col grid, 5 cards per row (189x220), gutter 20, margin 30 */
+.research-page {
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
+  padding-top: 0;
+  padding-bottom: 4rem;
+  background: #FBFBFB;
+}
+
+.research-page__title {
+  text-align: center;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  margin-top: 224px;
+  margin-bottom: 191px;
+}
+
+.research-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 120px var(--grid-gutter);
+  max-width: 100%;
+}
+
+.research-card {
+  width: 100%;
+  aspect-ratio: 189 / 220;
+  background: #D9D9D9;
+  overflow: hidden;
+}
+
+.research-card__image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #D9D9D9;
+}
+
+.research-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Me page: 9-col grid, margin 30 */
+.me-page {
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
+  padding-top: 0;
+  padding-bottom: 4rem;
+  background: #FBFBFB;
+}
+
+.me-page__wrap {
+  max-width: 100%;
+}
+
+.me-page__intro {
+  text-align: center;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  margin-top: 530px;
+  margin-bottom: 457px;
+}
+
+.me-page__contact {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 0 var(--grid-gutter);
+  align-items: start;
+}
+
+.me-page__social {
+  grid-column: 1 / span 3;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.me-page__social a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.me-page__social a:hover {
+  opacity: 0.6;
+}
+
+.me-page__email {
+  grid-column: 4 / span 3;
+  text-align: center;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.me-page__handle {
+  grid-column: 7 / span 3;
+  text-align: right;
+  font-family: 'SuisseIntl', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .research-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .project-card--grid {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 900px) {
+  .research-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  body.is-home .site-header__container {
+    justify-content: center;
+    transform: translateY(-50%) !important;
+  }
+
+  body.is-inner .site-header__container {
+    position: absolute !important;
+    top: 16px !important;
+    justify-content: flex-start !important;
+    padding-top: 0 !important;
+  }
+
+  .works-page-grid {
+    padding-top: 120px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .works-page-grid__view-toggle {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-bottom: 2rem;
+  }
+
+  .works-page-grid__description {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .works-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 0;
+  }
+
+  .project-card--grid {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 398 / 220;
+  }
+
+  .is-inner main {
+    padding-top: 0;
+  }
+
+  .index-list-wrap {
+    padding-top: 80px;
+  }
+
+  .index-page__view-toggle {
+    position: relative;
+    top: auto;
+    margin-bottom: 2rem;
+  }
+
+  .index-list {
+    padding-top: 2rem;
+  }
+
+  .index-list__header,
+  .index-list__row {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem 1rem;
+  }
+
+  .index-list__header .col-project,
+  .index-list__row .col-project { grid-column: 1; }
+  .index-list__header .col-type,
+  .index-list__row .col-type { grid-column: 2; }
+  .index-list__header .col-year,
+  .index-list__row .col-year { grid-column: 3; }
+  
+  .works-page__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .research-page__title {
+    margin-top: 100px;
+    margin-bottom: 2rem;
+  }
+  
+  .research-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem var(--grid-gutter);
+  }
+
+  .me-page__intro {
+    margin-top: 100px;
+    margin-bottom: 2rem;
+  }
+
+  .me-page__contact {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .me-page__social,
+  .me-page__email,
+  .me-page__handle {
+    grid-column: 1;
+    text-align: left;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .research-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,232 @@
+[
+  {
+    "id": "de-stul-furniture-brand",
+    "title": "De Stul",
+    "type": "Identity, 3D motion",
+    "year": "2023",
+    "description": "",
+    "images": [
+      "/images/destul/1.png",
+      "/images/destul/2.png",
+      "/images/destul/3.png"
+    ],
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/destul/1.png"
+      },
+      {
+        "type": "text",
+        "content": "De Stul. Furniture Brand\nFurniture, redefined by technology\n\nA brand of furniture printed on a 3D printer using innovative wood printing technologies. The brand is based in Oakland, California. De Stul offers a wide range of different one-of-a-kind furniture that is both art and home decor."
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1005119299?autoplay=0&amp;loop=0&amp;muted=0&amp;autopause=0&amp;badge=0&amp;color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "The metaphor of the brand, which helped to capture the visual concept — lines — the texture that is printed by a 3D printer. This image helps to accurately convey the precision and technology of the brand."
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/3.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/4.png"
+      },
+      {
+        "type": "text",
+        "content": "The second component of the style is 3D graphics, working together with stripes \nas photo content. This allows the brand to reflect another component characteristic — unique shapes.\n\nThe result is functional art.\nThe second component of the style is 3D graphics, working together with stripes \nas photo content. This allows the brand to reflect another component characteristic — unique shapes.\n\nThe result is functional art."
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/5.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/6.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/881284749?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/8.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/9-1.png",
+        "right": "/images/destul/9-2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/877724867?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/10.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/11.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/12-1.gif",
+        "right": "/images/destul/12-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/13.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/14-1.png",
+        "right": "/images/destul/14-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/15.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/16-1.png",
+        "right": "/images/destul/16-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/17.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/18.jpg"
+      }
+    ]
+  },
+  {
+    "id": "de-stul-interior-items-packaging",
+    "title": "De Stul. Interior Items Packaging",
+    "description": "",
+    "type": "Package",
+    "year": "2023",
+    "images": []
+  },
+  {
+    "id": "phenomenon-interior-psychologism",
+    "title": "The Phenomenon of Interior Psychologism",
+    "description": "",
+    "type": "Type design, book, Visual Research",
+    "year": "2024",
+    "images": []
+  },
+  {
+    "id": "boop-pet-shampoo-packaging",
+    "title": "Boop. Pet Shampoo Packaging",
+    "description": "",
+    "type": "Package, Illustration",
+    "year": "2024",
+    "images": []
+  },
+  {
+    "id": "antre-cheese-appetizers-packaging",
+    "title": "Antre. Cheese Appetizers Packaging",
+    "description": "",
+    "type": "Package, Illustration",
+    "year": "2024",
+    "images": []
+  },
+  {
+    "id": "dok-107-art-space",
+    "title": "DOK:107. Art Space",
+    "description": "",
+    "type": "Identity",
+    "year": "2024",
+    "images": []
+  },
+  {
+    "id": "photoelectric-effect-calendar-2025",
+    "title": "Photoelectric Effect Calendar 2025",
+    "description": "",
+    "type": "Type design, Calendar",
+    "year": "2024",
+    "images": []
+  },
+  {
+    "id": "bioart-lab-foundation",
+    "title": "Bioart Lab Foundation",
+    "description": "",
+    "type": "Identity, Generative, Typeface",
+    "year": "2024",
+    "images": []
+  },
+  {
+    "id": "hoja-sagrada-yerba-mate-tea",
+    "title": "Hoja Sagrada Yerba Mate Tea",
+    "description": "",
+    "type": "Package, Illustration",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "snve-pereodical",
+    "title": "SNVE. Pereodical",
+    "description": "",
+    "type": "Identity, Typeface",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "last-days-of-sababa",
+    "title": "The Last Days of Sababa",
+    "description": "",
+    "type": "Photo Zine",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "crypto-anarchist-manifesto",
+    "title": "The Crypto Anarchist Manifesto",
+    "description": "",
+    "type": "Motion design",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "chaos-construction-demoscene-fest",
+    "title": "Chaos Construction Demoscene Fest",
+    "description": "",
+    "type": "Identity, Generative",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "trash-aesthetics-visual-culture-of-waste",
+    "title": "Trash Aesthetics. Visual Culture of Waste",
+    "description": "",
+    "type": "Type design, book, Visual Research",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "w-dotorg-dymshits-partners-rebranding",
+    "title": "W//Dotorg. Dymshits and Partners. Rebranding",
+    "description": "",
+    "type": "Identity, Generative",
+    "year": "2025",
+    "images": []
+  },
+  {
+    "id": "w-dotorg-css-rebranding",
+    "title": "W//Dotorg. CSS Rebranding",
+    "description": "",
+    "type": "Identity, Motion",
+    "year": "2025",
+    "images": []
+  }
+]

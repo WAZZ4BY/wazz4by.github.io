@@ -1,0 +1,24 @@
+{
+  "name": "portfolio-site",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "predeploy": "node -e \"try{require('gh-pages').clean()}catch(e){}\"",
+    "deploy": "gh-pages -d dist",
+    "update-and-deploy": "node scripts/update-projects-and-deploy.js",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.0.0",
+    "marked": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "gh-pages": "^6.0.0",
+    "typescript": "^5.0.0"
+  }
+}

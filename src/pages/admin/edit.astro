@@ -1,0 +1,341 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<AdminLayout title="Редактировать проект">
+  <div id="admin-edit-root">
+    <div id="gate" class="gate">
+      <h1>Вход в админку</h1>
+      <input type="password" id="password" placeholder="Пароль" />
+      <button type="button" id="loginBtn" class="primary">Войти</button>
+      <p id="gateError" class="error" style="display:none;"></p>
+    </div>
+
+    <div id="app" style="display:none;">
+      <h1>Редактировать проект</h1>
+      <p><a href="" id="backToList">← К списку проектов</a></p>
+      <p id="loadStatus" class="status">Загрузка…</p>
+
+      <section class="admin-section" id="editSection" style="display:none;">
+        <form id="editForm">
+          <label>Название проекта</label>
+          <input type="text" id="editTitle" required />
+          <label>Тип проекта</label>
+          <input type="text" id="editType" />
+          <label>Год</label>
+          <input type="text" id="editYear" />
+          <label>Цвет фона страницы</label>
+          <div class="admin-color-row">
+            <input type="color" id="editBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
+            <input type="text" id="editBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
+          </div>
+          <label>Контент (блоки)</label>
+          <p class="admin-hint">Текст — колонки 5–12, стиль как в футере. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — вставьте embed-код (iframe) с Vimeo. Между блоками отступ 70px.</p>
+          <div id="contentBlocksList" class="content-blocks-list"></div>
+          <div class="content-blocks-actions">
+            <button type="button" class="secondary" id="addBlockText">+ Текст</button>
+            <button type="button" class="secondary" id="addBlockImage">+ Изображение</button>
+            <button type="button" class="secondary" id="addBlockSplit">+ Сплит</button>
+            <button type="button" class="secondary" id="addBlockVideo">+ Видео (Vimeo)</button>
+          </div>
+          <div style="margin-top:1rem;">
+            <button type="submit" class="primary">Сохранить изменения</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script define:vars={{ base }}>
+    (function () {
+      const STORAGE_KEY = 'admin_authed';
+      const PASSWORD = 'admin';
+      const EDITED_PROJECTS_KEY = 'admin_edited_projects';
+
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const passwordInput = document.getElementById('password');
+      const gateError = document.getElementById('gateError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function checkAuth() {
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+          gate.style.display = 'none';
+          app.style.display = 'block';
+          initApp();
+          return;
+        }
+        gate.style.display = 'block';
+        app.style.display = 'none';
+      }
+
+      loginBtn.addEventListener('click', function () {
+        gateError.style.display = 'none';
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEY, '1');
+          checkAuth();
+        } else {
+          gateError.textContent = 'Неверный пароль.';
+          gateError.style.display = 'block';
+        }
+      });
+
+      passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loginBtn.click(); });
+
+      const params = new URLSearchParams(window.location.search);
+      const projectId = params.get('id');
+
+      function dataUrl() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/projects.json';
+      }
+
+      function getBase() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return basePath.endsWith('/') ? basePath : basePath + '/';
+      }
+
+      let project = null;
+      let allProjects = [];
+      let contentBlocks = [];
+
+      function getEditedProjects() {
+        try {
+          const raw = sessionStorage.getItem(EDITED_PROJECTS_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (_) { return {}; }
+      }
+
+      function setEditedProject(id, data) {
+        const edited = getEditedProjects();
+        edited[id] = data;
+        sessionStorage.setItem(EDITED_PROJECTS_KEY, JSON.stringify(edited));
+      }
+
+      function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+      function resolveImgUrl(url) {
+        const u = (url || '').trim();
+        if (!u) return '';
+        if (u.startsWith('http')) return u;
+        return getBase() + u.replace(/^\//, '');
+      }
+
+      function renderBlocks() {
+        const list = document.getElementById('contentBlocksList');
+        list.innerHTML = '';
+        contentBlocks.forEach(function (block, index) {
+          const card = document.createElement('div');
+          card.className = 'content-block-card';
+          card.dataset.index = String(index);
+          let inner = '';
+          if (block.type === 'text') {
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Текст</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea" rows="3" placeholder="Текст (колонки 5–12)">' + esc(block.content || '') + '</textarea>';
+          } else if (block.type === 'image') {
+            const imgSrc = resolveImgUrl(block.src || '');
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Изображение</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><input type="text" class="content-block-card__url" value="' + esc(block.src || '') + '" placeholder="/images/photo.jpg" /><div class="content-block-card__preview">' + (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div>';
+          } else if (block.type === 'split') {
+            const leftSrc = resolveImgUrl(block.left || '');
+            const rightSrc = resolveImgUrl(block.right || '');
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Сплит</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><div class="content-block-card__split-fields"><input type="text" class="content-block-card__url" value="' + esc(block.left || '') + '" placeholder="Левое изображение" data-side="left" /><input type="text" class="content-block-card__url" value="' + esc(block.right || '') + '" placeholder="Правое изображение" data-side="right" /></div><div class="content-block-card__preview content-block-card__preview--split"><div class="content-block-card__preview-item">' + (leftSrc ? '<img src="' + esc(leftSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div><div class="content-block-card__preview-item">' + (rightSrc ? '<img src="' + esc(rightSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div></div>';
+          } else if (block.type === 'video') {
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Видео (Vimeo)</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea content-block-card__textarea--embed" rows="4" placeholder="Вставьте embed-код (iframe) с Vimeo">' + esc(block.embed || '') + '</textarea>';
+          }
+          card.innerHTML = inner;
+
+          card.querySelector('.remove-block').addEventListener('click', function () {
+            contentBlocks.splice(index, 1);
+            renderBlocks();
+          });
+          card.querySelector('.move-up').addEventListener('click', function () {
+            if (index === 0) return;
+            contentBlocks.splice(index - 1, 0, contentBlocks.splice(index, 1)[0]);
+            renderBlocks();
+          });
+          card.querySelector('.move-down').addEventListener('click', function () {
+            if (index >= contentBlocks.length - 1) return;
+            contentBlocks.splice(index + 1, 0, contentBlocks.splice(index, 1)[0]);
+            renderBlocks();
+          });
+
+          if (block.type === 'text') {
+            card.querySelector('.content-block-card__textarea').addEventListener('input', function () {
+              contentBlocks[index].content = this.value;
+            });
+          } else if (block.type === 'image') {
+            const urlInput = card.querySelector('.content-block-card__url');
+            const previewWrap = card.querySelector('.content-block-card__preview');
+            function updateImagePreview() {
+              contentBlocks[index].src = urlInput.value.trim();
+              const src = resolveImgUrl(urlInput.value.trim());
+              if (!previewWrap) return;
+              if (src) {
+                let img = previewWrap.querySelector('img');
+                if (!img) { img = document.createElement('img'); img.alt = ''; img.onerror = function () { this.classList.add('content-block-card__preview-img--error'); }; img.onload = function () { this.classList.remove('content-block-card__preview-img--error'); }; previewWrap.appendChild(img); }
+                img.src = src;
+                img.classList.remove('content-block-card__preview-img--error');
+              } else {
+                previewWrap.innerHTML = '';
+              }
+            }
+            urlInput.addEventListener('input', updateImagePreview);
+            urlInput.addEventListener('change', updateImagePreview);
+          } else if (block.type === 'split') {
+            const leftInput = card.querySelector('input[data-side="left"]');
+            const rightInput = card.querySelector('input[data-side="right"]');
+            const previewWrap = card.querySelector('.content-block-card__preview--split');
+            function updateSplitPreviews() {
+              contentBlocks[index].left = leftInput.value.trim();
+              contentBlocks[index].right = rightInput.value.trim();
+              if (!previewWrap) return;
+              const items = previewWrap.querySelectorAll('.content-block-card__preview-item');
+              [leftInput.value.trim(), rightInput.value.trim()].forEach(function (val, i) {
+                const src = resolveImgUrl(val);
+                const item = items[i];
+                if (!item) return;
+                if (src) {
+                  let img = item.querySelector('img');
+                  if (!img) { img = document.createElement('img'); img.alt = ''; img.onerror = function () { this.classList.add('content-block-card__preview-img--error'); }; img.onload = function () { this.classList.remove('content-block-card__preview-img--error'); }; item.appendChild(img); }
+                  img.src = src;
+                  img.classList.remove('content-block-card__preview-img--error');
+                } else {
+                  item.innerHTML = '';
+                }
+              });
+            }
+            leftInput.addEventListener('input', updateSplitPreviews);
+            leftInput.addEventListener('change', updateSplitPreviews);
+            rightInput.addEventListener('input', updateSplitPreviews);
+            rightInput.addEventListener('change', updateSplitPreviews);
+          } else if (block.type === 'video') {
+            card.querySelector('.content-block-card__textarea--embed').addEventListener('input', function () {
+              contentBlocks[index].embed = this.value;
+            });
+          }
+
+          list.appendChild(card);
+        });
+      }
+
+      document.getElementById('addBlockText').addEventListener('click', function () {
+        contentBlocks.push({ type: 'text', content: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockImage').addEventListener('click', function () {
+        contentBlocks.push({ type: 'image', src: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockSplit').addEventListener('click', function () {
+        contentBlocks.push({ type: 'split', left: '', right: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockVideo').addEventListener('click', function () {
+        contentBlocks.push({ type: 'video', embed: '' });
+        renderBlocks();
+      });
+
+      document.getElementById('editForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!project) return;
+        const bgHex = document.getElementById('editBackgroundColorHex').value.trim();
+        const bgColor = document.getElementById('editBackgroundColor').value;
+        const edited = {
+          id: project.id,
+          title: document.getElementById('editTitle').value.trim(),
+          type: document.getElementById('editType').value.trim(),
+          year: document.getElementById('editYear').value.trim(),
+          description: project.description || '',
+          images: project.images || [],
+          contentBlocks: contentBlocks.slice(),
+          backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined
+        };
+        setEditedProject(project.id, edited);
+        document.getElementById('loadStatus').textContent = 'Изменения сохранены в черновик. Перейдите в список проектов и нажмите «Сохранить в GitHub».';
+        document.getElementById('loadStatus').className = 'status ok';
+      });
+
+      async function loadAndShow() {
+        const statusEl = document.getElementById('loadStatus');
+        const section = document.getElementById('editSection');
+        const backLink = document.getElementById('backToList');
+        backLink.href = getBase() + 'admin/';
+
+        if (!projectId) {
+          statusEl.textContent = 'Укажите проект: ?id=slug';
+          statusEl.className = 'status err';
+          return;
+        }
+
+        try {
+          const res = await fetch(dataUrl(), { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.statusText);
+          allProjects = await res.json();
+          if (!Array.isArray(allProjects)) allProjects = [];
+          const edited = getEditedProjects();
+          if (edited[projectId]) {
+            project = edited[projectId];
+            contentBlocks = (project.contentBlocks || []).map(function (b) { return { ...b }; });
+          } else {
+            project = allProjects.find(function (p) { return p.id === projectId; });
+            if (!project) {
+              statusEl.textContent = 'Проект не найден: ' + projectId;
+              statusEl.className = 'status err';
+              return;
+            }
+            if (project.contentBlocks && project.contentBlocks.length > 0) {
+              contentBlocks = project.contentBlocks.map(function (b) { return { ...b }; });
+            } else {
+              contentBlocks = [];
+              if (project.description && project.description.trim()) {
+                contentBlocks.push({ type: 'text', content: project.description.trim() });
+              }
+              (project.images || []).forEach(function (src) {
+                if (src && src.trim()) contentBlocks.push({ type: 'image', src: src.trim() });
+              });
+            }
+          }
+
+          document.getElementById('editTitle').value = project.title || '';
+          document.getElementById('editType').value = project.type || '';
+          document.getElementById('editYear').value = project.year || '';
+          const bg = (project.backgroundColor || '').trim();
+          if (bg && /^#[0-9A-Fa-f]{6}$/.test(bg)) {
+            document.getElementById('editBackgroundColor').value = bg.slice(1);
+            document.getElementById('editBackgroundColorHex').value = bg;
+          } else if (bg) {
+            document.getElementById('editBackgroundColorHex').value = bg;
+            document.getElementById('editBackgroundColor').value = '#FBFBFB'.slice(1);
+          } else {
+            document.getElementById('editBackgroundColor').value = 'FBFBFB';
+            document.getElementById('editBackgroundColorHex').value = '';
+          }
+          if (!window._editColorListeners) {
+            window._editColorListeners = true;
+            document.getElementById('editBackgroundColor').addEventListener('input', function () {
+              document.getElementById('editBackgroundColorHex').value = '#' + this.value;
+            });
+            document.getElementById('editBackgroundColorHex').addEventListener('input', function () {
+              const v = this.value.trim();
+              if (/^#[0-9A-Fa-f]{6}$/.test(v)) document.getElementById('editBackgroundColor').value = v.slice(1);
+            });
+          }
+          renderBlocks();
+          section.style.display = 'block';
+          statusEl.textContent = '';
+        } catch (e) {
+          statusEl.textContent = 'Ошибка загрузки: ' + e.message;
+          statusEl.className = 'status err';
+        }
+      }
+
+      function initApp() {
+        loadAndShow();
+      }
+
+      checkAuth();
+    })();
+  </script>
+</AdminLayout>

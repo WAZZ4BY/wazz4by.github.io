@@ -1,0 +1,30 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  variant?: 'home' | 'inner';
+  bodyClass?: string;
+  hideHeader?: boolean;
+}
+
+const { title, variant = 'inner', bodyClass, hideHeader } = Astro.props;
+const bodyClasses = [variant === 'home' ? 'is-home' : 'is-inner', bodyClass].filter(Boolean).join(' ');
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Vasily Aleev - Portfolio" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + 'favicon.svg'} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class={bodyClasses}>
+    {!hideHeader && <SiteHeader variant={variant} />}
+    <slot />
+  </body>
+</html>

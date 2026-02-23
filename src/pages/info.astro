@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InnerPageHeader from '../components/InnerPageHeader.astro';
+---
+
+<BaseLayout title="Info" variant="inner" hideHeader>
+  <div class="inner-page">
+    <div class="inner-page__grid">
+      <InnerPageHeader activePage="info" />
+      <main class="inner-page__main me-page">
+        <div class="me-page__wrap">
+          <p class="me-page__intro">My name is Vasya :)</p>
+          <div class="me-page__contact">
+            <div class="me-page__social">
+              <a href="https://www.behance.net" target="_blank" rel="noopener noreferrer">Behance</a><br/>
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a><br/>
+              <a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">Telegram</a>
+            </div>
+            <div class="me-page__email">wass4lsnow@gmail.com</div>
+            <div class="me-page__handle">@waz4by</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</BaseLayout>

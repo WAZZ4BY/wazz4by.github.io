@@ -1,0 +1,32 @@
+---
+interface Props {
+  project: {
+    title: string;
+    type: string;
+    year: string;
+    image?: string;
+    slug?: string;
+  };
+  view: 'grid' | 'list';
+  base: string;
+}
+
+const { project, view, base } = Astro.props;
+const projectSlug = project.slug || project.title.toLowerCase().replace(/\s+/g, '-');
+---
+
+{view === 'grid' ? (
+  <a href={`${base}project/${projectSlug}`} class="project-card project-card--grid">
+    <div class="project-card__image">
+      {project.image ? (
+        <img src={project.image} alt={project.title} loading="lazy" />
+      ) : null}
+    </div>
+  </a>
+) : (
+  <a href={`${base}project/${projectSlug}`} class="project-card project-card--list">
+    <div class="project-card__project">{project.title}</div>
+    <div class="project-card__type">{project.type}</div>
+    <div class="project-card__year">{project.year}</div>
+  </a>
+)}

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Home" variant="home">
+  <main class="home-page">
+    <h1 class="sr-only">Vasily Aleev - Portfolio</h1>
+  </main>
+</BaseLayout>
+
+<style>
+  .home-page {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    background: #FBFBFB;
+    overflow: hidden;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>

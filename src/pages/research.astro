@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InnerPageHeader from '../components/InnerPageHeader.astro';
+
+const researchItems = [
+  { id: 1, image: '/images/research-1.jpg', title: 'Research 1' },
+  { id: 2, image: '/images/research-2.jpg', title: 'Research 2' },
+  { id: 3, image: '/images/research-3.jpg', title: 'Research 3' },
+  { id: 4, image: '/images/research-4.jpg', title: 'Research 4' },
+  { id: 5, image: '/images/research-5.jpg', title: 'Research 5' },
+  { id: 6, image: '/images/research-6.jpg', title: 'Research 6' },
+  { id: 7, image: '/images/research-7.jpg', title: 'Research 7' },
+  { id: 8, image: '/images/research-8.jpg', title: 'Research 8' },
+  { id: 9, image: '/images/research-9.jpg', title: 'Research 9' },
+  { id: 10, image: '/images/research-10.jpg', title: 'Research 10' },
+  { id: 11, image: '/images/research-1.jpg', title: 'Research 11' },
+  { id: 12, image: '/images/research-2.jpg', title: 'Research 12' },
+  { id: 13, image: '/images/research-3.jpg', title: 'Research 13' },
+  { id: 14, image: '/images/research-4.jpg', title: 'Research 14' },
+  { id: 15, image: '/images/research-5.jpg', title: 'Research 15' },
+];
+---
+
+<BaseLayout title="Research" variant="inner" hideHeader>
+  <div class="inner-page">
+    <div class="inner-page__grid">
+      <InnerPageHeader activePage="research" />
+      <main class="inner-page__main research-page">
+        <h1 class="research-page__title">Experiments, Research & Development</h1>
+        <div class="research-grid">
+          {researchItems.map((item) => (
+            <div class="research-card">
+              <div class="research-card__image">
+                <img src={item.image} alt={item.title} loading="lazy" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  </div>
+</BaseLayout>

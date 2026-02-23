@@ -1,0 +1,246 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<AdminLayout title="Добавить проект">
+  <div id="admin-add-root">
+    <div id="gate" class="gate">
+      <h1>Вход в админку</h1>
+      <input type="password" id="password" placeholder="Пароль" />
+      <button type="button" id="loginBtn" class="primary">Войти</button>
+      <p id="gateError" class="error" style="display:none;"></p>
+    </div>
+
+    <div id="app" style="display:none;">
+      <h1>Добавить проект</h1>
+      <p><a href={`${base}admin/`}>← К списку проектов</a></p>
+
+      <section class="admin-section">
+        <form id="addForm">
+          <label>Название проекта</label>
+          <input type="text" id="addTitle" placeholder="Название" required />
+          <label>Тип проекта</label>
+          <input type="text" id="addType" placeholder="Type design, Motion, Identity…" />
+          <label>Год</label>
+          <input type="text" id="addYear" placeholder="2025" />
+          <label>Цвет фона страницы</label>
+          <div class="admin-color-row">
+            <input type="color" id="addBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
+            <input type="text" id="addBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
+          </div>
+          <label>Контент (блоки)</label>
+          <p class="admin-hint">Текст — колонки 5–12. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — embed-код (iframe) с Vimeo. Между блоками отступ 70px.</p>
+          <div id="addContentBlocksList" class="content-blocks-list"></div>
+          <div class="content-blocks-actions">
+            <button type="button" class="secondary" id="addBlockText">+ Текст</button>
+            <button type="button" class="secondary" id="addBlockImage">+ Изображение</button>
+            <button type="button" class="secondary" id="addBlockSplit">+ Сплит</button>
+            <button type="button" class="secondary" id="addBlockVideo">+ Видео (Vimeo)</button>
+          </div>
+          <button type="submit" class="primary">Сохранить проект</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script define:vars={{ base }}>
+    (function () {
+      const STORAGE_KEY = 'admin_authed';
+      const PASSWORD = 'admin';
+      const NEW_PROJECT_KEY = 'admin_new_project';
+
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const passwordInput = document.getElementById('password');
+      const gateError = document.getElementById('gateError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function checkAuth() {
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+          gate.style.display = 'none';
+          app.style.display = 'block';
+          return;
+        }
+        gate.style.display = 'block';
+        app.style.display = 'none';
+      }
+
+      loginBtn.addEventListener('click', function () {
+        gateError.style.display = 'none';
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEY, '1');
+          checkAuth();
+        } else {
+          gateError.textContent = 'Неверный пароль.';
+          gateError.style.display = 'block';
+        }
+      });
+
+      passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loginBtn.click(); });
+
+      function slugify(s) {
+        return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      }
+
+      let contentBlocks = [];
+
+      function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+      function resolveImgUrl(url) {
+        const u = (url || '').trim();
+        if (!u) return '';
+        if (u.startsWith('http')) return u;
+        const b = (typeof base !== 'undefined' ? base : '') || '/';
+        return (b.endsWith('/') ? b : b + '/') + u.replace(/^\//, '');
+      }
+
+      function renderBlocks() {
+        const list = document.getElementById('addContentBlocksList');
+        list.innerHTML = '';
+        contentBlocks.forEach(function (block, index) {
+          const card = document.createElement('div');
+          card.className = 'content-block-card';
+          card.dataset.index = String(index);
+          let inner = '';
+          if (block.type === 'text') {
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Текст</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea" rows="3" placeholder="Текст (колонки 5–12)">' + esc(block.content || '') + '</textarea>';
+          } else if (block.type === 'image') {
+            const imgSrc = resolveImgUrl(block.src || '');
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Изображение</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><input type="text" class="content-block-card__url" value="' + esc(block.src || '') + '" placeholder="/images/photo.jpg" /><div class="content-block-card__preview">' + (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div>';
+          } else if (block.type === 'split') {
+            const leftSrc = resolveImgUrl(block.left || '');
+            const rightSrc = resolveImgUrl(block.right || '');
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Сплит</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><div class="content-block-card__split-fields"><input type="text" class="content-block-card__url" value="' + esc(block.left || '') + '" placeholder="Левое изображение" data-side="left" /><input type="text" class="content-block-card__url" value="' + esc(block.right || '') + '" placeholder="Правое изображение" data-side="right" /></div><div class="content-block-card__preview content-block-card__preview--split"><div class="content-block-card__preview-item">' + (leftSrc ? '<img src="' + esc(leftSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div><div class="content-block-card__preview-item">' + (rightSrc ? '<img src="' + esc(rightSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div></div>';
+          } else if (block.type === 'video') {
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Видео (Vimeo)</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea content-block-card__textarea--embed" rows="4" placeholder="Вставьте embed-код (iframe) с Vimeo">' + esc(block.embed || '') + '</textarea>';
+          }
+          card.innerHTML = inner;
+
+          card.querySelector('.remove-block').addEventListener('click', function () {
+            contentBlocks.splice(index, 1);
+            renderBlocks();
+          });
+          card.querySelector('.move-up').addEventListener('click', function () {
+            if (index === 0) return;
+            contentBlocks.splice(index - 1, 0, contentBlocks.splice(index, 1)[0]);
+            renderBlocks();
+          });
+          card.querySelector('.move-down').addEventListener('click', function () {
+            if (index >= contentBlocks.length - 1) return;
+            contentBlocks.splice(index + 1, 0, contentBlocks.splice(index, 1)[0]);
+            renderBlocks();
+          });
+
+          if (block.type === 'text') {
+            card.querySelector('.content-block-card__textarea').addEventListener('input', function () {
+              contentBlocks[index].content = this.value;
+            });
+          } else if (block.type === 'image') {
+            const urlInput = card.querySelector('.content-block-card__url');
+            const previewWrap = card.querySelector('.content-block-card__preview');
+            function updateImagePreview() {
+              contentBlocks[index].src = urlInput.value.trim();
+              const src = resolveImgUrl(urlInput.value.trim());
+              if (!previewWrap) return;
+              if (src) {
+                let img = previewWrap.querySelector('img');
+                if (!img) { img = document.createElement('img'); img.alt = ''; img.onerror = function () { this.classList.add('content-block-card__preview-img--error'); }; img.onload = function () { this.classList.remove('content-block-card__preview-img--error'); }; previewWrap.appendChild(img); }
+                img.src = src;
+                img.classList.remove('content-block-card__preview-img--error');
+              } else {
+                previewWrap.innerHTML = '';
+              }
+            }
+            urlInput.addEventListener('input', updateImagePreview);
+            urlInput.addEventListener('change', updateImagePreview);
+          } else if (block.type === 'split') {
+            const leftInput = card.querySelector('input[data-side="left"]');
+            const rightInput = card.querySelector('input[data-side="right"]');
+            const previewWrap = card.querySelector('.content-block-card__preview--split');
+            function updateSplitPreviews() {
+              contentBlocks[index].left = leftInput.value.trim();
+              contentBlocks[index].right = rightInput.value.trim();
+              if (!previewWrap) return;
+              const items = previewWrap.querySelectorAll('.content-block-card__preview-item');
+              [leftInput.value.trim(), rightInput.value.trim()].forEach(function (val, i) {
+                const src = resolveImgUrl(val);
+                const item = items[i];
+                if (!item) return;
+                if (src) {
+                  let img = item.querySelector('img');
+                  if (!img) { img = document.createElement('img'); img.alt = ''; img.onerror = function () { this.classList.add('content-block-card__preview-img--error'); }; img.onload = function () { this.classList.remove('content-block-card__preview-img--error'); }; item.appendChild(img); }
+                  img.src = src;
+                  img.classList.remove('content-block-card__preview-img--error');
+                } else {
+                  item.innerHTML = '';
+                }
+              });
+            }
+            leftInput.addEventListener('input', updateSplitPreviews);
+            leftInput.addEventListener('change', updateSplitPreviews);
+            rightInput.addEventListener('input', updateSplitPreviews);
+            rightInput.addEventListener('change', updateSplitPreviews);
+          } else if (block.type === 'video') {
+            card.querySelector('.content-block-card__textarea--embed').addEventListener('input', function () {
+              contentBlocks[index].embed = this.value;
+            });
+          }
+
+          list.appendChild(card);
+        });
+      }
+
+      document.getElementById('addBlockText').addEventListener('click', function () {
+        contentBlocks.push({ type: 'text', content: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockImage').addEventListener('click', function () {
+        contentBlocks.push({ type: 'image', src: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockSplit').addEventListener('click', function () {
+        contentBlocks.push({ type: 'split', left: '', right: '' });
+        renderBlocks();
+      });
+      document.getElementById('addBlockVideo').addEventListener('click', function () {
+        contentBlocks.push({ type: 'video', embed: '' });
+        renderBlocks();
+      });
+
+      (function () {
+        const colorInput = document.getElementById('addBackgroundColor');
+        const hexInput = document.getElementById('addBackgroundColorHex');
+        if (colorInput && hexInput) {
+          colorInput.addEventListener('input', function () { hexInput.value = this.value; });
+          hexInput.addEventListener('input', function () {
+            const v = this.value.trim();
+            if (/^#[0-9A-Fa-f]{6}$/.test(v)) colorInput.value = v;
+          });
+        }
+      })();
+
+      document.getElementById('addForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const title = document.getElementById('addTitle').value.trim();
+        if (!title) return;
+        const addBgHex = document.getElementById('addBackgroundColorHex').value.trim();
+        const addBgColor = document.getElementById('addBackgroundColor').value;
+        const newProject = {
+          id: slugify(title),
+          title,
+          description: '',
+          type: document.getElementById('addType').value.trim(),
+          year: document.getElementById('addYear').value.trim(),
+          images: [],
+          contentBlocks: contentBlocks.slice(),
+          backgroundColor: addBgHex || addBgColor || undefined
+        };
+        sessionStorage.setItem(NEW_PROJECT_KEY, JSON.stringify(newProject));
+        window.location.href = base + 'admin/';
+      });
+
+      checkAuth();
+    })();
+  </script>
+</AdminLayout>

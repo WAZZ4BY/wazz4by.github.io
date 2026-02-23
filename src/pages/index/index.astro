@@ -1,0 +1,202 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InnerPageHeader from '../../components/InnerPageHeader.astro';
+import { getProjects } from '../../lib/projects';
+
+const base = import.meta.env.BASE_URL;
+const projects = getProjects()
+  .slice()
+  .sort((a, b) => {
+    const yA = parseInt(String(a.year || ''), 10) || 0;
+    const yB = parseInt(String(b.year || ''), 10) || 0;
+    return yB - yA; // newest first, как при первой загрузке в скрипте
+  });
+---
+
+<BaseLayout title="Index" variant="inner" bodyClass="page-index" hideHeader>
+  <div class="inner-page">
+    <div class="index2__grid">
+      <InnerPageHeader activePage="index" />
+      <div class="name index-labels-name">Name</div>
+      <div class="type index-labels-type">Type</div>
+      <button type="button" class="year index-labels-year year-sort-btn" id="yearSort" aria-label="Сортировка по году">Year</button>
+      <div class="index-list" id="indexList">
+      {projects.map((p) => (
+        <a href={`${base}project/${p.id}/`} class="index-list__row" data-year={p.year || ''}>
+          <span class="index-list__name">{p.title}</span>
+          <span class="index-list__type">{p.type || ''}</span>
+          <span class="index-list__year">{p.year || ''}</span>
+        </a>
+      ))}
+      </div>
+      <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
+      <div class="index-footer__name">Vasily Aleev</div>
+      <div class="index-footer__links"><a href="https://www.instagram.com/wazz4by" target="_blank" rel="noopener noreferrer">Ig</a><br/><a href="https://t.me/waz4by" target="_blank" rel="noopener noreferrer">Tg</a><br/><a href="https://www.behance.net/wazz4by/" target="_blank" rel="noopener noreferrer">Be</a></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Index: 12 колонок, 4 ряда — шапка → Name/Type/Year → список → футер */
+  :global(body.page-index .index2__grid) {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto auto 1fr auto;
+    gap: 0 var(--grid-gutter);
+    position: relative;
+  }
+  :global(body.page-index .index2__grid .page-header) {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  :global(body.page-index .index2__grid .index-list) {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    padding-top: 0;
+  }
+
+  /* Футер под списком: отступ от списка 70px, от низа 30px */
+  :global(body.page-index .index2__grid .index-footer__text) {
+    grid-column: 7 / 11;
+    grid-row: 4;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+    opacity: 1;
+    line-height: 1;
+  }
+  :global(body.page-index .index2__grid .index-footer__name) {
+    grid-column: 11;
+    grid-row: 4;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    color: black;
+    line-height: 1;
+  }
+  :global(body.page-index .index2__grid .index-footer__links) {
+    grid-column: 12;
+    grid-row: 4;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    color: black;
+    text-align: right;
+    line-height: 1;
+  }
+
+  /* Name, Type, Year — одна строка (row 2), разные колонки */
+  :global(body.page-index .index2__grid .index-labels-name) {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 220px;
+  }
+  :global(body.page-index .index2__grid .index-labels-type) {
+    grid-column: 7;
+    grid-row: 2;
+    margin-top: 220px;
+  }
+  :global(body.page-index .index2__grid .index-labels-year) {
+    grid-column: 12;
+    grid-row: 2;
+    justify-self: end;
+    margin-top: 220px;
+  }
+
+  .name, .type, .year {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+    opacity: 1;
+  }
+
+  .year {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: right;
+  }
+  .year:hover { opacity: 0.5; }
+
+  :global(body.page-index .index-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* 12 колонок (глобальный стиль даёт 9 — переопределяем) */
+  :global(body.page-index .index-list__row) {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0 var(--grid-gutter);
+    align-items: start;
+    text-decoration: none;
+    color:rgb(147, 142, 139);
+  }
+
+  :global(body.page-index .index-list__row .index-list__name) { grid-column: 1 / 7; }
+  :global(body.page-index .index-list__row .index-list__type) { grid-column: 7 / 12; }
+  :global(body.page-index .index-list__row .index-list__year) { grid-column: 12; text-align: right; }
+
+  :global(body.page-index .index-list__row:hover) {
+    color: black;
+  }
+  :global(body.page-index .index-list__row:hover .index-list__name),
+  :global(body.page-index .index-list__row:hover .index-list__type),
+  :global(body.page-index .index-list__row:hover .index-list__year) {
+    color: black;
+    opacity: 1;
+  }
+
+  :global(body.page-index .index-list__name),
+  :global(body.page-index .index-list__type),
+  :global(body.page-index .index-list__year) {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 75%;
+    word-wrap: break-word;
+    padding-bottom: 0;
+  }
+
+  :global(body.page-index .index-list__name) { text-align: left; }
+  :global(body.page-index .index-list__type) { text-align: left; }
+  :global(body.page-index .index-list__year) { text-align: right; }
+</style>
+
+<script>
+  (function () {
+    const list = document.getElementById('indexList');
+    const yearBtn = document.getElementById('yearSort');
+    if (!list || !yearBtn) return;
+
+    let newestFirst = true;
+
+    function sortRows() {
+      const rows = Array.from(list.querySelectorAll('.index-list__row'));
+      rows.sort(function (a, b) {
+        const yA = parseInt(a.dataset.year, 10) || 0;
+        const yB = parseInt(b.dataset.year, 10) || 0;
+        if (newestFirst) return yB - yA;
+        return yA - yB;
+      });
+      rows.forEach(function (row) { list.appendChild(row); });
+    }
+
+    yearBtn.addEventListener('click', function () {
+      newestFirst = !newestFirst;
+      sortRows();
+    });
+
+    sortRows();
+  })();
+</script>

@@ -1,0 +1,30 @@
+{
+  "title": "Пример проекта",
+  "slug": "example",
+  "cover": "/images/example-cover.jpg",
+  "blocks": [
+    {
+      "type": "text",
+      "content": "# Пример проекта\n\nЭто пример проекта в портфолио. Здесь можно описать проект, его концепцию и процесс работы."
+    },
+    {
+      "type": "image",
+      "src": "/images/example-1.jpg",
+      "width": 12
+    },
+    {
+      "type": "image",
+      "src": "/images/example-2.jpg",
+      "width": 6
+    },
+    {
+      "type": "image",
+      "src": "/images/example-3.jpg",
+      "width": 6
+    },
+    {
+      "type": "p5",
+      "url": "/sketches/example/index.html"
+    }
+  ]
+}

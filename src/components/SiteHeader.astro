@@ -1,0 +1,197 @@
+---
+interface Props {
+  variant?: 'home' | 'inner';
+}
+
+const { variant = 'inner' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const pathname = Astro.url.pathname;
+const pathWithoutBase = pathname.replace(new RegExp('^' + base.replace(/\/$/, '') + '\\/?'), '') || '';
+const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
+---
+
+<header class={`site-header site-header--${variant}`}>
+  <div class="site-header__container">
+    <div class="site-header__grid">
+      <div class="site-header__left">
+        <a href={base === '/' ? '/' : base}>Vasily Aleev</a>
+      </div>
+      <nav class="site-header__center">
+      {variant === 'home' ? (
+        <>
+          <a href={`${base}index/`} class="nav-link nav-link--home">Index</a>
+          <span class="nav-separator">, </span>
+          <a href={`${base}research/`} class="nav-link nav-link--home">Research</a>
+          <span class="nav-separator">, </span>
+          <a href={`${base}info/`} class="nav-link nav-link--home">Info</a>
+        </>
+      ) : (
+        <>
+          <a 
+            href={`${base}index/`} 
+            class={`nav-link ${currentPath === 'index' || currentPath.startsWith('index/') ? 'active' : ''}`}
+          >
+            Index
+          </a>
+          <span class="nav-separator">, </span>
+          <a 
+            href={`${base}research/`} 
+            class={`nav-link ${currentPath === 'research' || currentPath.startsWith('research/') ? 'active' : ''}`}
+          >
+            Research
+          </a>
+          <span class="nav-separator">, </span>
+          <a 
+            href={`${base}info/`} 
+            class={`nav-link ${currentPath === 'me' ? 'active' : ''}`}
+          >
+            Info
+          </a>
+        </>
+      )}
+    </nav>
+      <div class="site-header__right">
+        <a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer" class="site-header__right-link">SchK</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .site-header__container {
+    width: 100%;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .site-header__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0 var(--grid-gutter);
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .site-header__left {
+    grid-column: 1 / span 2;
+    pointer-events: auto;
+    text-align: left;
+  }
+
+  .site-header__center {
+    grid-column: 4 / span 6;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .site-header__right {
+    grid-column: 11 / span 2;
+    pointer-events: auto;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  /* Home: по вертикали — по центру экрана; по горизонтали — слева по колонке, центр, справа по колонке */
+  .site-header--home .site-header__container {
+    padding-left: var(--grid-margin);
+    padding-right: var(--grid-margin);
+  }
+
+  .site-header__left a {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  /* Home: Vasily Aleev — 16px, 700 */
+  body.is-home .site-header__left a {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+
+  .site-header__center .nav-link {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    transition: font-family 0.2s, font-style 0.2s, font-weight 0.2s;
+  }
+
+  .site-header__center .nav-link--home {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: black;
+  }
+
+  .site-header__center .nav-link--home:hover {
+    font-weight: 700;
+  }
+
+  .site-header__center .nav-link.active {
+    font-family: 'ORG66', sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .site-header__center .nav-link:not(.nav-link--home):hover {
+    opacity: 0.6;
+  }
+
+  .site-header__center .nav-separator {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+
+  .site-header__right-link {
+    font-family: 'SuisseIntl', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .site-header__right-link:hover {
+    opacity: 0.7;
+  }
+
+  /* Home: SchK — 16px, 500 */
+  body.is-home .site-header__right-link {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .site-header__grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .site-header__left,
+    .site-header__center,
+    .site-header__right {
+      grid-column: 1 / -1;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .site-header__center {
+      order: 2;
+    }
+  }
+</style>

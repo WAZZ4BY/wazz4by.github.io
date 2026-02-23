@@ -1,0 +1,237 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<AdminLayout title="Админка — Проекты">
+  <div id="admin-root">
+    <div id="gate" class="gate">
+      <h1>Вход в админку</h1>
+      <p>Введите пароль. По умолчанию: <code>admin</code>.</p>
+      <input type="password" id="password" placeholder="Пароль" autocomplete="current-password" />
+      <button type="button" id="loginBtn" class="primary">Войти</button>
+      <p id="gateError" class="error" style="display:none;"></p>
+    </div>
+
+    <div id="app" style="display:none;">
+      <h1>Управление проектами</h1>
+      <p id="loadStatus" class="status">Загрузка…</p>
+
+      <section class="admin-section">
+        <h2>Список проектов</h2>
+        <ul class="project-list" id="projectList"></ul>
+        <p class="mb-2"><a href={`${base}admin/add/`}>+ Добавить проект</a></p>
+      </section>
+
+      <section class="admin-section">
+        <h2>Сохранение в GitHub</h2>
+        <p>Чтобы изменения автоматически попадали в репозиторий, укажите репозиторий и токен. После нажатия «Сохранить в GitHub» файл <code>public/data/projects.json</code> будет закоммичен в ветку <code>main</code>; деплой выполнит GitHub Actions.</p>
+        <label>Репозиторий (owner/repo)</label>
+        <input type="text" id="ghRepo" placeholder="wazz4by/wazz4by.github.io" />
+        <label>GitHub Personal Access Token (права repo)</label>
+        <input type="password" id="ghToken" placeholder="ghp_xxxx…" autocomplete="off" />
+        <button type="button" id="saveToGitHubBtn" class="primary">Сохранить в GitHub</button>
+        <p id="ghStatus" class="status"></p>
+      </section>
+
+      <section class="admin-section">
+        <h2>Резервная копия</h2>
+        <p>Скачайте <code>projects.json</code> и при необходимости замените им файл в репозитории вручную.</p>
+        <button type="button" id="downloadBtn" class="secondary">Скачать projects.json</button>
+      </section>
+    </div>
+  </div>
+
+  <script define:vars={{ base }}>
+    (function () {
+      const STORAGE_KEY = 'admin_authed';
+      const PASSWORD = 'admin';
+      const REPO_KEY = 'admin_gh_repo';
+
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const passwordInput = document.getElementById('password');
+      const gateError = document.getElementById('gateError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function checkAuth() {
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+          gate.style.display = 'none';
+          app.style.display = 'block';
+          initApp();
+          return;
+        }
+        gate.style.display = 'block';
+        app.style.display = 'none';
+      }
+
+      loginBtn.addEventListener('click', function () {
+        gateError.style.display = 'none';
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(STORAGE_KEY, '1');
+          checkAuth();
+        } else {
+          gateError.textContent = 'Неверный пароль.';
+          gateError.style.display = 'block';
+        }
+      });
+
+      passwordInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') loginBtn.click();
+      });
+
+      document.querySelector('.admin-page__back')?.addEventListener('click', function(){});
+
+      let projects = [];
+
+      function dataUrl() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/projects.json';
+      }
+
+      async function loadProjects() {
+        const status = document.getElementById('loadStatus');
+        try {
+          const res = await fetch(dataUrl(), { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.statusText);
+          projects = await res.json();
+          if (!Array.isArray(projects)) projects = [];
+          const newProjectRaw = sessionStorage.getItem('admin_new_project');
+          if (newProjectRaw) {
+            try {
+              const newProject = JSON.parse(newProjectRaw);
+              if (newProject.id && !projects.find(p => p.id === newProject.id)) projects.push(newProject);
+              sessionStorage.removeItem('admin_new_project');
+            } catch (_) {}
+          }
+          const editedRaw = sessionStorage.getItem('admin_edited_projects');
+          if (editedRaw) {
+            try {
+              const edited = JSON.parse(editedRaw);
+              Object.keys(edited).forEach(function (id) {
+                const idx = projects.findIndex(p => p.id === id);
+                if (idx >= 0) projects[idx] = edited[id];
+              });
+            } catch (_) {}
+          }
+          status.textContent = 'Загружено проектов: ' + projects.length;
+          status.className = 'status ok';
+          renderProjectList();
+          restoreGhRepo();
+          return projects;
+        } catch (e) {
+          status.textContent = 'Ошибка загрузки: ' + e.message;
+          status.className = 'status err';
+          projects = [];
+          return [];
+        }
+      }
+
+      function getBase() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return basePath.endsWith('/') ? basePath : basePath + '/';
+      }
+
+      function renderProjectList() {
+        const list = document.getElementById('projectList');
+        list.innerHTML = '';
+        projects.forEach(function (p) {
+          const li = document.createElement('li');
+          const base = getBase();
+          li.innerHTML = '<span>' + (p.title || p.id) + '</span><span><a href="' + base + 'admin/edit/?id=' + encodeURIComponent(p.id) + '">Редактировать</a> <button type="button" class="danger delete-project" data-id="' + p.id + '" style="margin-left:0.5rem;padding:0.25rem 0.5rem;font-size:0.85rem;">Удалить</button></span>';
+          list.appendChild(li);
+        });
+        list.querySelectorAll('.delete-project').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const p = projects.find(function (x) { return x.id === id; });
+            if (!p || !confirm('Удалить проект «' + (p.title || id) + '»?')) return;
+            projects = projects.filter(function (x) { return x.id !== id; });
+            renderProjectList();
+            document.getElementById('loadStatus').textContent = 'Проект удалён из списка. Нажмите «Сохранить в GitHub» или скачайте projects.json.';
+          });
+        });
+      }
+
+      function restoreGhRepo() {
+        try {
+          const saved = sessionStorage.getItem(REPO_KEY);
+          if (saved && document.getElementById('ghRepo')) document.getElementById('ghRepo').value = saved;
+        } catch (_) {}
+      }
+
+      document.getElementById('saveToGitHubBtn').addEventListener('click', async function () {
+        const repoInput = document.getElementById('ghRepo');
+        const tokenInput = document.getElementById('ghToken');
+        const statusEl = document.getElementById('ghStatus');
+        const repo = (repoInput?.value || '').trim();
+        const token = (tokenInput?.value || '').trim();
+        if (!repo || !token) {
+          statusEl.textContent = 'Укажите репозиторий и токен.';
+          statusEl.className = 'status err';
+          return;
+        }
+        const [owner, repoName] = repo.split('/').filter(Boolean);
+        if (!owner || !repoName) {
+          statusEl.textContent = 'Репозиторий в формате owner/repo';
+          statusEl.className = 'status err';
+          return;
+        }
+        statusEl.textContent = 'Отправка…';
+        statusEl.className = 'status';
+        try {
+          sessionStorage.setItem(REPO_KEY, repo);
+          const path = 'public/data/projects.json';
+          const getRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
+            headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token }
+          });
+          let sha = null;
+          if (getRes.ok) {
+            const data = await getRes.json();
+            sha = data.sha;
+          } else if (getRes.status !== 404) {
+            const err = await getRes.json().catch(() => ({}));
+            throw new Error(err.message || getRes.statusText);
+          }
+          const content = JSON.stringify(projects, null, 2);
+          const body = { message: 'Update projects.json from admin', content: btoa(unescape(encodeURIComponent(content))), branch: 'main' };
+          if (sha) body.sha = sha;
+          const putRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
+            method: 'PUT',
+            headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          if (!putRes.ok) {
+            const err = await putRes.json().catch(() => ({}));
+            throw new Error(err.message || putRes.statusText);
+          }
+          statusEl.textContent = 'Сохранено. Деплой запустится по push в main.';
+          statusEl.className = 'status ok';
+          sessionStorage.removeItem('admin_new_project');
+          sessionStorage.removeItem('admin_edited_projects');
+        } catch (e) {
+          statusEl.textContent = 'Ошибка: ' + e.message;
+          statusEl.className = 'status err';
+        }
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', function () {
+        const json = JSON.stringify(projects, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'projects.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      function initApp() {
+        loadProjects();
+      }
+
+      checkAuth();
+    })();
+  </script>
+</AdminLayout>
