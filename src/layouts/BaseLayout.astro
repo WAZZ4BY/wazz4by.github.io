@@ -5,9 +5,12 @@ import '../styles/global.css';
 interface Props {
   title: string;
   variant?: 'home' | 'inner';
+  bodyClass?: string;
+  hideHeader?: boolean;
 }
 
-const { title, variant = 'inner' } = Astro.props;
+const { title, variant = 'inner', bodyClass, hideHeader } = Astro.props;
+const bodyClasses = [variant === 'home' ? 'is-home' : 'is-inner', bodyClass].filter(Boolean).join(' ');
 ---
 
 <!doctype html>
@@ -20,8 +23,8 @@ const { title, variant = 'inner' } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class={variant === 'home' ? 'is-home' : 'is-inner'}>
-    <SiteHeader variant={variant} />
+  <body class={bodyClasses}>
+    {!hideHeader && <SiteHeader variant={variant} />}
     <slot />
   </body>
 </html>

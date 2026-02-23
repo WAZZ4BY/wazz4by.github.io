@@ -8,7 +8,7 @@
 /* Fonts */
 @font-face {
   font-family: 'SuisseIntl';
-  src: url('/fonts/SuisseIntl-Regular.otf') format('opentype');
+  src: url('/fonts/SuisseIntl-Book.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -16,7 +16,15 @@
 
 @font-face {
   font-family: 'SuisseIntl';
-  src: url('/fonts/SuisseIntl-Bold.otf') format('opentype');
+  src: url('/fonts/SuisseIntl-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SuisseIntl';
+  src: url('/fonts/SuisseIntl-SemiBold.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -39,8 +47,8 @@
 }
 
 :root {
-  /* 9-column grid: margin 30, gutter 20 */
-  --grid-cols: 9;
+  /* 12-column grid: margin 30, gutter 20 */
+  --grid-cols: 12;
   --grid-margin: 30px;
   --grid-gutter: 20px;
   
@@ -60,6 +68,7 @@ html {
   font-size: var(--font-size-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #FBFBFB;
 }
 
 body {
@@ -75,9 +84,15 @@ body.is-home {
   background: #FBFBFB;
 }
 
-/* Container: 9-col grid, margin 30, gutter 20 */
+/* Inner pages (Index, Research, Info): фон и при overscroll — один цвет, без белой полосы */
+body.is-inner {
+  background: #FBFBFB;
+}
+
+/* Container: 12-col grid, margin 30, gutter 20 */
 .container,
-.grid-9-wrap {
+.grid-9-wrap,
+.grid-12-wrap {
   width: 100%;
   padding-left: var(--grid-margin);
   padding-right: var(--grid-margin);
@@ -99,6 +114,78 @@ body.is-home {
 .grid-9 .col-7 { grid-column: span 7; }
 .grid-9 .col-8 { grid-column: span 8; }
 .grid-9 .col-9 { grid-column: span 9; }
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0 var(--grid-gutter);
+  max-width: 100%;
+}
+
+.grid-12 .col-1 { grid-column: span 1; }
+.grid-12 .col-2 { grid-column: span 2; }
+.grid-12 .col-3 { grid-column: span 3; }
+.grid-12 .col-4 { grid-column: span 4; }
+.grid-12 .col-5 { grid-column: span 5; }
+.grid-12 .col-6 { grid-column: span 6; }
+.grid-12 .col-7 { grid-column: span 7; }
+.grid-12 .col-8 { grid-column: span 8; }
+.grid-12 .col-9 { grid-column: span 9; }
+.grid-12 .col-10 { grid-column: span 10; }
+.grid-12 .col-11 { grid-column: span 11; }
+.grid-12 .col-12 { grid-column: span 12; }
+
+/* Inner page header — жёстко закреплён, не двигается при overscroll */
+.page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0 var(--grid-gutter);
+  background: #FBFBFB;
+  padding: 30px var(--grid-margin) 12px;
+  font-family: 'SuisseIntl', sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  color: black;
+  box-sizing: border-box;
+}
+.page-header__vasily { grid-column: 1; padding-top: 0; }
+.page-header__nav { grid-column: 7 / 12; padding-top: 5px; }
+.page-header__schk { grid-column: 12; justify-self: end; padding-top: 5px; text-align: right; }
+.page-header__sep { font-weight: normal; }
+.page-header a { color: inherit; text-decoration: none; }
+.page-header a:hover { font-weight: 600; opacity: 0.9; }
+.page-header__schk a:hover { font-weight: 600; opacity: 0.9; }
+
+/* Высота шапки для отступа контента (padding-top + строка нава + padding-bottom) */
+:root {
+  --page-header-height: 62px;
+}
+
+/* Inner page layout: контент начинается под фиксированной шапкой */
+.inner-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #FBFBFB;
+  padding: var(--page-header-height) var(--grid-margin) 0;
+  box-sizing: border-box;
+}
+.inner-page__grid {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  position: relative;
+}
+.inner-page__main { position: relative; }
+.inner-page .research-page,
+.inner-page .me-page {
+  padding-left: 0;
+  padding-right: 0;
+  background: transparent;
+}
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
@@ -135,7 +222,7 @@ a.active {
 }
 
 /* SiteHeader styles */
-/* HOME mode: хедер по центру экрана */
+/* HOME: по вертикали — по центру экрана; по горизонтали — Vasily слева по колонке, nav по центру, SchK справа по колонке */
 body.is-home .site-header__container {
   position: absolute !important;
   top: 50% !important;
@@ -160,6 +247,58 @@ body.is-inner .site-header__container {
   right: 0 !important;
   align-items: flex-start !important;
   padding-top: 0 !important;
+}
+
+/* Index page: навигация по 12-колоночной сетке (margin 30, gutter 20) */
+/* Vasily — кол. 1, top 30px; Index — кол. 4; Research — кол. 6; Info — кол. 8; SchK — кол. 12 справа, top 35px */
+body.page-index .site-header__container {
+  padding-left: var(--grid-margin);
+  padding-right: var(--grid-margin);
+}
+
+body.page-index .site-header__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0 var(--grid-gutter);
+  max-width: 100%;
+  align-items: start;
+}
+
+body.page-index .site-header__left {
+  grid-column: 1;
+  padding-top: 30px;
+}
+
+body.page-index .site-header__center {
+  grid-column: 4 / span 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0;
+  padding-top: 35px;
+}
+
+body.page-index .site-header__center .nav-link {
+  display: block;
+}
+body.page-index .site-header__center .nav-link:nth-child(1) { grid-column: 1; }
+body.page-index .site-header__center .nav-link:nth-child(3) { grid-column: 3; }
+body.page-index .site-header__center .nav-link:nth-child(5) { grid-column: 5; }
+
+body.page-index .site-header__right {
+  grid-column: 12;
+  justify-self: end;
+  padding-top: 35px;
+}
+
+body.page-index .site-header__left a,
+body.page-index .site-header__center .nav-link,
+body.page-index .site-header__right-link {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+body.page-index .site-header__center .nav-separator {
+  display: none;
 }
 
 .is-inner main {
@@ -333,7 +472,7 @@ body.is-inner .works-page {
 }
 
 .index-list__row:first-of-type {
-  margin-top: calc(50vh - 25px - 20px - 15px);
+  margin-top: 20px;
 }
 
 .index-list__row:hover {

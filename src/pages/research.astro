@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import InnerPageHeader from '../components/InnerPageHeader.astro';
 
 const researchItems = [
   { id: 1, image: '/images/research-1.jpg', title: 'Research 1' },
@@ -20,17 +21,22 @@ const researchItems = [
 ];
 ---
 
-<BaseLayout title="Research" variant="inner">
-  <main class="research-page">
-    <h1 class="research-page__title">Experiments, Research & Development</h1>
-    <div class="research-grid">
-      {researchItems.map((item) => (
-        <div class="research-card">
-          <div class="research-card__image">
-            <img src={item.image} alt={item.title} loading="lazy" />
-          </div>
+<BaseLayout title="Research" variant="inner" hideHeader>
+  <div class="inner-page">
+    <div class="inner-page__grid">
+      <InnerPageHeader activePage="research" />
+      <main class="inner-page__main research-page">
+        <h1 class="research-page__title">Experiments, Research & Development</h1>
+        <div class="research-grid">
+          {researchItems.map((item) => (
+            <div class="research-card">
+              <div class="research-card__image">
+                <img src={item.image} alt={item.title} loading="lazy" />
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </main>
     </div>
-  </main>
+  </div>
 </BaseLayout>

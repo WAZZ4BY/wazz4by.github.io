@@ -1,73 +1,18 @@
 [
-  {
-    "id": "trash-aesthetics",
-    "title": "Trash aesthetics. Visual culture of waste",
-    "description": "Type design project about visual culture of waste.",
-    "type": "Type design",
-    "year": "2025",
-    "images": [
-      "/images/trash-aesthetics-1.jpg",
-      "/images/trash-aesthetics-2.jpg"
-    ]
-  },
-  {
-    "id": "crypto-anarchist",
-    "title": "The Crypto Anarchist Manifesto",
-    "description": "Motion design project.",
-    "type": "Motion",
-    "year": "2025",
-    "images": [
-      "/images/crypto-anarchist-1.jpg"
-    ]
-  },
-  {
-    "id": "chaos-construction",
-    "title": "Chaos Construction | Demoscene Fest",
-    "description": "Identity design for demoscene festival.",
-    "type": "Identity",
-    "year": "2025",
-    "images": [
-      "/images/chaos-construction-1.jpg"
-    ]
-  },
-  {
-    "id": "last-days-sababa",
-    "title": "The Last Days Of Sababa",
-    "description": "Photo and zine project.",
-    "type": "Photo, Zine",
-    "year": "2025",
-    "images": [
-      "/images/last-days-sababa-1.jpg"
-    ]
-  },
-  {
-    "id": "snve-periodical",
-    "title": "SNVE Pereodical",
-    "description": "Identity for periodical.",
-    "type": "Identity",
-    "year": "2025",
-    "images": [
-      "/images/snve-periodical-1.jpg"
-    ]
-  },
-  {
-    "id": "hoja-sagrada",
-    "title": "Hoja Sagrada Yerba Mate Tea",
-    "type": "Package",
-    "year": "2025",
-    "description": "Package design for yerba mate tea.",
-    "images": [
-      "/images/test1.png",
-      "/images/test2.png",
-      "/images/test3.gif"
-    ]
-  },
-  {
-    "id": "test",
-    "title": "test",
-    "description": "test",
-    "type": "test",
-    "year": "2026",
-    "images": []
-  }
+  {"id":"de-stul-furniture-brand","title":"De Stul. Furniture Brand","description":"","type":"Identity, 3D motion","year":"2023","images":[]},
+  {"id":"de-stul-interior-items-packaging","title":"De Stul. Interior Items Packaging","description":"","type":"Package","year":"2023","images":[]},
+  {"id":"phenomenon-interior-psychologism","title":"The Phenomenon of Interior Psychologism","description":"","type":"Type design, book, Visual Research","year":"2024","images":[]},
+  {"id":"boop-pet-shampoo-packaging","title":"Boop. Pet Shampoo Packaging","description":"","type":"Package, Illustration","year":"2024","images":[]},
+  {"id":"antre-cheese-appetizers-packaging","title":"Antre. Cheese Appetizers Packaging","description":"","type":"Package, Illustration","year":"2024","images":[]},
+  {"id":"dok-107-art-space","title":"DOK:107. Art Space","description":"","type":"Identity","year":"2024","images":[]},
+  {"id":"photoelectric-effect-calendar-2025","title":"Photoelectric Effect Calendar 2025","description":"","type":"Type design, Calendar","year":"2024","images":[]},
+  {"id":"bioart-lab-foundation","title":"Bioart Lab Foundation","description":"","type":"Identity, Generative, Typeface","year":"2024","images":[]},
+  {"id":"hoja-sagrada-yerba-mate-tea","title":"Hoja Sagrada Yerba Mate Tea","description":"","type":"Package, Illustration","year":"2025","images":[]},
+  {"id":"snve-pereodical","title":"SNVE. Pereodical","description":"","type":"Identity, Typeface","year":"2025","images":[]},
+  {"id":"last-days-of-sababa","title":"The Last Days of Sababa","description":"","type":"Photo Zine","year":"2025","images":[]},
+  {"id":"crypto-anarchist-manifesto","title":"The Crypto Anarchist Manifesto","description":"","type":"Motion design","year":"2025","images":[]},
+  {"id":"chaos-construction-demoscene-fest","title":"Chaos Construction Demoscene Fest","description":"","type":"Identity, Generative","year":"2025","images":[]},
+  {"id":"trash-aesthetics-visual-culture-of-waste","title":"Trash Aesthetics. Visual Culture of Waste","description":"","type":"Type design, book, Visual Research","year":"2025","images":[]},
+  {"id":"w-dotorg-dymshits-partners-rebranding","title":"W//Dotorg. Dymshits and Partners. Rebranding","description":"","type":"Identity, Generative","year":"2025","images":[]},
+  {"id":"w-dotorg-css-rebranding","title":"W//Dotorg. CSS Rebranding","description":"","type":"Identity, Motion","year":"2025","images":[]}
 ]
