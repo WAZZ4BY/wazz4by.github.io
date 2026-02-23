@@ -13,7 +13,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/public/images/destul/1.png"
+        "src": "/images/destul/1.png"
       },
       {
         "type": "text",
@@ -25,14 +25,14 @@
       },
       {
         "type": "image",
-        "src": "/public/images/destul/2.png"
+        "src": "/images/destul/2.png"
       },
       {
         "type": "image",
-        "src": "/public/images/destul/3.png"
+        "src": "/images/destul/3.png"
       }
     ],
-    "backgroundColor": "#000000"
+    "backgroundColor": "##ffffff"
   },
   {
     "id": "de-stul-interior-items-packaging",
