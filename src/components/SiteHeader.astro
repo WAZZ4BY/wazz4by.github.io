@@ -19,34 +19,36 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
       <nav class="site-header__center">
       {variant === 'home' ? (
         <>
-          <a href={`${base}index/`} class="nav-link nav-link--home">Index</a>
-          <span class="nav-separator">, </span>
-          <a href={`${base}research/`} class="nav-link nav-link--home">Research</a>
-          <span class="nav-separator">, </span>
-          <a href={`${base}info/`} class="nav-link nav-link--home">Info</a>
+          <span class="site-header__nav-item"><a href={`${base}index/`} class="nav-link nav-link--home">Index</a></span>
+          <span class="site-header__nav-item"><a href={`${base}research/`} class="nav-link nav-link--home">Research</a></span>
+          <span class="site-header__nav-item"><a href={`${base}info/`} class="nav-link nav-link--home">Info</a></span>
         </>
       ) : (
         <>
-          <a 
-            href={`${base}index/`} 
-            class={`nav-link ${currentPath === 'index' || currentPath.startsWith('index/') ? 'active' : ''}`}
-          >
-            Index
-          </a>
-          <span class="nav-separator">, </span>
-          <a 
-            href={`${base}research/`} 
-            class={`nav-link ${currentPath === 'research' || currentPath.startsWith('research/') ? 'active' : ''}`}
-          >
-            Research
-          </a>
-          <span class="nav-separator">, </span>
-          <a 
-            href={`${base}info/`} 
-            class={`nav-link ${currentPath === 'info' ? 'active' : ''}`}
-          >
-            Info
-          </a>
+          <span class="site-header__nav-item">
+            <a 
+              href={`${base}index/`} 
+              class={`nav-link ${currentPath === 'index' || currentPath.startsWith('index/') ? 'active' : ''}`}
+            >
+              Index
+            </a>
+          </span>
+          <span class="site-header__nav-item">
+            <a 
+              href={`${base}research/`} 
+              class={`nav-link ${currentPath === 'research' || currentPath.startsWith('research/') ? 'active' : ''}`}
+            >
+              Research
+            </a>
+          </span>
+          <span class="site-header__nav-item">
+            <a 
+              href={`${base}info/`} 
+              class={`nav-link ${currentPath === 'info' ? 'active' : ''}`}
+            >
+              Info
+            </a>
+          </span>
         </>
       )}
     </nav>
@@ -91,6 +93,12 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .site-header__center .site-header__nav-item {
+    display: inline-block;
   }
 
   .site-header__right {
@@ -148,12 +156,6 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
 
   .site-header__center .nav-link:not(.nav-link--home):hover {
     opacity: 0.6;
-  }
-
-  .site-header__center .nav-separator {
-    font-family: 'SuisseIntl', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
   }
 
 

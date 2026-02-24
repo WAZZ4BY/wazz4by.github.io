@@ -20,14 +20,19 @@ const projects = getProjects()
       <div class="name index-labels-name">Name</div>
       <div class="type index-labels-type">Type</div>
       <button type="button" class="year index-labels-year year-sort-btn" id="yearSort" aria-label="Сортировка по году">Year</button>
-      <div class="index-list" id="indexList">
-      {projects.map((p) => (
-        <a href={`${base}project/${p.id}/`} class="index-list__row" data-year={p.year || ''}>
-          <span class="index-list__name">{p.title}</span>
-          <span class="index-list__type">{p.type || ''}</span>
-          <span class="index-list__year">{p.year || ''}</span>
-        </a>
-      ))}
+      <div class="index-list-wrap">
+        <div class="index-list" id="indexList">
+          {projects.map((p) => (
+            <a href={`${base}project/${p.id}/`} class="index-list__row" data-year={p.year || ''} data-cover={p.cover || ''}>
+              <span class="index-list__name">{p.title}</span>
+              <span class="index-list__type">{p.type || ''}</span>
+              <span class="index-list__year">{p.year || ''}</span>
+            </a>
+          ))}
+        </div>
+        <div class="index-list-preview" id="indexListPreview" aria-hidden="true">
+          <img id="indexListPreviewImg" alt="" />
+        </div>
       </div>
       <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
       <div class="index-footer__name">Vasily Aleev</div>
@@ -48,11 +53,46 @@ const projects = getProjects()
   :global(body.page-index .index2__grid .page-header) {
     grid-column: 1 / -1;
     grid-row: 1;
+    z-index: 100;
   }
-  :global(body.page-index .index2__grid .index-list) {
+  :global(body.page-index .index2__grid .index-list-wrap) {
     grid-column: 1 / -1;
     grid-row: 3;
+    position: relative;
+    z-index: 0;
     padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    min-height: 0;
+  }
+  :global(body.page-index .index2__grid .index-list) {
+    position: relative;
+    z-index: 0;
+    padding-top: 0;
+  }
+  :global(body.page-index .index2__grid .index-list-preview) {
+    position: absolute;
+    left: calc(4 * (100% - 11 * var(--grid-gutter)) / 12 + 4 * var(--grid-gutter));
+    width: calc(2 * (100% - 11 * var(--grid-gutter)) / 12 + var(--grid-gutter));
+    max-height: 40vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  :global(body.page-index .index2__grid .index-list-preview.index-list-preview--visible) {
+    opacity: 1;
+  }
+  :global(body.page-index .index2__grid .index-list-preview img) {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
   }
 
   /* Футер под списком: отступ от списка 70px, от низа 30px */
@@ -133,14 +173,14 @@ const projects = getProjects()
     gap: 0;
   }
 
-  /* 12 колонок (глобальный стиль даёт 9 — переопределяем) */
+  /* 12 колонок как у страницы (Name 1, Type 7, Year 12) */
   :global(body.page-index .index-list__row) {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 0 var(--grid-gutter);
     align-items: start;
     text-decoration: none;
-    color:rgb(147, 142, 139);
+    color:#B29893;
   }
 
   :global(body.page-index .index-list__row .index-list__name) { grid-column: 1 / 7; }
@@ -161,7 +201,7 @@ const projects = getProjects()
   :global(body.page-index .index-list__type),
   :global(body.page-index .index-list__year) {
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 500;
     line-height: 75%;
     word-wrap: break-word;
@@ -173,13 +213,72 @@ const projects = getProjects()
   :global(body.page-index .index-list__year) { text-align: right; }
 </style>
 
-<script>
+<script define:vars={{ base }}>
   (function () {
     const list = document.getElementById('indexList');
     const yearBtn = document.getElementById('yearSort');
+    const preview = document.getElementById('indexListPreview');
+    const previewImg = document.getElementById('indexListPreviewImg');
     if (!list || !yearBtn) return;
 
     let newestFirst = true;
+    let previewTimeout = null;
+
+    function resolveCoverUrl(cover) {
+      const c = (cover || '').trim();
+      if (!c) return '';
+      if (c.startsWith('http')) return c;
+      return (base.endsWith('/') ? base : base + '/') + c.replace(/^\//, '');
+    }
+
+    function showPreview(url, row) {
+      if (!preview || !previewImg) return;
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+        previewTimeout = null;
+      }
+      if (url && row) {
+        const wrap = list.parentElement;
+        const newTop = wrap ? (row.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop) + 'px' : '';
+        const isCurrentlyVisible = preview.classList.contains('index-list-preview--visible');
+        if (isCurrentlyVisible) {
+          preview.classList.remove('index-list-preview--visible');
+          preview.setAttribute('aria-hidden', 'true');
+          previewTimeout = window.setTimeout(function () {
+            previewTimeout = null;
+            preview.style.top = newTop;
+            previewImg.src = url;
+            preview.classList.add('index-list-preview--visible');
+            preview.setAttribute('aria-hidden', 'false');
+          }, 300);
+        } else {
+          preview.style.top = newTop;
+          previewImg.src = url;
+          preview.classList.add('index-list-preview--visible');
+          preview.setAttribute('aria-hidden', 'false');
+        }
+      } else {
+        preview.classList.remove('index-list-preview--visible');
+        preview.setAttribute('aria-hidden', 'true');
+        previewTimeout = window.setTimeout(function () {
+          previewTimeout = null;
+          if (!preview.classList.contains('index-list-preview--visible')) {
+            preview.style.top = '';
+            previewImg.removeAttribute('src');
+          }
+        }, 300);
+      }
+    }
+
+    list.querySelectorAll('.index-list__row').forEach(function (row) {
+      row.addEventListener('mouseenter', function () {
+        const cover = row.dataset.cover;
+        showPreview(resolveCoverUrl(cover), row);
+      });
+      row.addEventListener('mouseleave', function () {
+        showPreview('');
+      });
+    });
 
     function sortRows() {
       const rows = Array.from(list.querySelectorAll('.index-list__row'));

@@ -9,10 +9,16 @@ const base = import.meta.env.BASE_URL;
 
 <header class="page-header">
   <div class="page-header__vasily"><b><a href={base}>Vasily Aleev</a></b></div>
-  <div class="page-header__nav">
-    {activePage === 'index' ? <b><a href={`${base}index/`}>Index</a></b> : <a href={`${base}index/`}>Index</a>}<span class="page-header__sep">,</span>
-    {activePage === 'research' ? <b><a href={`${base}research/`}>Research</a></b> : <a href={`${base}research/`}>Research</a>}<span class="page-header__sep">,</span>
-    {activePage === 'info' ? <b><a href={`${base}info/`}>Info</a></b> : <a href={`${base}info/`}>Info</a>}
-  </div>
+  <nav class="page-header__nav">
+    <span class="page-header__nav-item">
+      {activePage === 'index' ? <b><a href={`${base}index/`}>Index</a></b> : <a href={`${base}index/`}>Index</a>}
+    </span>
+    <span class="page-header__nav-item">
+      {activePage === 'research' ? <b><a href={`${base}research/`}>Research</a></b> : <a href={`${base}research/`}>Research</a>}
+    </span>
+    <span class="page-header__nav-item">
+      {activePage === 'info' ? <b><a href={`${base}info/`}>Info</a></b> : <a href={`${base}info/`}>Info</a>}
+    </span>
+  </nav>
   <div class="page-header__schk"><a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">SchK</a></div>
 </header>

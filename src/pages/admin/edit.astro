@@ -30,6 +30,8 @@ const base = import.meta.env.BASE_URL;
             <input type="color" id="editBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
             <input type="text" id="editBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
           </div>
+          <label>Обложка (превью при наведении на Index)</label>
+          <input type="text" id="editCover" placeholder="/images/cover.jpg или URL" />
           <label>Контент (блоки)</label>
           <p class="admin-hint">Текст — колонки 5–12, стиль как в футере. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — вставьте embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
           <div id="contentBlocksList" class="content-blocks-list"></div>
@@ -250,7 +252,8 @@ const base = import.meta.env.BASE_URL;
           description: project.description || '',
           images: project.images || [],
           contentBlocks: contentBlocks.slice(),
-          backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined
+          backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined,
+          cover: document.getElementById('editCover').value.trim() || undefined
         };
         setEditedProject(project.id, edited);
         document.getElementById('loadStatus').textContent = 'Изменения сохранены в черновик. Перейдите в список проектов и нажмите «Сохранить в GitHub».';
@@ -301,6 +304,7 @@ const base = import.meta.env.BASE_URL;
           document.getElementById('editTitle').value = project.title || '';
           document.getElementById('editType').value = project.type || '';
           document.getElementById('editYear').value = project.year || '';
+          document.getElementById('editCover').value = project.cover || '';
           const bg = (project.backgroundColor || '').trim();
           if (bg && /^#[0-9A-Fa-f]{6}$/.test(bg)) {
             document.getElementById('editBackgroundColor').value = bg.slice(1);

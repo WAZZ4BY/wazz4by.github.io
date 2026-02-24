@@ -16,6 +16,8 @@ export interface Project {
   images: string[];
   contentBlocks?: ContentBlock[];
   backgroundColor?: string;
+  /** Обложка: показывается при наведении на проект во вкладке Index */
+  cover?: string;
 }
 
 let cached: Project[] | null = null;

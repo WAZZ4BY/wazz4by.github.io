@@ -161,10 +161,13 @@
   {
     "id": "bioart-lab-foundation",
     "title": "Bioart Lab Foundation",
-    "description": "",
     "type": "Identity, Generative, Typeface",
     "year": "2024",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "cover": "/images/bioart/cover.png"
   },
   {
     "id": "hoja-sagrada-yerba-mate-tea",
@@ -177,57 +180,204 @@
   {
     "id": "snve-pereodical",
     "title": "SNVE. Pereodical",
-    "description": "",
     "type": "Identity, Typeface",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "cover": "/images/snve/cover.png"
   },
   {
     "id": "last-days-of-sababa",
     "title": "The Last Days of Sababa",
-    "description": "",
     "type": "Photo Zine",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "cover": "/images/sababa/cover.png"
   },
   {
     "id": "crypto-anarchist-manifesto",
     "title": "The Crypto Anarchist Manifesto",
-    "description": "",
     "type": "Motion design",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "cover": "/images/crypto/cover.png"
   },
   {
     "id": "chaos-construction-demoscene-fest",
     "title": "Chaos Construction Demoscene Fest",
-    "description": "",
     "type": "Identity, Generative",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "cover": "/images/cc25/cover.png"
   },
   {
     "id": "trash-aesthetics-visual-culture-of-waste",
     "title": "Trash Aesthetics. Visual Culture of Waste",
-    "description": "",
     "type": "Type design, book, Visual Research",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "cover": "/images/trash/cover.png"
   },
   {
     "id": "w-dotorg-dymshits-partners-rebranding",
-    "title": "W//Dotorg. Dymshits and Partners. Rebranding",
-    "description": "",
+    "title": "Dymshits and Partners. W//Dotorg",
     "type": "Identity, Generative",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110097498?autopause=false&amp;h=c5f0dc1ec5&amp;autoplay=1&amp;loop=1&amp;title=1&amp;byline=0&amp;%20portrait=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay; picture-in-picture\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "\n«Дымшиц и партнеры» — консалтинговая компания, которая специализируется на маркетинговых исследованиях. С 2001 года визуальные коммуникации бренда не менялись и порядком устарели за это время. Михаил Дымшиц обратился к нам с задачей — обновить визуальный язык бренда так, чтобы сохранить дух серьезной консалтинговой фирмы, но добавить огня.\n\nЦифры, графики, таблицы Excel и презентации в Power Point — типичная среда, в которой работает компания «Дымшиц и партнеры». Профессионалы компании доверяют только фактам, которые получают с помощью данных опросов, интервью и тестов. Мы сформулировали позиционирование бренда — «Маркетинг, основанный на фактах». Метафора: «Весь мир — данные».\n\nМы взяли системные шрифты Arial и Times New Roman, добавили к ним генеративную графику с цветовой палитрой Excel и выжали всё на максимум! Логотип «Дымшиц и партнеры» — это старый добрый Times New Roman, который мы модифицировали, чтобы придать ему больше строгости, дерзости и уникальности.\n\nКаждый носитель содержит факты о себе. На конвертах указан размер и вес бумаги, в папке для бумаг указаны её формат, а фирменные футболки и галстуки запечатаны текстами про размер и материалы. Разработали сайт компании, который намеренно похож на документ, сверстанный по ГОСТ и наполнили его генеративной графикой, которая напоминает о больших объемах данных.​​​​​​​\n"
+      },
+      {
+        "type": "image",
+        "src": "/public/images/dym/1.png"
+      },
+      {
+        "type": "image",
+        "src": "/public/images/dym/2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110099740?background=1\" width=\"1920\" height=\"1080\" frameborder=\"0\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110100258?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110101454?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/public/images/dym/3.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110104909?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/public/images/dym/4.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110106475?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/public/images/dym/5 copy.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110106897?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110108665?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1110109674?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "Арсений Кутовой — стратег\nОльга Кутовая — арт-директор\nВиталий Шадрин — дизайнер\nВасилий Алеев — дизайнер\nСоня Пичевская — дизайнер\nВасилий Сиванюк — фронтенд-разработчик\nПавел Марков — программист"
+      }
+    ],
+    "backgroundColor": "##FBFBFB",
+    "cover": "/images/dym/cover.png"
   },
   {
     "id": "w-dotorg-css-rebranding",
-    "title": "W//Dotorg. CSS Rebranding",
-    "description": "",
+    "title": "CSS. W//Dotorg",
     "type": "Identity, Motion",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "public/images/css/1.webp"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120754237?autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120758127?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120762774?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120767530?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120768361?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "public/images/css/2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120768892?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120770017?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "public/images/css/3.png"
+      },
+      {
+        "type": "image",
+        "src": "public/images/css/4.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120770352?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120771757?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120810907?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "Олег Трофимович — стратег\nОльга Кутовая — арт-директор\nЕкатерина Антонова — ведущий дизайнер\nВиктория Трубицина — старший дизайнер\nВиталий Шадрин — старший дизайнер\nВасилий Алеев — дизайнер\nЛада Бурова — дизайнер\nСоня Пичевская — дизайнер\nАндрей Шматько — 3D-визуализатор\nПавел Парамонов — фотограф\nУльяна Уступная и Степан Верба — модели\nВасилий Сиванюк — фронтенд-разработчик\nПавел Марков — программист"
+      }
+    ],
+    "backgroundColor": "##ffffff",
+    "cover": "/images/css/cover.png"
   }
 ]
