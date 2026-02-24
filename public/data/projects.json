@@ -165,8 +165,104 @@
     "year": "2024",
     "description": "",
     "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000",
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/bioart/1.gif"
+      },
+      {
+        "type": "text",
+        "content": "The Bioart Laboratories Foundation, located in Eindhoven in the Netherlands, functions as a gateway to a world of unlimited possibilities where science, nature, technology and creativity go hand in hand.\nBio-art is a direction in contemporary art, where authors work with living tissues, bacteria, and microorganisms."
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1041402171?autoplay=0&amp;loop=0&amp;muted=0&amp;autopause=0&amp;badge=0&amp;color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1042331732?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "The graphics are based on the “Fusie” font, inspired by the fusion of technology and biology in bio-art, as well as graphics based on the font, conveying the interaction of microorganisms in a Petri dish as part of an exhibit of the bio-art movement."
+      },
+      {
+        "type": "image",
+        "src": "/images/bioart/2.gif"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1042427943?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1023022390?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/909286059?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/bioart/3-1.png",
+        "right": "/images/bioart/3-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/bioart/4.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/868000314?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1023023015?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/bioart/5.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/bioart/6.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/858798640?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/bioart/7-1.png",
+        "right": "/images/bioart/7-2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/858939736?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/bioart/8.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/bioart/9-1.png",
+        "right": "/images/bioart/9-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/bioart/10.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1042425480?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "Sreda New Design Festival 2025 — Silver, \"Identity concept\"\nSreda New Design Festival 2025 — Open Jury — Bronze, \"Identity concept\""
+      }
+    ],
+    "backgroundColor": "##ffffff",
     "cover": "/images/bioart/cover.png"
   },
   {
