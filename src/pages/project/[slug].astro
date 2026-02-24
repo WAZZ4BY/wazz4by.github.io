@@ -19,9 +19,12 @@ const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const blocks = getContentBlocks(project);
 const bgColor = project.backgroundColor || '#FBFBFB';
+const bgNorm = (bgColor || '').replace(/^#/, '').toLowerCase();
+const isDarkBg = bgNorm === '000' || bgNorm === '000000';
+const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
 ---
 
-<BaseLayout title={project.title} variant="inner" bodyClass="page-project" hideHeader>
+<BaseLayout title={project.title} variant="inner" bodyClass={bodyClass} hideHeader>
   <div class="inner-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
     <main class="project-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
       <div class="project-page__grid">
@@ -46,9 +49,7 @@ const bgColor = project.backgroundColor || '#FBFBFB';
             }
             if (block.type === 'text') {
               return (
-                <div class="content-block content-block--text">
-                  <p>{block.text}</p>
-                </div>
+                <div class="content-block content-block--text" set:html={block.content}></div>
               );
             }
             if (block.type === 'split') {
@@ -69,6 +70,7 @@ const bgColor = project.backgroundColor || '#FBFBFB';
             return null;
           })}
         </div>
+        <div class="index-footer__schk"><a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">SCHK</a></div>
         <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
         <div class="index-footer__name">Vasily Aleev</div>
         <div class="index-footer__links"><a href="https://www.instagram.com/wazz4by" target="_blank" rel="noopener noreferrer">Ig</a><br/><a href="https://t.me/waz4by" target="_blank" rel="noopener noreferrer">Tg</a><br/><a href="https://www.behance.net/wazz4by/" target="_blank" rel="noopener noreferrer">Be</a></div>
@@ -78,19 +80,30 @@ const bgColor = project.backgroundColor || '#FBFBFB';
 </BaseLayout>
 
 <style>
-  .project-page {
+    /* Футер прижат к низу при ресайзе */
+  :global(body.page-project .inner-page) {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    padding: 0 var(--grid-margin) 4rem;
+  }
+
+  .project-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 0 0 4rem;
     background: #FBFBFB;
   }
 
   .project-page__grid {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: auto auto auto auto 1fr auto;
     gap: 0 var(--grid-gutter);
     max-width: 100%;
-    min-height: calc(100vh - var(--page-header-height, 62px));
+    min-height: 0;
   }
 
   :global(body.page-project .project-page__grid .page-header) {
@@ -116,9 +129,9 @@ const bgColor = project.backgroundColor || '#FBFBFB';
     grid-column: 1 / 7;
     grid-row: 3;
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 64px;
+    font-size: 72px;
     font-weight: 700;
-    letter-spacing: -3px;
+    letter-spacing: -4px;
     margin-top: 290px;
     margin-bottom: 0;
     line-height: 1;
@@ -157,28 +170,29 @@ const bgColor = project.backgroundColor || '#FBFBFB';
   .project-title-line {
     grid-column: 1 / -1;
     grid-row: 4;
-    margin: 100px 0;
+    margin: 50px 0;
     border: none;
-    border-bottom: 1.5pt solid black;
-    opacity: 0.5;
+    border-bottom: 3pt solid black;
+    opacity: 0.3;
   }
 
   .project-page__content {
     grid-column: 1 / -1;
     grid-row: 5;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0 var(--grid-gutter);
+    align-content: start;
   }
 
   .content-block {
-    width: 100%;
+    min-width: 0;
   }
 
   .content-block--image {
     grid-column: 1 / -1;
-    margin-top: 70px;
-    margin-bottom: 70px;
+    margin-top: 50px;
+    margin-bottom: 50px;
   }
 
   .content-block--image img {
@@ -188,25 +202,32 @@ const bgColor = project.backgroundColor || '#FBFBFB';
   }
 
   .content-block--text {
-    margin-top: 70px;
-    margin-bottom: 70px;
     grid-column: 5 / 13;
-  }
-
-  .content-block--text p {
+    margin-top: 50px;
+    margin-bottom: 50px;
     font-family: 'SuisseIntl', sans-serif;
     font-size: 16pt;
     font-weight: 500;
-    line-height: 1.4;
-    margin: 0;
+    color: black;
+    line-height: 1.2;
+  }
+
+  .content-block--text :global(p) {
+    margin: 0 0 0.5em;
+    line-height: 1;
+  }
+
+  .content-block--text :global(p:last-child) {
+    margin-bottom: 0;
   }
 
   .content-block--split {
+    grid-column: 1 / -1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--grid-gutter);
-    margin-top: 70px;
-    margin-bottom: 70px;
+    margin-top: 50px;
+    margin-bottom: 50px;
   }
 
   .content-block--split img {
@@ -263,11 +284,27 @@ const bgColor = project.backgroundColor || '#FBFBFB';
     display: block;
   }
 
-  /* Футер как на index: колонки 7–11 (текст), 11 (имя), 12 (ссылки) */
+  /* Футер: колонка 1 — SCHK, 7–11 — текст, 11 — имя, 12 — ссылки */
+  :global(body.page-project .project-page__grid .index-footer__schk) {
+    grid-column: 1;
+    grid-row: 6;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+    opacity: 1;
+    line-height: 1;
+  }
+  :global(body.page-project .project-page__grid .index-footer__schk a) {
+    color: inherit;
+    text-decoration: none;
+  }
   :global(body.page-project .project-page__grid .index-footer__text) {
     grid-column: 7 / 11;
     grid-row: 6;
-    margin-top: 70px;
+    margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
     font-size: 12px;
@@ -279,7 +316,7 @@ const bgColor = project.backgroundColor || '#FBFBFB';
   :global(body.page-project .project-page__grid .index-footer__name) {
     grid-column: 11;
     grid-row: 6;
-    margin-top: 70px;
+    margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
     font-size: 16pt;
@@ -290,7 +327,7 @@ const bgColor = project.backgroundColor || '#FBFBFB';
   :global(body.page-project .project-page__grid .index-footer__links) {
     grid-column: 12;
     grid-row: 6;
-    margin-top: 70px;
+    margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
     font-size: 16pt;
@@ -298,6 +335,38 @@ const bgColor = project.backgroundColor || '#FBFBFB';
     color: black;
     text-align: right;
     line-height: 1;
+  }
+
+  /* Если фон чёрный — текст и линия белые */
+  :global(body.page-project--dark .project-page__grid .project-title),
+  :global(body.page-project--dark .project-page__grid .project-meta__label),
+  :global(body.page-project--dark .project-page__grid .project-meta__value),
+  :global(body.page-project--dark .project-page__grid .project-title-line) {
+    color: white;
+    border-color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .project-title-line) {
+    border-bottom-color: white;
+    opacity: 0.5;
+  }
+  :global(body.page-project--dark .project-page__grid .project-page__edit) {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  :global(body.page-project--dark .project-page__grid .project-page__edit:hover) {
+    color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .content-block--text) {
+    color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .index-footer__schk),
+  :global(body.page-project--dark .project-page__grid .index-footer__text),
+  :global(body.page-project--dark .project-page__grid .index-footer__name),
+  :global(body.page-project--dark .project-page__grid .index-footer__links) {
+    color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .index-footer__schk a),
+  :global(body.page-project--dark .project-page__grid .index-footer__links a) {
+    color: inherit;
   }
 
   @media (max-width: 768px) {

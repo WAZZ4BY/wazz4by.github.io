@@ -24,12 +24,88 @@
         "embed": "<iframe src=\"https://player.vimeo.com/video/1005119299?autoplay=0&amp;loop=0&amp;muted=0&amp;autopause=0&amp;badge=0&amp;color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
       },
       {
+        "type": "text",
+        "content": "The metaphor of the brand, which helped to capture the visual concept — lines — the texture that is printed by a 3D printer. This image helps to accurately convey the precision and technology of the brand."
+      },
+      {
         "type": "image",
         "src": "/images/destul/2.png"
       },
       {
         "type": "image",
         "src": "/images/destul/3.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/4.png"
+      },
+      {
+        "type": "text",
+        "content": "The second component of the style is 3D graphics, working together with stripes \nas photo content. This allows the brand to reflect another component characteristic — unique shapes.\n\nThe result is functional art."
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/5.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/6.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/881284749?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/8.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/9-1.png",
+        "right": "/images/destul/9-2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/877724867?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/10.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/11.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/12-1.gif",
+        "right": "/images/destul/12-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/13.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/14-1.png",
+        "right": "/images/destul/14-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/15.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/destul/16-1.png",
+        "right": "/images/destul/16-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/17.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/destul/18.jpg"
       }
     ],
     "backgroundColor": "##ffffff"
