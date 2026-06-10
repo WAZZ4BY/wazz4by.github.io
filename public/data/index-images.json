@@ -1,0 +1,58 @@
+[
+  {
+    "type": "image",
+    "src": "/images/main/1.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/2.gif"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/3.png"
+  },
+  {
+    "type": "image",
+    "src": null
+  },
+  {
+    "type": "image",
+    "src": "/images/main/5.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/6.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/7.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/8.gif"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/9.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/10.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/11.png"
+  },
+  {
+    "type": "vimeo",
+    "src": "https://player.vimeo.com/video/1110109674?background=1&%20;autoplay=1&loop=1&%20muted=1&title=0&%20byline=0&portrait=0&%20autopause=0"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/13.png"
+  },
+  {
+    "type": "image",
+    "src": "/images/main/14.gif"
+  }
+]

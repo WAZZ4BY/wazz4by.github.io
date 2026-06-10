@@ -21,6 +21,8 @@ const base = import.meta.env.BASE_URL;
         <form id="editForm">
           <label>Название проекта</label>
           <input type="text" id="editTitle" required />
+          <label>Короткое название (для Index)</label>
+          <input type="text" id="editShortTitle" />
           <label>Тип проекта</label>
           <input type="text" id="editType" />
           <label>Год</label>
@@ -32,6 +34,13 @@ const base = import.meta.env.BASE_URL;
           </div>
           <label>Обложка (превью при наведении на Index)</label>
           <input type="text" id="editCover" placeholder="/images/cover.jpg или URL" />
+          <label>Awards (награды)</label>
+          <p class="admin-hint">В конце проекта: левая колонка — место, правая — название фестиваля. Одна строка = одна награда.</p>
+          <div id="editAwardsList" class="awards-list"></div>
+          <button type="button" class="secondary" id="addAwardBtn" style="margin-top:0.5rem;">+ Добавить награду</button>
+          <label style="margin-top:1rem;">Credits (кредиты)</label>
+          <p class="admin-hint">Текст в конце проекта мелким шрифтом (как в футере). Можно HTML.</p>
+          <textarea id="editCredits" rows="4" placeholder="Например: Дизайн — Василий Алеев"></textarea>
           <label>Контент (блоки)</label>
           <p class="admin-hint">Текст — колонки 5–12, стиль как в футере. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — вставьте embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
           <div id="contentBlocksList" class="content-blocks-list"></div>
@@ -118,6 +127,42 @@ const base = import.meta.env.BASE_URL;
       }
 
       function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+      function collectAwards() {
+        const rows = document.querySelectorAll('#editAwardsList .award-row');
+        const awards = [];
+        rows.forEach(function (row) {
+          const placeEl = row.querySelector('.award-place');
+          const festivalEl = row.querySelector('.award-festival');
+          const place = placeEl ? placeEl.value.trim() : '';
+          const festival = festivalEl ? festivalEl.value.trim() : '';
+          if (place || festival) awards.push({ place: place || '—', festival: festival || '—' });
+        });
+        return awards;
+      }
+
+      function renderAwards(awards) {
+        const list = document.getElementById('editAwardsList');
+        list.innerHTML = '';
+        (awards && awards.length ? awards : [{ place: '', festival: '' }]).forEach(function (a) {
+          const row = document.createElement('div');
+          row.className = 'award-row';
+          row.innerHTML = '<input type="text" class="award-place" placeholder="Место" value="' + esc(a.place) + '" /> <input type="text" class="award-festival" placeholder="Фестиваль" value="' + esc(a.festival) + '" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+          list.appendChild(row);
+        });
+        list.querySelectorAll('.remove-award').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            btn.closest('.award-row').remove();
+            if (list.querySelectorAll('.award-row').length === 0) {
+              const r = document.createElement('div');
+              r.className = 'award-row';
+              r.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+              list.appendChild(r);
+              r.querySelector('.remove-award').addEventListener('click', function () { r.remove(); });
+            }
+          });
+        });
+      }
 
       function resolveImgUrl(url) {
         const u = (url || '').trim();
@@ -239,21 +284,36 @@ const base = import.meta.env.BASE_URL;
         renderBlocks();
       });
 
+      document.getElementById('addAwardBtn').addEventListener('click', function () {
+        const list = document.getElementById('editAwardsList');
+        const row = document.createElement('div');
+        row.className = 'award-row';
+        row.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+        list.appendChild(row);
+        row.querySelector('.remove-award').addEventListener('click', function () {
+          row.remove();
+        });
+      });
+
       document.getElementById('editForm').addEventListener('submit', function (e) {
         e.preventDefault();
         if (!project) return;
         const bgHex = document.getElementById('editBackgroundColorHex').value.trim();
         const bgColor = document.getElementById('editBackgroundColor').value;
+        const awards = collectAwards();
         const edited = {
           id: project.id,
           title: document.getElementById('editTitle').value.trim(),
+          shortTitle: document.getElementById('editShortTitle').value.trim() || undefined,
           type: document.getElementById('editType').value.trim(),
           year: document.getElementById('editYear').value.trim(),
           description: project.description || '',
           images: project.images || [],
           contentBlocks: contentBlocks.slice(),
           backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined,
-          cover: document.getElementById('editCover').value.trim() || undefined
+          cover: document.getElementById('editCover').value.trim() || undefined,
+          awards: awards.length > 0 ? awards : undefined,
+          credits: document.getElementById('editCredits').value.trim() || undefined
         };
         setEditedProject(project.id, edited);
         document.getElementById('loadStatus').textContent = 'Изменения сохранены в черновик. Перейдите в список проектов и нажмите «Сохранить в GitHub».';
@@ -302,9 +362,12 @@ const base = import.meta.env.BASE_URL;
           }
 
           document.getElementById('editTitle').value = project.title || '';
+          document.getElementById('editShortTitle').value = project.shortTitle || '';
           document.getElementById('editType').value = project.type || '';
           document.getElementById('editYear').value = project.year || '';
           document.getElementById('editCover').value = project.cover || '';
+          renderAwards(project.awards && project.awards.length ? project.awards : []);
+          document.getElementById('editCredits').value = project.credits || '';
           const bg = (project.backgroundColor || '').trim();
           if (bg && /^#[0-9A-Fa-f]{6}$/.test(bg)) {
             document.getElementById('editBackgroundColor').value = bg.slice(1);

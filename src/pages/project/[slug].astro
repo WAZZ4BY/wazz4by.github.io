@@ -18,6 +18,10 @@ interface Props {
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const blocks = getContentBlocks(project);
+const firstImageOrVideoIndex = blocks.findIndex((b) => b.type === 'image' || b.type === 'video');
+const metaInsertIndex = firstImageOrVideoIndex >= 0 ? firstImageOrVideoIndex + 1 : 0;
+const typeWords = (project.type || '—').split(',').map((s) => s.trim()).filter(Boolean);
+const creditsHtml = project.credits?.trim() ? project.credits.trim().replace(/\n/g, '<br>') : '';
 const bgColor = project.backgroundColor || '#FBFBFB';
 const bgNorm = (bgColor || '').replace(/^#/, '').toLowerCase();
 const isDarkBg = bgNorm === '000' || bgNorm === '000000';
@@ -31,15 +35,40 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
         <InnerPageHeader activePage="project" />
         <a href={`${base}admin/edit/?id=${encodeURIComponent(project.id)}`} class="project-page__edit">Редактировать</a>
         <h1 class="project-title">{project.title}</h1>
-        <div class="project-meta">
-          <span class="project-meta__label">Type</span>
-          <span class="project-meta__value">{project.type || '—'}</span>
-          <span class="project-meta__label">Year</span>
-          <span class="project-meta__value">{project.year || '—'}</span>
-        </div>
-        <hr class="project-title-line" aria-hidden="true" />
         <div class="project-page__content">
-          {blocks.map((block) => {
+          {blocks.map((block, index) => {
+            if (index === metaInsertIndex) {
+              return (
+                <>
+                  <div class="content-block content-block--meta">
+                    <span class="project-meta__label">Type</span>
+                    <div class="project-meta__value-list">
+                      {typeWords.length ? typeWords.map((word) => <span class="project-meta__value-line">{word}</span>) : <span class="project-meta__value-line">—</span>}
+                    </div>
+                    <span class="project-meta__label project-meta__label--year">Year</span>
+                    <div class="project-meta__value-list project-meta__value-list--year">
+                      <span class="project-meta__value-line">{project.year || '—'}</span>
+                    </div>
+                  </div>
+                  {block.type === 'image' ? (
+                    <div class="content-block content-block--image">
+                      <img src={block.src} alt={project.title} loading="lazy" />
+                    </div>
+                  ) : block.type === 'text' ? (
+                    <div class="content-block content-block--text" set:html={block.content}></div>
+                  ) : block.type === 'split' ? (
+                    <div class="content-block content-block--split">
+                      <img src={block.left} alt={project.title} loading="lazy" />
+                      <img src={block.right} alt={project.title} loading="lazy" />
+                    </div>
+                  ) : block.type === 'video' ? (
+                    <div class="content-block content-block--video">
+                      <div class="video-wrap" set:html={block.embed} />
+                    </div>
+                  ) : null}
+                </>
+              );
+            }
             if (block.type === 'image') {
               return (
                 <div class="content-block content-block--image">
@@ -69,10 +98,24 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
             }
             return null;
           })}
+          {project.awards && project.awards.length > 0 && (
+            <div class="content-block content-block--awards">
+              <span class="project-meta__label">Awards</span>
+              {project.awards.map((a, i) => (
+                <>
+                  <span class="project-awards__place" style={`grid-column: 2; grid-row: ${i + 1};`}>{a.place}</span>
+                  <span class="project-awards__festival" style={`grid-column: 3; grid-row: ${i + 1};`}>{a.festival}</span>
+                </>
+              ))}
+            </div>
+          )}
+          {creditsHtml && (
+            <div class="content-block content-block--credits" set:html={creditsHtml} />
+          )}
         </div>
         <div class="index-footer__schk"><a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">SCHK</a></div>
         <p class="index-footer__text">The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.</p>
-        <div class="index-footer__name">Vasily Aleev</div>
+        <div class="index-footer__name">Vasilii Aleev</div>
         <div class="index-footer__links"><a href="https://www.instagram.com/wazz4by" target="_blank" rel="noopener noreferrer">Ig</a><br/><a href="https://t.me/waz4by" target="_blank" rel="noopener noreferrer">Tg</a><br/><a href="https://www.behance.net/wazz4by/" target="_blank" rel="noopener noreferrer">Be</a></div>
       </div>
     </main>
@@ -100,7 +143,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     flex: 1;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr auto;
     gap: 0 var(--grid-gutter);
     max-width: 100%;
     min-height: 0;
@@ -137,48 +180,9 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     line-height: 1;
   }
 
-  .project-meta {
-    grid-column: 7 / 9;
-    grid-row: 3;
-    align-self: start;
-    margin-top: 290px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.25em var(--grid-gutter);
-    align-items: baseline;
-  }
-
-  /* Колонка 7: подписи как в заголовке списка проектов (12px) */
-  .project-meta__label {
-    grid-column: 1;
-    font-family: 'SuisseIntl', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: black;
-  }
-
-  /* Колонка 8: значения как в списке проектов (28px) */
-  .project-meta__value {
-    grid-column: 2;
-    font-family: 'SuisseIntl', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1;
-    color: black;
-  }
-
-  .project-title-line {
-    grid-column: 1 / -1;
-    grid-row: 4;
-    margin: 50px 0;
-    border: none;
-    border-bottom: 3pt solid black;
-    opacity: 0.3;
-  }
-
   .project-page__content {
     grid-column: 1 / -1;
-    grid-row: 5;
+    grid-row: 4;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 0 var(--grid-gutter);
@@ -187,6 +191,112 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
 
   .content-block {
     min-width: 0;
+  }
+
+  /* Type/Year слева от первого текстового блока (или после первой картинки) */
+  .content-block--meta {
+    grid-column: 1 / 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0 var(--grid-gutter);
+    align-content: start;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  .content-block--meta .project-meta__label {
+    grid-column: 1;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: black;
+  }
+
+  .content-block--meta .project-meta__value-list {
+    grid-column: 2 / 4;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: black;
+  }
+
+  .content-block--meta .project-meta__value-line {
+    display: block;
+  }
+
+  .content-block--meta .project-meta__label--year {
+    margin-top: 10px;
+  }
+
+  .content-block--meta .project-meta__value-list--year {
+    margin-top: 10px;
+  }
+
+  /* Awards: колонки 1–6 */
+  .content-block--awards {
+    grid-column: 1 / 7;
+    display: grid;
+    grid-template-columns: auto minmax(5em, 120px) minmax(12em, 1fr);
+    gap: 10px var(--grid-gutter);
+    align-items: start;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  .content-block--awards .project-meta__label {
+    grid-column: 1;
+    grid-row: 1;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: black;
+  }
+
+  .project-awards__place {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: black;
+    white-space: nowrap;
+  }
+
+  .project-awards__festival {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: black;
+    min-width: 0;
+    word-wrap: break-word;
+  }
+
+  /* Credits: колонки 7–12, переносы строк из админки отображаются как <br> */
+  .content-block--credits {
+    grid-column: 7 / 13;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+    line-height: 1.2;
+  }
+
+  .content-block--credits :global(p),
+  .content-block--credits :global(br) {
+    line-height: 1.2;
+  }
+
+  .content-block--credits :global(p) {
+    margin: 0 0 0.5em;
+  }
+
+  .content-block--credits :global(p:last-child) {
+    margin-bottom: 0;
   }
 
   .content-block--image {
@@ -287,7 +397,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   /* Футер: колонка 1 — SCHK, 7–11 — текст, 11 — имя, 12 — ссылки */
   :global(body.page-project .project-page__grid .index-footer__schk) {
     grid-column: 1;
-    grid-row: 6;
+    grid-row: 5;
     margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
@@ -303,7 +413,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
   :global(body.page-project .project-page__grid .index-footer__text) {
     grid-column: 7 / 11;
-    grid-row: 6;
+    grid-row: 5;
     margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
@@ -315,7 +425,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
   :global(body.page-project .project-page__grid .index-footer__name) {
     grid-column: 11;
-    grid-row: 6;
+    grid-row: 5;
     margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
@@ -326,7 +436,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
   :global(body.page-project .project-page__grid .index-footer__links) {
     grid-column: 12;
-    grid-row: 6;
+    grid-row: 5;
     margin-top: 50px;
     margin-bottom: 30px;
     font-family: 'SuisseIntl', sans-serif;
@@ -337,17 +447,9 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     line-height: 1;
   }
 
-  /* Если фон чёрный — текст и линия белые */
-  :global(body.page-project--dark .project-page__grid .project-title),
-  :global(body.page-project--dark .project-page__grid .project-meta__label),
-  :global(body.page-project--dark .project-page__grid .project-meta__value),
-  :global(body.page-project--dark .project-page__grid .project-title-line) {
+  /* Если фон чёрный — текст белый */
+  :global(body.page-project--dark .project-page__grid .project-title) {
     color: white;
-    border-color: white;
-  }
-  :global(body.page-project--dark .project-page__grid .project-title-line) {
-    border-bottom-color: white;
-    opacity: 0.5;
   }
   :global(body.page-project--dark .project-page__grid .project-page__edit) {
     color: rgba(255, 255, 255, 0.7);
@@ -356,6 +458,19 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     color: white;
   }
   :global(body.page-project--dark .project-page__grid .content-block--text) {
+    color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .content-block--meta .project-meta__label),
+  :global(body.page-project--dark .project-page__grid .content-block--meta .project-meta__value-list),
+  :global(body.page-project--dark .project-page__grid .content-block--meta .project-meta__value-line) {
+    color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .content-block--awards .project-meta__label),
+  :global(body.page-project--dark .project-page__grid .content-block--awards .project-awards__place),
+  :global(body.page-project--dark .project-page__grid .content-block--awards .project-awards__festival) {
+    color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .content-block--credits) {
     color: white;
   }
   :global(body.page-project--dark .project-page__grid .index-footer__schk),
@@ -374,8 +489,12 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
       font-size: 2.5rem;
       letter-spacing: -0.02em;
     }
-    .project-meta {
-      margin-top: 2rem;
+    .content-block--meta,
+    .content-block--awards {
+      grid-column: 1 / -1;
+    }
+    .content-block--credits {
+      grid-column: 1 / -1;
     }
   }
 </style>

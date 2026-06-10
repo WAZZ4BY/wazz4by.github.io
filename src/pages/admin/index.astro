@@ -16,14 +16,55 @@ const base = import.meta.env.BASE_URL;
     <div id="app" style="display:none;">
       <h1>Управление проектами</h1>
       <p id="loadStatus" class="status">Загрузка…</p>
+      <div id="adminNav" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0 1rem;">
+        <button type="button" class="secondary admin-nav-btn" data-pane="projectsPane">Проекты</button>
+        <button type="button" class="secondary admin-nav-btn" data-pane="homeCardsPane">Главная: Media Cards</button>
+        <button type="button" class="secondary admin-nav-btn" data-pane="researchCardsPane">Research</button>
+        <button type="button" class="secondary admin-nav-btn" data-pane="githubPane">GitHub</button>
+        <button type="button" class="secondary admin-nav-btn" data-pane="backupPane">Резервная копия</button>
+      </div>
 
-      <section class="admin-section">
+      <section class="admin-section admin-pane" id="projectsPane">
         <h2>Список проектов</h2>
         <ul class="project-list" id="projectList"></ul>
         <p class="mb-2"><a href={`${base}admin/add/`}>+ Добавить проект</a></p>
       </section>
 
-      <section class="admin-section">
+      <section class="admin-section admin-pane" id="homeCardsPane">
+        <h2>Фото на главной (Media Cards)</h2>
+        <p class="admin-hint">Управление карточками на главной странице. Можно загружать фото в репозиторий (папка <code>public/images/main</code>) и сразу подставлять путь в карточку. Для режима <code>vimeo</code> вставляйте iframe/embed или ссылку Vimeo, для <code>kinescope</code> — iframe/embed или ссылку Kinescope.</p>
+        <p id="homeMediaCardsLoadStatus" class="status">Загрузка…</p>
+        <div id="homeMediaCardsEditor"></div>
+        <div style="margin-top:1rem;">
+          <button type="button" id="addHomeMediaCardBtn" class="secondary">+ Добавить карточку</button>
+          <button type="button" id="saveHomeMediaCardsToGitHubBtn" class="primary" style="margin-left:0.5rem;">Сохранить карточки в GitHub</button>
+          <button type="button" id="downloadHomeMediaCardsBtn" class="secondary" style="margin-left:0.5rem;">Скачать home-media-cards.json</button>
+        </div>
+        <p id="homeMediaCardsGhStatus" class="status"></p>
+      </section>
+
+      <section class="admin-section admin-section--wide admin-pane" id="researchCardsPane">
+        <h2>Карточки Research</h2>
+        <p class="admin-hint">Квадратные контейнеры на вкладке Research. Для режима <code>image</code> можно загружать только <code>jpg</code>, <code>png</code> и <code>gif</code>. Для режима <code>kinescope</code> вставляйте ссылку или iframe embed. Карточки сортируются по номеру: больший номер выше.</p>
+        <p id="researchCardsLoadStatus" class="status">Загрузка…</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
+          <button type="button" id="addResearchCardBtn" class="secondary">+ Добавить карточку</button>
+          <button type="button" id="researchViewListBtn" class="primary">Список</button>
+          <button type="button" id="researchViewGridBtn" class="secondary">Сетка 5</button>
+          <button type="button" id="researchViewPreviewBtn" class="secondary">Мини-превью</button>
+          <label for="researchCardScaleRange" style="margin:0 0 0 0.5rem;font-weight:500;">Масштаб карточек</label>
+          <input type="range" id="researchCardScaleRange" min="70" max="140" step="5" value="100" style="width:170px;margin:0;" />
+          <span id="researchCardScaleValue" style="min-width:3ch;">100%</span>
+        </div>
+        <div id="researchCardsEditor"></div>
+        <div style="margin-top:1rem;">
+          <button type="button" id="saveResearchCardsToGitHubBtn" class="primary">Сохранить карточки в GitHub</button>
+          <button type="button" id="downloadResearchCardsBtn" class="secondary" style="margin-left:0.5rem;">Скачать research-cards.json</button>
+        </div>
+        <p id="researchCardsGhStatus" class="status"></p>
+      </section>
+
+      <section class="admin-section admin-pane" id="githubPane">
         <h2>Сохранение в GitHub</h2>
         <p>Чтобы изменения автоматически попадали в репозиторий, укажите репозиторий и токен. После нажатия «Сохранить в GitHub» файл <code>public/data/projects.json</code> будет закоммичен в ветку <code>main</code>; деплой выполнит GitHub Actions.</p>
         <label>Репозиторий (owner/repo)</label>
@@ -34,7 +75,7 @@ const base = import.meta.env.BASE_URL;
         <p id="ghStatus" class="status"></p>
       </section>
 
-      <section class="admin-section">
+      <section class="admin-section admin-pane" id="backupPane">
         <h2>Резервная копия</h2>
         <p>Скачайте <code>projects.json</code> и при необходимости замените им файл в репозитории вручную.</p>
         <button type="button" id="downloadBtn" class="secondary">Скачать projects.json</button>
@@ -81,13 +122,63 @@ const base = import.meta.env.BASE_URL;
       });
 
       document.querySelector('.admin-page__back')?.addEventListener('click', function(){});
+      const ADMIN_PANES = ['projectsPane', 'homeCardsPane', 'researchCardsPane', 'githubPane', 'backupPane'];
+      let adminNavInitialized = false;
+
+      function setActivePane(paneId) {
+        const target = ADMIN_PANES.includes(paneId) ? paneId : 'projectsPane';
+        ADMIN_PANES.forEach(function (id) {
+          const pane = document.getElementById(id);
+          if (pane) pane.style.display = id === target ? 'block' : 'none';
+        });
+        document.querySelectorAll('.admin-nav-btn').forEach(function (btn) {
+          const isActive = btn.getAttribute('data-pane') === target;
+          btn.className = isActive ? 'primary admin-nav-btn' : 'secondary admin-nav-btn';
+        });
+      }
+
+      function initAdminNav() {
+        if (adminNavInitialized) return;
+        adminNavInitialized = true;
+        document.querySelectorAll('.admin-nav-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            setActivePane(this.getAttribute('data-pane') || 'projectsPane');
+          });
+        });
+      }
 
       let projects = [];
+      let homeMediaCards = [];
+      let researchCards = [];
+      let researchCardsView = 'list';
+      let researchCardsScale = 100;
+      let draggedResearchIndex = null;
+
+      const HOME_MEDIA_RATIOS = [
+        'aspect-16-9',
+        'aspect-4-5',
+        'aspect-3-4',
+        'aspect-1-1',
+        'aspect-original',
+        'aspect-free'
+      ];
 
       function dataUrl() {
         const path = window.location.pathname;
         const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
         return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/projects.json';
+      }
+
+      function dataUrlHomeMediaCards() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/home-media-cards.json';
+      }
+
+      function dataUrlResearchCards() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/research-cards.json';
       }
 
       async function loadProjects() {
@@ -162,6 +253,646 @@ const base = import.meta.env.BASE_URL;
         } catch (_) {}
       }
 
+      function normalizeHomeMediaCard(card) {
+        const c = card || {};
+        const ratio = HOME_MEDIA_RATIOS.includes(c.ratio) ? c.ratio : 'aspect-16-9';
+        return {
+          href: typeof c.href === 'string' ? c.href : '/index/',
+          src: typeof c.src === 'string' ? c.src : '',
+          alt: typeof c.alt === 'string' ? c.alt : '',
+          ratio: ratio,
+          as: c.as === 'video' || c.as === 'vimeo' || c.as === 'kinescope' ? c.as : 'image',
+          size: c.size === 'wide' ? 'wide' : 'normal',
+          edge: c.edge === 'left' || c.edge === 'right' ? c.edge : 'auto'
+        };
+      }
+
+      function normalizeResearchCard(card, fallbackNumber) {
+        const c = card || {};
+        const parsedNumber = Number(c.number);
+        const rawDate = typeof c.date === 'string' ? c.date : '';
+        const m = rawDate.trim().match(/^(\d{1,2})[.\-/](\d{4})$/);
+        const normalizedDate = m ? String(m[1]).padStart(2, '0') + '.' + m[2] : '';
+        return {
+          number: Number.isFinite(parsedNumber) ? Math.max(0, Math.round(parsedNumber)) : fallbackNumber,
+          src: typeof c.src === 'string' ? c.src : '',
+          alt: typeof c.alt === 'string' ? c.alt : '',
+          as: c.as === 'kinescope' ? 'kinescope' : 'image',
+          caption: typeof c.caption === 'string' ? c.caption : '',
+          date: normalizedDate
+        };
+      }
+
+      function sortResearchCards() {
+        researchCards.sort(function (a, b) {
+          return Number(b.number || 0) - Number(a.number || 0);
+        });
+      }
+
+      function reindexResearchCards() {
+        const total = researchCards.length;
+        researchCards.forEach(function (card, index) {
+          card.number = total - index;
+        });
+      }
+
+      function moveResearchCard(fromIndex, toIndex) {
+        if (!Number.isFinite(fromIndex) || !Number.isFinite(toIndex)) return;
+        if (fromIndex < 0 || toIndex < 0) return;
+        if (fromIndex >= researchCards.length || toIndex >= researchCards.length) return;
+        if (fromIndex === toIndex) return;
+        const moved = researchCards.splice(fromIndex, 1)[0];
+        researchCards.splice(toIndex, 0, moved);
+        reindexResearchCards();
+        renderResearchCardsEditor();
+        const status = document.getElementById('researchCardsLoadStatus');
+        if (status) status.textContent = 'Порядок обновлён. Карточек: ' + researchCards.length;
+      }
+
+      function syncResearchViewButtons() {
+        const listBtn = document.getElementById('researchViewListBtn');
+        const gridBtn = document.getElementById('researchViewGridBtn');
+        const previewBtn = document.getElementById('researchViewPreviewBtn');
+        if (listBtn) listBtn.className = researchCardsView === 'list' ? 'primary' : 'secondary';
+        if (gridBtn) gridBtn.className = researchCardsView === 'grid' ? 'primary' : 'secondary';
+        if (previewBtn) previewBtn.className = researchCardsView === 'preview' ? 'primary' : 'secondary';
+      }
+
+      function syncResearchScaleUi() {
+        const range = document.getElementById('researchCardScaleRange');
+        const label = document.getElementById('researchCardScaleValue');
+        if (range) range.value = String(researchCardsScale);
+        if (label) label.textContent = String(researchCardsScale) + '%';
+      }
+
+      async function loadHomeMediaCards() {
+        const status = document.getElementById('homeMediaCardsLoadStatus');
+        try {
+          const res = await fetch(dataUrlHomeMediaCards(), { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.statusText);
+          const data = await res.json();
+          const arr = Array.isArray(data) ? data : data.cards;
+          homeMediaCards = Array.isArray(arr) ? arr.slice(0, 30).map(normalizeHomeMediaCard) : [];
+          status.textContent = 'Загружено карточек: ' + homeMediaCards.length;
+          status.className = 'status ok';
+          renderHomeMediaCardsEditor();
+          return homeMediaCards;
+        } catch (e) {
+          homeMediaCards = [];
+          status.textContent = 'Файл не найден или пустой. Добавьте карточки.';
+          status.className = 'status';
+          renderHomeMediaCardsEditor();
+          return homeMediaCards;
+        }
+      }
+
+      async function loadResearchCards() {
+        const status = document.getElementById('researchCardsLoadStatus');
+        try {
+          const res = await fetch(dataUrlResearchCards(), { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.statusText);
+          const data = await res.json();
+          const arr = Array.isArray(data) ? data : data.cards;
+          researchCards = Array.isArray(arr)
+            ? arr.slice(0, 100).map(function (card, i) { return normalizeResearchCard(card, i + 1); })
+            : [];
+          sortResearchCards();
+          status.textContent = 'Загружено карточек: ' + researchCards.length;
+          status.className = 'status ok';
+          renderResearchCardsEditor();
+          return researchCards;
+        } catch (e) {
+          researchCards = [];
+          status.textContent = 'Файл не найден или пустой. Добавьте карточки.';
+          status.className = 'status';
+          renderResearchCardsEditor();
+          return researchCards;
+        }
+      }
+
+      function esc(s) {
+        return String(s || '')
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      function extractIframeSrc(raw) {
+        const s = String(raw || '').trim();
+        const m = s.match(/<iframe[\s\S]*?src=["']([^"']+)["']/i);
+        if (m && m[1]) return m[1].trim();
+        return s;
+      }
+
+      function getVimeoEmbedUrl(raw) {
+        const s = extractIframeSrc(raw);
+        if (!s) return '';
+        const direct = s.match(/player\.vimeo\.com\/video\/(\d+)/);
+        if (direct) return s;
+        const page = s.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+        if (page) return 'https://player.vimeo.com/video/' + page[1] + '?background=1&autoplay=1&loop=1&muted=1';
+        return s;
+      }
+
+      function getKinescopeEmbedUrl(raw) {
+        const s = extractIframeSrc(raw);
+        if (!s) return '';
+        if (/kinescope\.(io|ru)\/embed\//.test(s)) return s;
+        const m = s.match(/https?:\/\/(?:kinescope\.(?:io|ru))\/([^/?#]+)/);
+        if (m && m[1]) return 'https://kinescope.io/embed/' + m[1] + '?autoplay=1&muted=1';
+        return s;
+      }
+
+      function renderHomeMediaCardsEditor() {
+        const container = document.getElementById('homeMediaCardsEditor');
+        if (!container) return;
+        container.innerHTML = '';
+
+        function getHomeCardPreviewHtml(card) {
+          const src = (card && typeof card.src === 'string') ? card.src : '';
+          const as = (card && (card.as === 'video' || card.as === 'vimeo' || card.as === 'kinescope')) ? card.as : 'image';
+          if (!src) return '<span style="font-size:12px;color:#666;">Превью появится после заполнения src</span>';
+          if (as === 'vimeo') {
+            return '<iframe src="' + esc(getVimeoEmbedUrl(src)) + '" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:220px;display:block;border:0;"></iframe>';
+          }
+          if (as === 'kinescope') {
+            return '<iframe src="' + esc(getKinescopeEmbedUrl(src)) + '" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:220px;display:block;border:0;"></iframe>';
+          }
+          if (as === 'video') {
+            return '<video src="' + esc(src) + '" muted playsinline preload="metadata" style="width:100%;max-height:220px;display:block;"></video>';
+          }
+          return '<img src="' + esc(src) + '" alt="" style="width:100%;max-height:220px;object-fit:contain;display:block;" />';
+        }
+
+        function updateHomeCardPreview(i) {
+          const preview = container.querySelector('.home-card-preview[data-i="' + i + '"]');
+          if (!preview) return;
+          preview.innerHTML = getHomeCardPreviewHtml(homeMediaCards[i] || {});
+        }
+
+        homeMediaCards.forEach(function (card, i) {
+          const item = normalizeHomeMediaCard(card);
+          const row = document.createElement('div');
+          row.style.cssText = 'margin-bottom:1rem;padding:1rem;border:1px solid #ddd;border-radius:6px;';
+          row.innerHTML =
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">' +
+              '<strong>Карточка ' + (i + 1) + '</strong>' +
+              '<div style="display:flex;gap:0.4rem;align-items:center;">' +
+                '<button type="button" class="secondary move-home-card-up" data-i="' + i + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">↑</button>' +
+                '<button type="button" class="secondary move-home-card-down" data-i="' + i + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">↓</button>' +
+                '<button type="button" class="danger delete-home-card" data-i="' + i + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">Удалить</button>' +
+              '</div>' +
+            '</div>' +
+            '<div style="display:grid;gap:0.5rem;">' +
+              '<label>Источник (src)</label>' +
+              '<input type="text" class="home-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/main/photo.jpg" />' +
+              '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">' +
+                '<button type="button" class="secondary upload-home-card-image" data-i="' + i + '">Загрузить фото в GitHub</button>' +
+                '<input type="file" class="home-card-file" data-i="' + i + '" accept="image/*" style="display:none;" />' +
+              '</div>' +
+              '<label>Ссылка (href)</label>' +
+              '<input type="text" class="home-card-href" data-i="' + i + '" value="' + esc(item.href) + '" placeholder="/index/" />' +
+              '<label>Alt</label>' +
+              '<input type="text" class="home-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание изображения" />' +
+              '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.5rem;">' +
+                '<div><label>Режим</label><select class="home-card-as" data-i="' + i + '"><option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option><option value="video"' + (item.as === 'video' ? ' selected' : '') + '>video-file</option><option value="vimeo"' + (item.as === 'vimeo' ? ' selected' : '') + '>vimeo</option><option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>kinescope</option></select></div>' +
+                '<div><label>Размер в сетке</label><select class="home-card-size" data-i="' + i + '"><option value="normal"' + (item.size === 'normal' ? ' selected' : '') + '>normal</option><option value="wide"' + (item.size === 'wide' ? ' selected' : '') + '>wide</option></select></div>' +
+                '<div><label>Край</label><select class="home-card-edge" data-i="' + i + '"><option value="auto"' + (item.edge === 'auto' ? ' selected' : '') + '>auto</option><option value="left"' + (item.edge === 'left' ? ' selected' : '') + '>left</option><option value="right"' + (item.edge === 'right' ? ' selected' : '') + '>right</option></select></div>' +
+              '</div>' +
+              '<div><label>Пропорция</label><select class="home-card-ratio" data-i="' + i + '">' +
+                HOME_MEDIA_RATIOS.map(function (r) {
+                  return '<option value="' + r + '"' + (item.ratio === r ? ' selected' : '') + '>' + r + '</option>';
+                }).join('') +
+              '</select></div>' +
+              '<div class="home-card-preview" data-i="' + i + '" style="margin-top:0.25rem;border:1px solid #eee;background:#f8f8f8;min-height:80px;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+                getHomeCardPreviewHtml(item) +
+              '</div>' +
+            '</div>';
+          container.appendChild(row);
+        });
+
+        container.querySelectorAll('.home-card-src').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards[i].src = this.value.trim();
+            updateHomeCardPreview(i);
+          });
+        });
+        container.querySelectorAll('.home-card-href').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards[i].href = this.value.trim() || '/index/';
+          });
+        });
+        container.querySelectorAll('.home-card-alt').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards[i].alt = this.value;
+          });
+        });
+        container.querySelectorAll('.home-card-as').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            if (this.value === 'video' || this.value === 'vimeo' || this.value === 'kinescope') {
+              homeMediaCards[i].as = this.value;
+            } else {
+              homeMediaCards[i].as = 'image';
+            }
+            renderHomeMediaCardsEditor();
+          });
+        });
+        container.querySelectorAll('.home-card-size').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards[i].size = this.value === 'wide' ? 'wide' : 'normal';
+          });
+        });
+        container.querySelectorAll('.home-card-ratio').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards[i].ratio = HOME_MEDIA_RATIOS.includes(this.value) ? this.value : 'aspect-16-9';
+          });
+        });
+        container.querySelectorAll('.home-card-edge').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards[i].edge = (this.value === 'left' || this.value === 'right') ? this.value : 'auto';
+          });
+        });
+        container.querySelectorAll('.delete-home-card').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards.splice(i, 1);
+            renderHomeMediaCardsEditor();
+            document.getElementById('homeMediaCardsLoadStatus').textContent = 'Карточек: ' + homeMediaCards.length;
+          });
+        });
+        container.querySelectorAll('.move-home-card-up').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            if (!Number.isFinite(i) || i <= 0) return;
+            const current = homeMediaCards[i];
+            homeMediaCards[i] = homeMediaCards[i - 1];
+            homeMediaCards[i - 1] = current;
+            renderHomeMediaCardsEditor();
+          });
+        });
+        container.querySelectorAll('.move-home-card-down').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            if (!Number.isFinite(i) || i >= homeMediaCards.length - 1) return;
+            const current = homeMediaCards[i];
+            homeMediaCards[i] = homeMediaCards[i + 1];
+            homeMediaCards[i + 1] = current;
+            renderHomeMediaCardsEditor();
+          });
+        });
+        container.querySelectorAll('.upload-home-card-image').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = this.getAttribute('data-i');
+            const input = container.querySelector('.home-card-file[data-i="' + i + '"]');
+            if (input) input.click();
+          });
+        });
+        container.querySelectorAll('.home-card-file').forEach(function (inp) {
+          inp.addEventListener('change', async function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('homeMediaCardsGhStatus');
+            if (!/^image\//.test(file.type)) {
+              statusEl.textContent = 'Можно загружать только фото (image/*).';
+              statusEl.className = 'status err';
+              this.value = '';
+              return;
+            }
+            try {
+              statusEl.textContent = 'Загрузка фото в GitHub…';
+              statusEl.className = 'status';
+              const uploadedPath = await uploadFileToGitHub(file, 'public/images/main', 'Upload home media image from admin');
+              homeMediaCards[i].src = uploadedPath;
+              homeMediaCards[i].as = 'image';
+              statusEl.textContent = 'Фото загружено: ' + uploadedPath;
+              statusEl.className = 'status ok';
+              renderHomeMediaCardsEditor();
+            } catch (e) {
+              statusEl.textContent = 'Ошибка загрузки: ' + e.message;
+              statusEl.className = 'status err';
+            } finally {
+              this.value = '';
+            }
+          });
+        });
+      }
+
+      function renderResearchCardsEditor() {
+        const container = document.getElementById('researchCardsEditor');
+        if (!container) return;
+        container.innerHTML = '';
+        syncResearchViewButtons();
+        syncResearchScaleUi();
+
+        const listMode = researchCardsView === 'list';
+        const previewMode = researchCardsView === 'preview';
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = listMode
+          ? 'display:block;'
+          : (previewMode
+            ? 'display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.5rem;align-items:start;'
+            : 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0.75rem;align-items:start;');
+        container.appendChild(wrapper);
+
+        function getResearchCardPreviewHtml(card) {
+          const item = normalizeResearchCard(card, 0);
+          if (!item.src) return '<span style="font-size:12px;color:#666;">Превью появится после заполнения src</span>';
+          if (item.as === 'kinescope') {
+            return '<iframe src="' + esc(getKinescopeEmbedUrl(item.src)) + '" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:220px;display:block;border:0;"></iframe>';
+          }
+          return '<img src="' + esc(item.src) + '" alt="" style="width:100%;max-height:220px;object-fit:contain;display:block;" />';
+        }
+
+        function updateResearchCardPreview(i) {
+          const preview = container.querySelector('.research-card-preview[data-i="' + i + '"]');
+          if (!preview) return;
+          preview.innerHTML = getResearchCardPreviewHtml(researchCards[i] || {});
+        }
+
+        researchCards.forEach(function (card, i) {
+          const item = normalizeResearchCard(card, i + 1);
+          const row = document.createElement('div');
+          row.style.cssText = listMode
+            ? 'margin-bottom:1rem;padding:1rem;border:1px solid #ddd;border-radius:6px;'
+            : (previewMode
+              ? 'padding:0.35rem;border:1px solid #ddd;border-radius:6px;background:#fff;'
+              : 'padding:0.75rem;border:1px solid #ddd;border-radius:6px;background:#fff;zoom:' + researchCardsScale + '%;');
+          row.setAttribute('draggable', 'true');
+          row.setAttribute('data-i', String(i));
+          if (previewMode) {
+            row.innerHTML =
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.4rem;">' +
+                '<strong style="font-size:0.8rem;">#' + esc(item.number) + '</strong>' +
+                '<span title="Перетащите для смены порядка" style="font-size:0.8rem;color:#666;cursor:grab;">↕</span>' +
+              '</div>' +
+              '<div class="research-card-preview" data-i="' + i + '" style="border:1px solid #eee;background:#f8f8f8;aspect-ratio:1/1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+                getResearchCardPreviewHtml(item) +
+              '</div>';
+          } else {
+            row.innerHTML =
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">' +
+              '<strong>Карточка #' + esc(item.number) + '</strong>' +
+              '<div style="display:flex;gap:0.4rem;align-items:center;">' +
+                '<span title="Перетащите для смены порядка" style="font-size:0.85rem;color:#666;cursor:grab;">↕</span>' +
+                '<button type="button" class="danger delete-research-card" data-i="' + i + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">Удалить</button>' +
+              '</div>' +
+            '</div>' +
+            '<div style="display:grid;gap:0.5rem;">' +
+              '<label>Номер (сортировка по убыванию)</label>' +
+              '<input type="number" class="research-card-number" data-i="' + i + '" min="0" step="1" value="' + esc(item.number) + '" />' +
+              '<label>Режим</label>' +
+              '<select class="research-card-as" data-i="' + i + '">' +
+                '<option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option>' +
+                '<option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>kinescope</option>' +
+              '</select>' +
+              '<label>Источник (src)</label>' +
+              '<input type="text" class="research-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/research/photo.jpg или ссылка/iframe Kinescope" />' +
+              '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">' +
+                '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '">Загрузить JPG/PNG/GIF в GitHub</button>' +
+                '<input type="file" class="research-card-file" data-i="' + i + '" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif" style="display:none;" />' +
+              '</div>' +
+              '<label>Alt</label>' +
+              '<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание изображения" />' +
+              '<label>Подпись (caption)</label>' +
+              '<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="Подпись в полноэкранном просмотре" />' +
+              '<label>Дата (MM.YYYY)</label>' +
+              '<input type="text" class="research-card-date" data-i="' + i + '" value="' + esc(item.date || '') + '" placeholder="06.2026" />' +
+              '<div class="research-card-preview" data-i="' + i + '" style="margin-top:0.25rem;border:1px solid #eee;background:#f8f8f8;' + (listMode ? 'min-height:120px;' : 'aspect-ratio:1/1;min-height:0;') + 'display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+                getResearchCardPreviewHtml(item) +
+              '</div>' +
+            '</div>';
+          }
+          wrapper.appendChild(row);
+
+          row.addEventListener('dragstart', function (e) {
+            draggedResearchIndex = i;
+            row.style.opacity = '0.6';
+            if (e.dataTransfer) {
+              e.dataTransfer.effectAllowed = 'move';
+              e.dataTransfer.setData('text/plain', String(i));
+            }
+          });
+          row.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            row.style.outline = '2px dashed #999';
+          });
+          row.addEventListener('dragleave', function () {
+            row.style.outline = '';
+          });
+          row.addEventListener('drop', function (e) {
+            e.preventDefault();
+            row.style.outline = '';
+            const from = Number.isFinite(draggedResearchIndex)
+              ? draggedResearchIndex
+              : parseInt(e.dataTransfer?.getData('text/plain') || '', 10);
+            const to = i;
+            moveResearchCard(from, to);
+          });
+          row.addEventListener('dragend', function () {
+            draggedResearchIndex = null;
+            row.style.outline = '';
+            row.style.opacity = '';
+          });
+        });
+
+        container.querySelectorAll('.research-card-number').forEach(function (inp) {
+          inp.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const value = Number(this.value);
+            researchCards[i].number = Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
+            sortResearchCards();
+            renderResearchCardsEditor();
+          });
+        });
+        container.querySelectorAll('.research-card-as').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards[i].as = this.value === 'kinescope' ? 'kinescope' : 'image';
+            updateResearchCardPreview(i);
+          });
+        });
+        container.querySelectorAll('.research-card-src').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards[i].src = this.value.trim();
+            updateResearchCardPreview(i);
+          });
+        });
+        container.querySelectorAll('.research-card-alt').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards[i].alt = this.value;
+          });
+        });
+        container.querySelectorAll('.research-card-caption').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards[i].caption = this.value;
+          });
+        });
+        container.querySelectorAll('.research-card-date').forEach(function (inp) {
+          inp.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const v = (this.value || '').trim();
+            const m = v.match(/^(\d{1,2})[.\-/](\d{4})$/);
+            researchCards[i].date = m ? String(m[1]).padStart(2, '0') + '.' + m[2] : '';
+            this.value = researchCards[i].date || '';
+          });
+        });
+        container.querySelectorAll('.delete-research-card').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards.splice(i, 1);
+            sortResearchCards();
+            renderResearchCardsEditor();
+            document.getElementById('researchCardsLoadStatus').textContent = 'Карточек: ' + researchCards.length;
+          });
+        });
+        container.querySelectorAll('.upload-research-card-image').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = this.getAttribute('data-i');
+            const input = container.querySelector('.research-card-file[data-i="' + i + '"]');
+            if (input) input.click();
+          });
+        });
+        container.querySelectorAll('.research-card-file').forEach(function (inp) {
+          inp.addEventListener('change', async function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('researchCardsGhStatus');
+            if (researchCards[i].as === 'kinescope') {
+              statusEl.textContent = 'Для режима kinescope вставьте ссылку или iframe в поле src.';
+              statusEl.className = 'status';
+              this.value = '';
+              return;
+            }
+            const lowerName = (file.name || '').toLowerCase();
+            const allowedByMime = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
+            const allowedByExt = /\.(jpe?g|png|gif)$/.test(lowerName);
+            if (!allowedByMime && !allowedByExt) {
+              statusEl.textContent = 'Можно загружать только JPG, PNG или GIF.';
+              statusEl.className = 'status err';
+              this.value = '';
+              return;
+            }
+            try {
+              statusEl.textContent = 'Загрузка картинки в GitHub…';
+              statusEl.className = 'status';
+              const uploadedPath = await uploadFileToGitHub(file, 'public/images/research', 'Upload research image from admin');
+              researchCards[i].src = uploadedPath;
+              researchCards[i].as = 'image';
+              statusEl.textContent = 'Картинка загружена: ' + uploadedPath;
+              statusEl.className = 'status ok';
+              renderResearchCardsEditor();
+            } catch (e) {
+              statusEl.textContent = 'Ошибка загрузки: ' + e.message;
+              statusEl.className = 'status err';
+            } finally {
+              this.value = '';
+            }
+          });
+        });
+      }
+
+      function parseRepoAndToken(statusEl) {
+        const repoInput = document.getElementById('ghRepo');
+        const tokenInput = document.getElementById('ghToken');
+        const repo = (repoInput?.value || '').trim();
+        const token = (tokenInput?.value || '').trim();
+        if (!repo || !token) {
+          statusEl.textContent = 'Укажите репозиторий и токен выше.';
+          statusEl.className = 'status err';
+          return null;
+        }
+        const parts = repo.split('/').filter(Boolean);
+        if (parts.length !== 2) {
+          statusEl.textContent = 'Репозиторий в формате owner/repo';
+          statusEl.className = 'status err';
+          return null;
+        }
+        return { owner: parts[0], repoName: parts[1], token: token, repo: repo };
+      }
+
+      function sanitizeFileName(name) {
+        const safe = String(name || 'image')
+          .toLowerCase()
+          .replace(/[^a-z0-9._-]+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        return safe || 'image';
+      }
+
+      async function fileToBase64(file) {
+        const buffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        const chunk = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunk) {
+          const part = bytes.subarray(i, i + chunk);
+          binary += String.fromCharCode.apply(null, part);
+        }
+        return btoa(binary);
+      }
+
+      async function uploadFileToGitHub(file, targetDir, commitMessage) {
+        const statusEl = document.getElementById('homeMediaCardsGhStatus');
+        const gh = parseRepoAndToken(statusEl);
+        if (!gh) throw new Error('Нет данных GitHub');
+
+        sessionStorage.setItem(REPO_KEY, gh.repo);
+
+        const fileName = Date.now() + '-' + sanitizeFileName(file.name);
+        const contentPath = targetDir + '/' + fileName;
+        const apiUrl = 'https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + contentPath;
+
+        const getRes = await fetch(apiUrl, {
+          headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + gh.token }
+        });
+        let sha = null;
+        if (getRes.ok) {
+          const data = await getRes.json();
+          sha = data.sha;
+        } else if (getRes.status !== 404) {
+          const err = await getRes.json().catch(() => ({}));
+          throw new Error(err.message || getRes.statusText);
+        }
+
+        const body = {
+          message: commitMessage,
+          content: await fileToBase64(file),
+          branch: 'main'
+        };
+        if (sha) body.sha = sha;
+
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': 'token ' + gh.token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(() => ({}));
+          throw new Error(err.message || putRes.statusText);
+        }
+
+        const publicPath = targetDir.replace(/^public\//, '');
+        return '/' + publicPath + '/' + fileName;
+      }
+
       document.getElementById('saveToGitHubBtn').addEventListener('click', async function () {
         const repoInput = document.getElementById('ghRepo');
         const tokenInput = document.getElementById('ghToken');
@@ -227,8 +958,216 @@ const base = import.meta.env.BASE_URL;
         URL.revokeObjectURL(a.href);
       });
 
+      document.getElementById('addHomeMediaCardBtn').addEventListener('click', function () {
+        homeMediaCards.push({
+          href: '/index/',
+          src: '',
+          alt: '',
+          ratio: 'aspect-16-9',
+          as: 'image',
+          size: 'normal',
+          edge: 'auto'
+        });
+        renderHomeMediaCardsEditor();
+        document.getElementById('homeMediaCardsLoadStatus').textContent = 'Карточек: ' + homeMediaCards.length;
+      });
+
+      document.getElementById('saveHomeMediaCardsToGitHubBtn').addEventListener('click', async function () {
+        const statusEl = document.getElementById('homeMediaCardsGhStatus');
+        const gh = parseRepoAndToken(statusEl);
+        if (!gh) return;
+        statusEl.textContent = 'Отправка…';
+        statusEl.className = 'status';
+        try {
+          sessionStorage.setItem(REPO_KEY, gh.repo);
+          const path = 'public/data/home-media-cards.json';
+          const getRes = await fetch('https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + path, {
+            headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + gh.token }
+          });
+          let sha = null;
+          if (getRes.ok) {
+            const data = await getRes.json();
+            sha = data.sha;
+          } else if (getRes.status !== 404) {
+            const err = await getRes.json().catch(() => ({}));
+            throw new Error(err.message || getRes.statusText);
+          }
+          const payload = homeMediaCards.map(function (card) {
+            const normalized = normalizeHomeMediaCard(card);
+            return {
+              href: normalized.href || '/index/',
+              src: normalized.src || '',
+              alt: normalized.alt || '',
+              ratio: normalized.ratio || 'aspect-16-9',
+              as: normalized.as || 'image',
+              loading: 'lazy',
+              size: normalized.size || 'normal',
+              edge: normalized.edge === 'left' || normalized.edge === 'right' ? normalized.edge : undefined
+            };
+          });
+          const content = JSON.stringify(payload, null, 2);
+          const body = {
+            message: 'Update home-media-cards.json from admin',
+            content: btoa(unescape(encodeURIComponent(content))),
+            branch: 'main'
+          };
+          if (sha) body.sha = sha;
+          const putRes = await fetch('https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + path, {
+            method: 'PUT',
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'Authorization': 'token ' + gh.token,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+          });
+          if (!putRes.ok) {
+            const err = await putRes.json().catch(() => ({}));
+            throw new Error(err.message || putRes.statusText);
+          }
+          statusEl.textContent = 'Карточки сохранены. Деплой запустится по push в main.';
+          statusEl.className = 'status ok';
+        } catch (e) {
+          statusEl.textContent = 'Ошибка: ' + e.message;
+          statusEl.className = 'status err';
+        }
+      });
+
+      document.getElementById('downloadHomeMediaCardsBtn').addEventListener('click', function () {
+        const payload = homeMediaCards.map(function (card) {
+          const normalized = normalizeHomeMediaCard(card);
+          return {
+            href: normalized.href || '/index/',
+            src: normalized.src || '',
+            alt: normalized.alt || '',
+            ratio: normalized.ratio || 'aspect-16-9',
+            as: normalized.as || 'image',
+            loading: 'lazy',
+            size: normalized.size || 'normal',
+            edge: normalized.edge === 'left' || normalized.edge === 'right' ? normalized.edge : undefined
+          };
+        });
+        const json = JSON.stringify(payload, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'home-media-cards.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      document.getElementById('addResearchCardBtn').addEventListener('click', function () {
+        const maxNumber = researchCards.reduce(function (acc, item) {
+          const n = Number(item.number || 0);
+          return Number.isFinite(n) ? Math.max(acc, n) : acc;
+        }, 0);
+        researchCards.push({
+          number: maxNumber + 1,
+          src: '',
+          alt: '',
+          as: 'image',
+          caption: '',
+          date: ''
+        });
+        sortResearchCards();
+        renderResearchCardsEditor();
+        document.getElementById('researchCardsLoadStatus').textContent = 'Карточек: ' + researchCards.length;
+      });
+
+      document.getElementById('saveResearchCardsToGitHubBtn').addEventListener('click', async function () {
+        const statusEl = document.getElementById('researchCardsGhStatus');
+        const gh = parseRepoAndToken(statusEl);
+        if (!gh) return;
+        statusEl.textContent = 'Отправка…';
+        statusEl.className = 'status';
+        try {
+          sessionStorage.setItem(REPO_KEY, gh.repo);
+          const path = 'public/data/research-cards.json';
+          const getRes = await fetch('https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + path, {
+            headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + gh.token }
+          });
+          let sha = null;
+          if (getRes.ok) {
+            const data = await getRes.json();
+            sha = data.sha;
+          } else if (getRes.status !== 404) {
+            const err = await getRes.json().catch(() => ({}));
+            throw new Error(err.message || getRes.statusText);
+          }
+          sortResearchCards();
+          const payload = researchCards
+            .map(function (card, i) { return normalizeResearchCard(card, i + 1); })
+            .filter(function (card) { return Boolean(card.src && card.src.trim()); });
+          const content = JSON.stringify(payload, null, 2);
+          const body = {
+            message: 'Update research-cards.json from admin',
+            content: btoa(unescape(encodeURIComponent(content))),
+            branch: 'main'
+          };
+          if (sha) body.sha = sha;
+          const putRes = await fetch('https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + path, {
+            method: 'PUT',
+            headers: {
+              'Accept': 'application/vnd.github.v3+json',
+              'Authorization': 'token ' + gh.token,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+          });
+          if (!putRes.ok) {
+            const err = await putRes.json().catch(() => ({}));
+            throw new Error(err.message || putRes.statusText);
+          }
+          statusEl.textContent = 'Карточки Research сохранены. Деплой запустится по push в main.';
+          statusEl.className = 'status ok';
+        } catch (e) {
+          statusEl.textContent = 'Ошибка: ' + e.message;
+          statusEl.className = 'status err';
+        }
+      });
+
+      document.getElementById('downloadResearchCardsBtn').addEventListener('click', function () {
+        sortResearchCards();
+        const payload = researchCards
+          .map(function (card, i) { return normalizeResearchCard(card, i + 1); })
+          .filter(function (card) { return Boolean(card.src && card.src.trim()); });
+        const json = JSON.stringify(payload, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'research-cards.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      document.getElementById('researchViewListBtn').addEventListener('click', function () {
+        researchCardsView = 'list';
+        renderResearchCardsEditor();
+      });
+
+      document.getElementById('researchViewGridBtn').addEventListener('click', function () {
+        researchCardsView = 'grid';
+        renderResearchCardsEditor();
+      });
+
+      document.getElementById('researchViewPreviewBtn').addEventListener('click', function () {
+        researchCardsView = 'preview';
+        renderResearchCardsEditor();
+      });
+
+      document.getElementById('researchCardScaleRange').addEventListener('input', function () {
+        const value = Number(this.value);
+        researchCardsScale = Number.isFinite(value) ? Math.max(70, Math.min(140, Math.round(value))) : 100;
+        syncResearchScaleUi();
+        if (researchCardsView === 'grid' || researchCardsView === 'preview') renderResearchCardsEditor();
+      });
+
       function initApp() {
+        initAdminNav();
+        setActivePane('projectsPane');
         loadProjects();
+        loadHomeMediaCards();
+        loadResearchCards();
       }
 
       checkAuth();

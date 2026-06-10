@@ -1,0 +1,117 @@
+[
+  {
+    "href": "/project/snve-pereodical/",
+    "src": "/images/main/1.png",
+    "alt": "SNVE",
+    "ratio": "aspect-original",
+    "as": "image",
+    "loading": "lazy",
+    "size": "wide",
+    "edge": "left"
+  },
+  {
+    "href": "/project/bioart-lab-foundation/",
+    "src": "/images/main/2.gif",
+    "alt": "Bioart",
+    "ratio": "aspect-original",
+    "as": "image",
+    "loading": "lazy",
+    "size": "wide",
+    "edge": "right"
+  },
+  {
+    "href": "/project/de-stul-furniture-brand/",
+    "src": "https://kinescope.io/c8GTVVc8Frm43sRsFK3jCX",
+    "alt": "De Stul",
+    "ratio": "aspect-1-1",
+    "as": "kinescope",
+    "loading": "lazy",
+    "size": "wide",
+    "edge": "right"
+  },
+  {
+    "href": "/project/phenomenon-interior-psychologism/",
+    "src": "/images/main/8.gif",
+    "alt": "The Phenomenon Interior Psychologism",
+    "ratio": "aspect-original",
+    "as": "image",
+    "loading": "lazy",
+    "size": "wide"
+  },
+  {
+    "href": "/project/photoelectric-effect-calendar-2025/",
+    "src": "/images/main/5.png",
+    "alt": "Photoelectric Effect Calendar 2025",
+    "ratio": "aspect-16-9",
+    "as": "image",
+    "loading": "lazy",
+    "size": "normal",
+    "edge": "left"
+  },
+  {
+    "href": "/project/trash-aesthetics-visual-culture-of-waste/",
+    "src": "/images/main/3.png",
+    "alt": "Trash Aesthetics",
+    "ratio": "aspect-3-4",
+    "as": "image",
+    "loading": "lazy",
+    "size": "normal"
+  },
+  {
+    "href": "/project/boop-pet-shampoo-packaging/",
+    "src": "/images/main/10.png",
+    "alt": "Boop",
+    "ratio": "aspect-original",
+    "as": "image",
+    "loading": "lazy",
+    "size": "wide",
+    "edge": "right"
+  },
+  {
+    "href": "/project/chaos-construction-demoscene-fest/",
+    "src": "/images/main/11.png",
+    "alt": "Chaos Construction",
+    "ratio": "aspect-original",
+    "as": "image",
+    "loading": "lazy",
+    "size": "normal",
+    "edge": "left"
+  },
+  {
+    "href": "/project/crypto-anarchist-manifesto/",
+    "src": "/images/main/14.gif",
+    "alt": "The Crypto Anarchist Manifesto",
+    "ratio": "aspect-free",
+    "as": "image",
+    "loading": "lazy",
+    "size": "wide"
+  },
+  {
+    "href": "/project/hoja-sagrada-yerba-mate-tea/",
+    "src": "/images/main/7.png",
+    "alt": "Hoja Sagrada",
+    "ratio": "aspect-1-1",
+    "as": "image",
+    "loading": "lazy",
+    "size": "normal"
+  },
+  {
+    "href": "/project/antre-cheese-appetizers-packaging/",
+    "src": "/images/main/13.png",
+    "alt": "Antre",
+    "ratio": "aspect-original",
+    "as": "image",
+    "loading": "lazy",
+    "size": "normal"
+  },
+  {
+    "href": "/project/w-dotorg-dymshits-partners-rebranding/",
+    "src": "https://kinescope.io/eRTz7oSUbEAJC9AHeJwxz1",
+    "alt": "DNP",
+    "ratio": "aspect-1-1",
+    "as": "kinescope",
+    "loading": "lazy",
+    "size": "wide",
+    "edge": "right"
+  }
+]

@@ -14,7 +14,7 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
   <div class="site-header__container">
     <div class="site-header__grid">
       <div class="site-header__left">
-        <a href={base === '/' ? '/' : base}>Vasily Aleev</a>
+        <a href={base === '/' ? '/' : base}>Vasilii Aleev</a>
       </div>
       <nav class="site-header__center">
       {variant === 'home' ? (
@@ -122,7 +122,7 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
     font-size: 16px;
   }
 
-  /* Home: Vasily Aleev — 16px, 700 */
+  /* Home: Vasilii Aleev — 16px, 700 */
   body.is-home .site-header__left a {
     font-size: 16px;
     font-weight: 700;
@@ -152,10 +152,15 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
     font-style: italic;
     font-weight: 700;
     font-size: 16px;
+    opacity: 1;
+  }
+
+  .site-header__center .nav-link:not(.active):not(.nav-link--home) {
+    opacity: 0.3;
   }
 
   .site-header__center .nav-link:not(.nav-link--home):hover {
-    opacity: 0.6;
+    opacity: 1;
   }
 
 

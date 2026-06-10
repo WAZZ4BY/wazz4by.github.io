@@ -3,24 +3,365 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import InnerPageHeader from '../components/InnerPageHeader.astro';
 ---
 
-<BaseLayout title="Info" variant="inner" hideHeader>
-  <div class="inner-page">
+<BaseLayout title="Info" variant="inner" bodyClass="page-info" hideHeader>
+  <div class="inner-page info-page">
     <div class="inner-page__grid">
       <InnerPageHeader activePage="info" />
-      <main class="inner-page__main me-page">
-        <div class="me-page__wrap">
-          <p class="me-page__intro">My name is Vasya :)</p>
-          <div class="me-page__contact">
-            <div class="me-page__social">
-              <a href="https://www.behance.net" target="_blank" rel="noopener noreferrer">Behance</a><br/>
-              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a><br/>
-              <a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <main class="inner-page__main info">
+        <div class="info-grid">
+          <p class="info-intro">
+            I design in the field of identity, constantly experimenting with form and graphics, and exploring the trashart approach to commerce. I focus on building complex identity systems with an emphasis on digital and physicality.
+          </p>
+
+          <div class="info-split">
+            <div class="info-split__left">
+              <div class="info-pair">
+                <div class="info-pair__label info-pair__label--tight">
+                  Name<br/>Based<br/>Alive
+                </div>
+                <div class="info-pair__value">
+                  Vasilii Aleev<br/>
+                  In Moscow<br/>
+                  Since 2004
+                </div>
+              </div>
+              <div class="info-pair">
+                <div class="info-pair__label">Education<br/>Work</div>
+                <div class="info-pair__value">
+                  HSE A&amp;D School<br/>
+                  Currently designer in ONY Agency, ex-designer in Dotorg. Freelance since `23.
+                </div>
+              </div>
             </div>
-            <div class="me-page__email">wass4lsnow@gmail.com</div>
-            <div class="me-page__handle">@waz4by</div>
+
+            <div class="info-split__right">
+              <p class="info-quote">
+                “The combination of robust classical typography with a clear vision of the path and experimental visualization is a true balance between chaotic trash art and an academic approach.”
+              </p>
+              <div class="info-contacts-line">
+                <div class="info-contacts-handles">
+                  @waz4by<br/>
+                  @wazz4by<br/>
+                  @wazz4by<br/>
+                  wass4lsnow<br/>@gmail.com
+                </div>
+                <div class="info-contacts-short">
+                  <span>Tg</span><br/>
+                  <span>Ig</span><br/>
+                  <span>Be</span><br/>
+                  <span>Mail</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-reward-row">
+            <div class="info-reward-label">Reward</div>
+            <div class="info-reward-years">
+              WBDS `23-24<br/>
+              WBDS `24-25<br/>
+              Pentawards `25<br/>
+              Sreda `25<br/>
+              Sreda `25<br/>
+              WBDS `25-26
+            </div>
+            <div class="info-reward-pairs">
+              <span>Silver <span class="info-reward-project">De Stul</span></span><br/>
+              <span>Gold <span class="info-reward-project">Boop</span></span><br/>
+              <span>Silver <span class="info-reward-project">Boop</span></span><br/>
+              <span>Silver <span class="info-reward-project">Bioart Lab</span></span><br/>
+              <span>Bronze <span class="info-reward-project">Hoja Sagrada</span></span><br/>
+              <span>Commended <span class="info-reward-project">CC25</span></span>
+            </div>
           </div>
         </div>
       </main>
     </div>
   </div>
 </BaseLayout>
+
+<style>
+  .info {
+    width: 100%;
+    background: transparent;
+  }
+
+  .info-grid {
+    width: 100%;
+  }
+
+  .info-grid > * {
+    color: #000;
+    font-family: 'SuisseIntl', sans-serif;
+    word-wrap: break-word;
+    min-width: 0;
+  }
+
+  .info-intro {
+    margin-top: calc(300px - var(--page-header-height));
+    margin-bottom: 0;
+    font-size: 72px;
+    font-weight: 700;
+    letter-spacing: -4px;
+    line-height: 1;
+  }
+
+  .info-split {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0 var(--grid-gutter);
+    margin-top: 70px;
+    align-items: start;
+  }
+
+  .info-split__left {
+    grid-column: 1 / 7;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .info-split__right {
+    grid-column: 7 / 13;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0 var(--grid-gutter);
+    align-content: start;
+  }
+
+  .info-pair {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0 var(--grid-gutter);
+    align-items: start;
+  }
+
+  .info-pair__label,
+  .info-pair__value,
+  .info-reward-label,
+  .info-reward-years,
+  .info-reward-pairs,
+  .info-contacts-handles,
+  .info-contacts-short {
+    font-size: 14pt;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .info-pair__label {
+    grid-column: 1 / 2;
+  }
+
+  .info-pair__label--tight {
+    line-height: 1.2;
+  }
+
+  .info-pair__value {
+    grid-column: 2 / 5;
+  }
+
+  .info-quote {
+    grid-column: 1 / 5;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .info-contacts-line {
+    grid-column: 5 / 7;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 var(--grid-gutter);
+    align-items: start;
+    min-width: 0;
+  }
+
+  .info-contacts-handles {
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .info-contacts-short {
+    text-align: right;
+  }
+
+  .info-reward-row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0 var(--grid-gutter);
+    margin-top: 20px;
+    align-items: start;
+  }
+
+  .info-reward-label {
+    grid-column: 1 / 2;
+  }
+
+  .info-reward-years {
+    grid-column: 2 / 4;
+  }
+
+  .info-reward-pairs {
+    grid-column: 4 / 6;
+  }
+
+  .info-reward-project {
+    color: #B29893;
+  }
+
+  @media (max-width: 1024px) {
+    .info-intro {
+      font-size: clamp(2rem, 10vw, 4rem);
+      letter-spacing: -0.04em;
+      margin-top: min(180px, 28vw);
+    }
+
+    .info-split {
+      margin-top: 48px;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .info-split__left {
+      grid-column: 1 / 7;
+    }
+
+    .info-split__right {
+      grid-column: 7 / 13;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-quote {
+      margin-bottom: 0;
+    }
+
+    .info-contacts-line {
+      grid-column: unset;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px 24px;
+      width: 100%;
+    }
+
+    .info-contacts-handles {
+      white-space: nowrap;
+    }
+
+    .info-contacts-short {
+      text-align: left;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .info-split {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .info-split__left,
+    .info-split__right {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .info-split__right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-contacts-line {
+      grid-column: unset;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px 24px;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .info-intro {
+      font-size: clamp(1.5rem, 7.5vw, 2.75rem);
+      letter-spacing: -0.03em;
+      margin-top: min(100px, 18vh);
+    }
+
+    .info-split {
+      gap: 28px;
+      margin-top: 32px;
+    }
+
+    .info-pair {
+      grid-template-columns: minmax(5rem, 28%) 1fr;
+      gap: 0 var(--grid-gutter);
+    }
+
+    .info-pair__label,
+    .info-pair__value {
+      grid-column: unset;
+    }
+
+    .info-quote {
+      font-size: 12px;
+      line-height: 1.35;
+      max-width: 100%;
+    }
+
+    .info-contacts-line {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px 28px;
+      width: 100%;
+    }
+
+    .info-contacts-handles,
+    .info-contacts-short {
+      font-size: 14px;
+    }
+
+    .info-contacts-handles {
+      white-space: nowrap;
+    }
+
+    .info-contacts-short {
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .info-reward-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .info-reward-label,
+    .info-reward-years,
+    .info-reward-pairs {
+      grid-column: unset;
+      width: 100%;
+    }
+
+    .info-reward-years,
+    .info-reward-pairs {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .info-reward-pairs span {
+      display: block;
+      margin-bottom: 0.35em;
+    }
+  }
+</style>

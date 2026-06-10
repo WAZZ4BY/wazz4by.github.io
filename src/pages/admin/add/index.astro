@@ -20,6 +20,8 @@ const base = import.meta.env.BASE_URL;
         <form id="addForm">
           <label>Название проекта</label>
           <input type="text" id="addTitle" placeholder="Название" required />
+          <label>Короткое название (для Index)</label>
+          <input type="text" id="addShortTitle" placeholder="Например: De Stul" />
           <label>Тип проекта</label>
           <input type="text" id="addType" placeholder="Type design, Motion, Identity…" />
           <label>Год</label>
@@ -29,6 +31,13 @@ const base = import.meta.env.BASE_URL;
             <input type="color" id="addBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
             <input type="text" id="addBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
           </div>
+          <label>Awards (награды)</label>
+          <p class="admin-hint">В конце проекта: место и название фестиваля.</p>
+          <div id="addAwardsList" class="awards-list"></div>
+          <button type="button" class="secondary" id="addAwardBtn" style="margin-top:0.5rem;">+ Добавить награду</button>
+          <label style="margin-top:1rem;">Credits (кредиты)</label>
+          <p class="admin-hint">Текст в конце проекта мелким шрифтом. Можно HTML.</p>
+          <textarea id="addCredits" rows="4" placeholder="Например: Дизайн — Василий Алеев"></textarea>
           <label>Контент (блоки)</label>
           <p class="admin-hint">Текст — колонки 5–12. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
           <div id="addContentBlocksList" class="content-blocks-list"></div>
@@ -220,21 +229,46 @@ const base = import.meta.env.BASE_URL;
         }
       })();
 
+      (function () {
+        const list = document.getElementById('addAwardsList');
+        if (!list) return;
+        const addRow = function () {
+          const row = document.createElement('div');
+          row.className = 'award-row';
+          row.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+          list.appendChild(row);
+          row.querySelector('.remove-award').addEventListener('click', function () { row.remove(); });
+        };
+        addRow();
+        document.getElementById('addAwardBtn').addEventListener('click', addRow);
+      })();
+
       document.getElementById('addForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const title = document.getElementById('addTitle').value.trim();
         if (!title) return;
         const addBgHex = document.getElementById('addBackgroundColorHex').value.trim();
         const addBgColor = document.getElementById('addBackgroundColor').value;
+        const awards = [];
+        document.querySelectorAll('#addAwardsList .award-row').forEach(function (row) {
+          const placeEl = row.querySelector('.award-place');
+          const festivalEl = row.querySelector('.award-festival');
+          const place = placeEl ? placeEl.value.trim() : '';
+          const festival = festivalEl ? festivalEl.value.trim() : '';
+          if (place || festival) awards.push({ place: place || '—', festival: festival || '—' });
+        });
         const newProject = {
           id: slugify(title),
           title,
+          shortTitle: document.getElementById('addShortTitle').value.trim() || undefined,
           description: '',
           type: document.getElementById('addType').value.trim(),
           year: document.getElementById('addYear').value.trim(),
           images: [],
           contentBlocks: contentBlocks.slice(),
-          backgroundColor: addBgHex || addBgColor || undefined
+          backgroundColor: addBgHex || addBgColor || undefined,
+          awards: awards.length > 0 ? awards : undefined,
+          credits: document.getElementById('addCredits').value.trim() || undefined
         };
         sessionStorage.setItem(NEW_PROJECT_KEY, JSON.stringify(newProject));
         window.location.href = base + 'admin/';

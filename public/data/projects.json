@@ -1,7 +1,8 @@
 [
   {
     "id": "de-stul-furniture-brand",
-    "title": "De Stul",
+    "title": "De Stul. Furniture Brand",
+    "shortTitle": "De Stul",
     "type": "Identity, 3D motion",
     "year": "2023",
     "description": "",
@@ -108,15 +109,24 @@
         "src": "/images/destul/18.jpg"
       }
     ],
-    "backgroundColor": "##ffffff"
+    "backgroundColor": "##ffffff",
+    "awards": [
+      {
+        "place": "Silver",
+        "festival": "World Brand Design Awards 23-24"
+      }
+    ]
   },
   {
     "id": "de-stul-interior-items-packaging",
     "title": "De Stul. Interior Items Packaging",
-    "description": "",
+    "shortTitle": "De Stul",
     "type": "Package",
     "year": "2023",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000"
   },
   {
     "id": "phenomenon-interior-psychologism",
@@ -129,34 +139,57 @@
   {
     "id": "boop-pet-shampoo-packaging",
     "title": "Boop. Pet Shampoo Packaging",
-    "description": "",
+    "shortTitle": "Boop",
     "type": "Package, Illustration",
     "year": "2024",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000",
+    "awards": [
+      {
+        "place": "Gold",
+        "festival": "World Brand Design Awards 24-25"
+      },
+      {
+        "place": "Silver",
+        "festival": "Pentawards 2025"
+      }
+    ],
+    "credits": "Art Director – Ksenia Ivanova\nDesigners — Elizaveta Andrievskaya, Vasilii Aleev, Polina Dmitrieva"
   },
   {
     "id": "antre-cheese-appetizers-packaging",
     "title": "Antre. Cheese Appetizers Packaging",
-    "description": "",
+    "shortTitle": "Antre",
     "type": "Package, Illustration",
     "year": "2024",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000"
   },
   {
     "id": "dok-107-art-space",
     "title": "DOK:107. Art Space",
-    "description": "",
+    "shortTitle": "DOK:107",
     "type": "Identity",
     "year": "2024",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000"
   },
   {
     "id": "photoelectric-effect-calendar-2025",
     "title": "Photoelectric Effect Calendar 2025",
-    "description": "",
+    "shortTitle": "Photoelectric Effect Calendar",
     "type": "Type design, Calendar",
     "year": "2024",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000"
   },
   {
     "id": "bioart-lab-foundation",
@@ -268,14 +301,18 @@
   {
     "id": "hoja-sagrada-yerba-mate-tea",
     "title": "Hoja Sagrada Yerba Mate Tea",
-    "description": "",
+    "shortTitle": "Hoja Sagrada",
     "type": "Package, Illustration",
     "year": "2025",
-    "images": []
+    "description": "",
+    "images": [],
+    "contentBlocks": [],
+    "backgroundColor": "#000000"
   },
   {
     "id": "snve-pereodical",
     "title": "SNVE. Pereodical",
+    "shortTitle": "SNVE",
     "type": "Identity, Typeface",
     "year": "2025",
     "description": "",
@@ -287,6 +324,7 @@
   {
     "id": "last-days-of-sababa",
     "title": "The Last Days of Sababa",
+    "shortTitle": "Sababa",
     "type": "Photo Zine",
     "year": "2025",
     "description": "",
@@ -298,17 +336,44 @@
   {
     "id": "crypto-anarchist-manifesto",
     "title": "The Crypto Anarchist Manifesto",
+    "shortTitle": "The Crypto",
     "type": "Motion design",
     "year": "2025",
     "description": "",
     "images": [],
-    "contentBlocks": [],
+    "contentBlocks": [
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1094827591?autoplay=0&amp;loop=0&amp;muted=0&amp;autopause=0&amp;badge=0&amp;color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "The Crypto Anarchist Manifesto by Timothy May is a short but powerful text written in 1988, which is considered the ideological foundation of the entire crypto-anarchist movement. The graphics actively use techniques that prevent the text from being easily read, continuing the idea of anonymity. There is also pervasive pixelation, referencing the dawn of the internet."
+      },
+      {
+        "type": "text",
+        "content": "A specter is haunting the modern world, the specter of crypto anarchy. Interactions over networks will be untraceable, via extensive re-routing of encrypted packets. These developments will alter completely the nature of government regulation, the ability to tax and control economic interactions. Arise, you have nothing to lose but your barbed wire fences!"
+      },
+      {
+        "type": "image",
+        "src": "/images/ctypto/2.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/ctypto/3.gif"
+      },
+      {
+        "type": "text",
+        "content": "//Text//\n\"The Crypto Anarchist Manifesto\" byTimothy C. May\n//Music//\n“Everything You Can See Through A Little Hole” by Ryoichi Kurokawa\n//Design//\nVasilii Aleev x SHTAB KVARTIRA\n//Tutor//\nVasily Shikhachevsky"
+      }
+    ],
     "backgroundColor": "#000000",
-    "cover": "/images/crypto/cover.png"
+    "cover": "/images/ctypto/cover.png"
   },
   {
     "id": "chaos-construction-demoscene-fest",
     "title": "Chaos Construction Demoscene Fest",
+    "shortTitle": "Chaos Construction",
     "type": "Identity, Generative",
     "year": "2025",
     "description": "",
@@ -320,6 +385,7 @@
   {
     "id": "trash-aesthetics-visual-culture-of-waste",
     "title": "Trash Aesthetics. Visual Culture of Waste",
+    "shortTitle": "Trash Aesthetics",
     "type": "Type design, book, Visual Research",
     "year": "2025",
     "description": "",
@@ -330,7 +396,8 @@
   },
   {
     "id": "w-dotorg-dymshits-partners-rebranding",
-    "title": "Dymshits and Partners. W//Dotorg",
+    "title": "Dymshits and Partners. W/ Dotorg",
+    "shortTitle": "Dymshits",
     "type": "Identity, Generative",
     "year": "2025",
     "description": "",
@@ -406,23 +473,24 @@
   },
   {
     "id": "w-dotorg-css-rebranding",
-    "title": "CSS. W//Dotorg",
+    "title": "CSS. W/ Dotorg",
+    "shortTitle": "CSS",
     "type": "Identity, Motion",
     "year": "2025",
     "description": "",
     "images": [],
     "contentBlocks": [
       {
-        "type": "image",
-        "src": "public/images/css/1.webp"
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1120758127?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "A lid or bottle may seem simple and unnoticeable to the consumer. But for business, it's a unique engineering breakthrough. Every day, CSS engineers design ergonomics, safety, force, and opening methods. Every day, they make new discoveries. The CSS brand metaphor is billions of new discoveries."
       },
       {
         "type": "video",
         "embed": "<iframe src=\"https://player.vimeo.com/video/1120754237?autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
-      },
-      {
-        "type": "video",
-        "embed": "<iframe src=\"https://player.vimeo.com/video/1120758127?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
       },
       {
         "type": "video",
@@ -474,6 +542,13 @@
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/css/cover.png"
+    "cover": "/images/css/cover.png",
+    "awards": [
+      {
+        "place": "Gold",
+        "festival": "Sreda New Design Festival"
+      }
+    ],
+    "credits": "Олег Трофимович — стратег\nОльга Кутовая — арт-директор\nЕкатерина Антонова — ведущий дизайнер\nВиктория Трубицина — старший дизайнер\nВиталий Шадрин — старший дизайнер\nВасилий Алеев — дизайнер\nЛада Бурова — дизайнер\nСоня Пичевская — дизайнер\nАндрей Шматько — 3D-визуализатор\nПавел Парамонов — фотограф\nУльяна Уступная и Степан Верба — модели\nВасилий Сиванюк — фронтенд-разработчик\nПавел Марков — программист"
   }
 ]

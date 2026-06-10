@@ -23,6 +23,7 @@ const base = import.meta.env.BASE_URL;
       .admin-page a { color: #0066cc; text-decoration: none; }
       .admin-page a:hover { text-decoration: underline; }
       .admin-section { background: #fff; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-width: 720px; }
+      .admin-section.admin-section--wide { max-width: none; width: 100%; }
       .admin-section h2 { margin: 0 0 1rem; font-size: 1.15rem; }
       .admin-page label { display: block; margin-bottom: 0.25rem; font-weight: 500; font-size: 0.9rem; }
       .admin-page input[type="text"], .admin-page input[type="password"], .admin-page textarea, .admin-page select { width: 100%; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 1rem; border: 1px solid #ddd; border-radius: 4px; }
@@ -80,6 +81,11 @@ const base = import.meta.env.BASE_URL;
       .admin-page .content-block-card__preview--split { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
       .admin-page .content-block-card__preview-item { max-height: 160px; background: #eee; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 60px; }
       .admin-page .content-block-card__preview-item img { max-width: 100%; max-height: 160px; width: auto; height: auto; object-fit: contain; }
+      .admin-page .awards-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0; }
+      .admin-page .award-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+      .admin-page .award-row .award-place { flex: 1; margin-bottom: 0; }
+      .admin-page .award-row .award-festival { flex: 1; margin-bottom: 0; }
+      .admin-page .award-row .remove-award { flex-shrink: 0; padding: 4px 8px; font-size: 0.9rem; }
     </style>
   </head>
   <body>
