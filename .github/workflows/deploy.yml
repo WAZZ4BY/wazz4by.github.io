@@ -1,4 +1,4 @@
-image.png name: Deploy Astro to GitHub Pages
+name: Deploy Astro to GitHub Pages
 
 on:
   push:
