@@ -10,6 +10,18 @@ export type ContentBlock =
 export interface ProjectAward {
   place: string;
   festival: string;
+  nomination?: string;
+}
+
+export interface ProjectTextLink {
+  text: string;
+  url: string;
+}
+
+export interface ProjectCredit {
+  role: string;
+  name: string;
+  url?: string;
 }
 
 export interface Project {
@@ -20,6 +32,8 @@ export interface Project {
   description: string;
   type?: string;
   year?: string;
+  /** Точная дата для сортировки (YYYY-MM-DD), не отображается в UI */
+  sortDate?: string;
   images: string[];
   contentBlocks?: ContentBlock[];
   backgroundColor?: string;
@@ -27,8 +41,22 @@ export interface Project {
   cover?: string;
   /** Награды: место и название фестиваля */
   awards?: ProjectAward[];
+  /** Текстовые ссылки внизу проекта */
+  links?: ProjectTextLink[];
+  /** Кредиты в формате колонок: роль и имя (опционально со ссылкой) */
+  creditsList?: ProjectCredit[];
   /** Текстовый блок кредитов в конце (мелкий шрифт как в футере) */
   credits?: string;
+  /** Скрыт с сайта, но сохранён в данных */
+  hidden?: boolean;
+}
+
+export function isProjectHidden(project: Pick<Project, 'hidden'>): boolean {
+  return project.hidden === true;
+}
+
+export function getVisibleProjects(): Project[] {
+  return getProjects().filter((p) => !isProjectHidden(p));
 }
 
 let cached: Project[] | null = null;
@@ -46,23 +74,42 @@ export function getProjectBySlug(slug: string): Project | undefined {
   return getProjects().find((p) => p.id === slug);
 }
 
+/** Медиа для hover-эффекта на Index: изображения и видео из contentBlocks. */
+export type ProjectHoverMedia =
+  | { type: 'image'; src: string }
+  | { type: 'video'; embed: string };
+
 /** Все уникальные URL картинок проекта (images + contentBlocks image/split). */
 export function getProjectImageUrls(p: Project): string[] {
+  return getProjectHoverMedia(p)
+    .filter((item): item is { type: 'image'; src: string } => item.type === 'image')
+    .map((item) => item.src);
+}
+
+/** Изображения и видео проекта для hover-эффекта на Index. */
+export function getProjectHoverMedia(p: Project): ProjectHoverMedia[] {
   const seen = new Set<string>();
-  const out: string[] = [];
-  const add = (u: string) => {
+  const out: ProjectHoverMedia[] = [];
+  const addImage = (u: string) => {
     const s = (u || '').trim();
-    if (!s || seen.has(s)) return;
-    seen.add(s);
-    out.push(s);
+    if (!s || seen.has('img:' + s)) return;
+    seen.add('img:' + s);
+    out.push({ type: 'image', src: s });
   };
-  for (const src of p.images || []) add(src);
+  const addVideo = (embed: string) => {
+    const s = (embed || '').trim();
+    if (!s || seen.has('vid:' + s)) return;
+    seen.add('vid:' + s);
+    out.push({ type: 'video', embed: s });
+  };
+  for (const src of p.images || []) addImage(src);
   for (const block of p.contentBlocks || []) {
-    if (block.type === 'image') add(block.src);
+    if (block.type === 'image') addImage(block.src);
     if (block.type === 'split') {
-      add(block.left);
-      add(block.right);
+      addImage(block.left);
+      addImage(block.right);
     }
+    if (block.type === 'video') addVideo(block.embed);
   }
   return out;
 }

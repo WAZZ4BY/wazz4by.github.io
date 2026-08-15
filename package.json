@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "astro": "^4.0.0",
+    "figma-squircle": "^1.1.0",
     "marked": "^11.0.0"
   },
   "devDependencies": {

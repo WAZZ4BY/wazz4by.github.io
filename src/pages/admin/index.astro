@@ -206,7 +206,7 @@ const base = import.meta.env.BASE_URL;
               });
             } catch (_) {}
           }
-          status.textContent = 'Загружено проектов: ' + projects.length;
+          status.textContent = 'Загружено проектов: ' + projects.length + ' (скрытых: ' + projects.filter(function (p) { return p.hidden; }).length + ')';
           status.className = 'status ok';
           renderProjectList();
           restoreGhRepo();
@@ -225,14 +225,47 @@ const base = import.meta.env.BASE_URL;
         return basePath.endsWith('/') ? basePath : basePath + '/';
       }
 
+      function setEditedProject(id, data) {
+        try {
+          const editedRaw = sessionStorage.getItem('admin_edited_projects');
+          const edited = editedRaw ? JSON.parse(editedRaw) : {};
+          edited[id] = data;
+          sessionStorage.setItem('admin_edited_projects', JSON.stringify(edited));
+        } catch (_) {}
+      }
+
       function renderProjectList() {
         const list = document.getElementById('projectList');
         list.innerHTML = '';
         projects.forEach(function (p) {
           const li = document.createElement('li');
+          if (p.hidden) li.className = 'project-list__item--hidden';
           const base = getBase();
-          li.innerHTML = '<span>' + (p.title || p.id) + '</span><span><a href="' + base + 'admin/edit/?id=' + encodeURIComponent(p.id) + '">Редактировать</a> <button type="button" class="danger delete-project" data-id="' + p.id + '" style="margin-left:0.5rem;padding:0.25rem 0.5rem;font-size:0.85rem;">Удалить</button></span>';
+          const hiddenBadge = p.hidden ? '<span class="project-list__badge">скрыт</span>' : '';
+          const toggleLabel = p.hidden ? 'Показать' : 'Скрыть';
+          li.innerHTML =
+            '<span class="project-list__title"><span>' + (p.title || p.id) + '</span>' + hiddenBadge + '</span>' +
+            '<span class="project-list__actions">' +
+              '<a href="' + base + 'admin/edit/?id=' + encodeURIComponent(p.id) + '">Редактировать</a>' +
+              '<button type="button" class="secondary toggle-project-hidden" data-id="' + p.id + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">' + toggleLabel + '</button>' +
+              '<button type="button" class="danger delete-project" data-id="' + p.id + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">Удалить</button>' +
+            '</span>';
           list.appendChild(li);
+        });
+        list.querySelectorAll('.toggle-project-hidden').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const p = projects.find(function (x) { return x.id === id; });
+            if (!p) return;
+            const willHide = !p.hidden;
+            const action = willHide ? 'скрыть' : 'показать';
+            if (!confirm((willHide ? 'Скрыть' : 'Показать') + ' проект «' + (p.title || id) + '» на сайте?')) return;
+            p.hidden = willHide;
+            if (!willHide) delete p.hidden;
+            setEditedProject(id, p);
+            renderProjectList();
+            document.getElementById('loadStatus').textContent = 'Проект будет ' + (willHide ? 'скрыт' : 'показан') + ' после сохранения в GitHub. Скрытых: ' + projects.filter(function (x) { return x.hidden; }).length + '.';
+          });
         });
         list.querySelectorAll('.delete-project').forEach(function (btn) {
           btn.addEventListener('click', function () {

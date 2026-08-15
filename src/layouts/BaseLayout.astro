@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
+import MobileGlobalNav from '../components/MobileGlobalNav.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -25,6 +26,7 @@ const bodyClasses = [variant === 'home' ? 'is-home' : 'is-inner', bodyClass].fil
   </head>
   <body class={bodyClasses}>
     {!hideHeader && <SiteHeader variant={variant} />}
+    <MobileGlobalNav />
     <slot />
   </body>
 </html>

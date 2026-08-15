@@ -5,6 +5,7 @@
     "shortTitle": "De Stul",
     "type": "Identity, 3D motion",
     "year": "2023",
+    "sortDate": "2023-11-05",
     "description": "",
     "images": [
       "/images/destul/1.png",
@@ -110,31 +111,161 @@
       }
     ],
     "backgroundColor": "##ffffff",
+    "cover": "/images/destul/cover.jpg",
     "awards": [
       {
         "place": "Silver",
-        "festival": "World Brand Design Awards 23-24"
+        "festival": "World Brand Design Awards 23-24",
+        "nomination": "Student Identity: Brand Design Creation"
       }
     ]
   },
   {
-    "id": "de-stul-interior-items-packaging",
-    "title": "De Stul. Interior Items Packaging",
-    "shortTitle": "De Stul",
-    "type": "Package",
-    "year": "2023",
-    "description": "",
-    "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000"
-  },
-  {
     "id": "phenomenon-interior-psychologism",
     "title": "The Phenomenon of Interior Psychologism",
-    "description": "",
-    "type": "Type design, book, Visual Research",
+    "type": "Type design, Book, Visual Research",
     "year": "2024",
-    "images": []
+    "sortDate": "2024-04-01",
+    "description": "",
+    "images": [],
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/interior/1.jpg"
+      },
+      {
+        "type": "text",
+        "content": "The question of the possibility of forming a full-fledged idea of ​​a person based on his interior poses a complex task that requires careful consideration of various aspects. The interior of a room is not just a collection of objects. This is a unique reflection of a person’s inner world, his preferences, and lifestyle."
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/2.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/w6h25oBQa9wNSh32WpEHz7\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1280\" height=\"720\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/3.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/4.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/5.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/7.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/8.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/9.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/10.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/11.jpg"
+      },
+      {
+        "type": "text",
+        "content": "The content of the visual study is divided into four chapters, in which interior psychologism \nis examined from different angles."
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/12.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/13.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/14.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/15.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/16.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/17.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/925018141?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/18.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/19.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/20.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/21.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/22.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/23.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/24.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/925635565?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/interior/25.jpg"
+      },
+      {
+        "type": "text",
+        "content": "Analyzing the interior of a room can give some insight into a person: his lifestyle, tastes, preferences and perhaps even some aspects of his personality.\nCan analysis of a person's interior give a complete picture of a person? No.\nTo fully understand personality, it is necessary to consider the interior in the context of other factors, such as behavior, relationships with other people."
+      }
+    ],
+    "backgroundColor": "##ffffff",
+    "cover": "/images/interior/cover.jpg",
+    "links": [
+      {
+        "text": "Calameo",
+        "url": "https://www.calameo.com/read/00726281154dd2f309db6"
+      }
+    ],
+    "creditsList": [
+      {
+        "role": "Print",
+        "name": "PRO.ЩЕ",
+        "url": "https://pro-sche.ru/"
+      }
+    ],
+    "hidden": true
   },
   {
     "id": "boop-pet-shampoo-packaging",
@@ -142,43 +273,115 @@
     "shortTitle": "Boop",
     "type": "Package, Illustration",
     "year": "2024",
+    "sortDate": "2024-04-27",
     "description": "",
     "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000",
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/boop/1.jpg"
+      },
+      {
+        "type": "text",
+        "content": "The pet care brand \"boop\" transforms routine pet grooming into a fun and enjoyable experience. The style is based on illustrations of animals frolicking in the water. There are three types of patterns, representing curly, short, and long hair."
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/3.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/4.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/boop/5-1.gif",
+        "right": "/images/boop/5-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/6.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/boop/7-1.jpg",
+        "right": "/images/boop/7-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/8.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/boop/9-1.jpg",
+        "right": "/images/boop/9-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/10.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/boop/11-1.png",
+        "right": "/images/boop/11-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/12.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/boop/13-1.jpg",
+        "right": "/images/boop/13-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/14.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/boop/15.gif"
+      }
+    ],
+    "backgroundColor": "##ffffff",
+    "cover": "/images/boop/cover.png",
     "awards": [
       {
         "place": "Gold",
-        "festival": "World Brand Design Awards 24-25"
+        "festival": "World Brand Design Awards 24-25",
+        "nomination": "Student package: Packaging design"
       },
       {
         "place": "Silver",
-        "festival": "Pentawards 2025"
+        "festival": "Pentawards 2025",
+        "nomination": "Student conceptual work"
       }
     ],
-    "credits": "Art Director – Ksenia Ivanova\nDesigners — Elizaveta Andrievskaya, Vasilii Aleev, Polina Dmitrieva"
-  },
-  {
-    "id": "antre-cheese-appetizers-packaging",
-    "title": "Antre. Cheese Appetizers Packaging",
-    "shortTitle": "Antre",
-    "type": "Package, Illustration",
-    "year": "2024",
-    "description": "",
-    "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000"
-  },
-  {
-    "id": "dok-107-art-space",
-    "title": "DOK:107. Art Space",
-    "shortTitle": "DOK:107",
-    "type": "Identity",
-    "year": "2024",
-    "description": "",
-    "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000"
+    "creditsList": [
+      {
+        "role": "Art Director",
+        "name": "Ksenia Ivanova",
+        "url": "https://www.behance.net/967d07dc"
+      },
+      {
+        "role": "Designer",
+        "name": "Elizaveta Andrievskaya",
+        "url": "https://www.behance.net/l134_l134"
+      },
+      {
+        "role": "Designer",
+        "name": "Vasilii Aleev"
+      },
+      {
+        "role": "Designer",
+        "name": "Polina Dmitrieva",
+        "url": "https://www.behance.net/4266e1b4"
+      }
+    ]
   },
   {
     "id": "photoelectric-effect-calendar-2025",
@@ -186,16 +389,87 @@
     "shortTitle": "Photoelectric Effect Calendar",
     "type": "Type design, Calendar",
     "year": "2024",
+    "sortDate": "2024-10-29",
     "description": "",
     "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000"
+    "contentBlocks": [
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1023796203?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "This calendar is dedicated to the photoelectric effect*, which was explained in 1905 by Albert Einstein based on Max Planck's hypothesis about the quantum nature of light.\n\nThere are four main periods of the year: low energy, solar activity, peak energy, and trough energy. Depending on the strength of the sun, a different number of photons reach the earth, which directly affects the strength of the photoelectric effect. Each season represents a phase of the photoelectric effect in the annual cycle.\n\n*The photoelectric effect is the interaction of light or any other electromagnetic radiation with matter, in which the energy of the photons is transferred to the electrons of the matter."
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/1.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/2.jpg"
+      },
+      {
+        "type": "text",
+        "content": "Depending on the strength of the sun's activity and the number of photons reaching the surface at any given time of year, the black balance in the graphic changes\nagainst the background, which envelops the bare metal sheet, altering the interaction area of ​​electromagnetic radiation with the surface."
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/3.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/4.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/5.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/6.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/7.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/8.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/9.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/10.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/11.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/calendar/12.png"
+      }
+    ],
+    "backgroundColor": "##ffffff",
+    "cover": "/images/calendar/cover.png",
+    "awards": [
+      {
+        "place": "Bronze",
+        "festival": "Sreda New Design Festival 2025",
+        "nomination": "Print design concept"
+      }
+    ]
   },
   {
     "id": "bioart-lab-foundation",
     "title": "Bioart Lab Foundation",
     "type": "Identity, Generative, Typeface",
     "year": "2024",
+    "sortDate": "2025-01-07",
     "description": "",
     "images": [],
     "contentBlocks": [
@@ -289,25 +563,22 @@
       {
         "type": "video",
         "embed": "<iframe src=\"https://player.vimeo.com/video/1042425480?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
-      },
-      {
-        "type": "text",
-        "content": "Sreda New Design Festival 2025 — Silver, \"Identity concept\"\nSreda New Design Festival 2025 — Open Jury — Bronze, \"Identity concept\""
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/bioart/cover.png"
-  },
-  {
-    "id": "hoja-sagrada-yerba-mate-tea",
-    "title": "Hoja Sagrada Yerba Mate Tea",
-    "shortTitle": "Hoja Sagrada",
-    "type": "Package, Illustration",
-    "year": "2025",
-    "description": "",
-    "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000"
+    "cover": "/images/bioart/cover.png",
+    "awards": [
+      {
+        "place": "Silver",
+        "festival": "Sreda New Design Festival 2025",
+        "nomination": "Identity concept"
+      },
+      {
+        "place": "Bronze",
+        "festival": "Sreda New Design Festival 2025",
+        "nomination": "Open Jury — Identity concept"
+      }
+    ]
   },
   {
     "id": "snve-pereodical",
@@ -315,10 +586,145 @@
     "shortTitle": "SNVE",
     "type": "Identity, Typeface",
     "year": "2025",
+    "sortDate": "2025-03-29",
     "description": "",
     "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000",
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/snve/1.jpg"
+      },
+      {
+        "type": "text",
+        "content": "Medieval Numismatics of Eastern Europe is a periodical, a collection of articles by various experts devoted to Russian coins. Numismatics is not just a hobby, but also a process of studying history through collecting coins, each of which is a cast, a snapshot, an imprint of its era."
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1069517387?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/2.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/3-1.jpg",
+        "right": "/images/snve/3-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/4.gif"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/5-1.gif",
+        "right": "/images/snve/5-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/6.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/7.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/8.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/9.gif"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/10-1.jpg",
+        "right": "/images/snve/10-2.gif"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1069487228?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/11.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/868022545?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/12.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/13.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/14.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/15.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/858993867?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/16-1.jpg",
+        "right": "/images/snve/16-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/17.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/18-1.gif",
+        "right": "/images/snve/18-2.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/19-1.jpg",
+        "right": "/images/snve/19-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/20.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/21-1.jpg",
+        "right": "/images/snve/21-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/22.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/snve/23.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/24-1.jpg",
+        "right": "/images/snve/24-2.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/snve/25-1.jpg",
+        "right": "/images/snve/25-2.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1069488352?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      }
+    ],
+    "backgroundColor": "##ffffff",
     "cover": "/images/snve/cover.png"
   },
   {
@@ -329,9 +735,309 @@
     "year": "2025",
     "description": "",
     "images": [],
-    "contentBlocks": [],
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/sababa/1.jpg"
+      },
+      {
+        "type": "text",
+        "content": "A documentary photo series dedicated to skaters in a moment of pause. Looking back from the event, you can see the world from a completely different perspective. Instead of flashy tricks, there are tired looks, warm concrete and dirty plywood, dusty palms and idle conversations stretched out between runs. A skatepark is not only a place for skating, but also a space for communication, observation, silent understanding of each other and a vibrant FIFA rink. The project captures such moments, forcing us to see that skateboarding is not just a movement, but also people frozen in its rhythm. Moreover, in March 2025, Sababa closed and ceased to exist for an unknown period. The series documents the last days of the sixth Sababa, which no one will ever see again."
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/3.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/4.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/5.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/6-1.jpg",
+        "right": "/images/sababa/6-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/7.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/8.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/9.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/10.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/11.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/12.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/13.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/14.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/15.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/16.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/17.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/18.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/19.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/20.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/21.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/22.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/23.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/24.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/25.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/26.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/27.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/28.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/29.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/30.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/31.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/32.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/33.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/34-1.jpg",
+        "right": "/images/sababa/34-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/35.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/36.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/37-1.jpg",
+        "right": "/images/sababa/37-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/38.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/39.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/40.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/41-1.jpg",
+        "right": "/images/sababa/41-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/42.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/43.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/44.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/45.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/46-1.jpg",
+        "right": "/images/sababa/46-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/47.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/48.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/49.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/50-1.jpg",
+        "right": "/images/sababa/50-2.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/51-1.jpg",
+        "right": "/images/sababa/51-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/52.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/53.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/54-1.jpg",
+        "right": "/images/sababa/54-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/55.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/56.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/57.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/58.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/59.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/60.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/61-1.jpg",
+        "right": "/images/sababa/61-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/62.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/63.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/64.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/65.jpg"
+      },
+      {
+        "type": "split",
+        "left": "/images/sababa/66-1.jpg",
+        "right": "/images/sababa/66-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/sababa/67.jpg"
+      },
+      {
+        "type": "text",
+        "content": "Фотокнижный фестиваль Жердёла — Краснодар, Москва, Пермь, Самара, Ростов — The Last Days Of Sababa\nГалерея SI19 — Москва, 29–31.08.25 — Большие города"
+      }
+    ],
     "backgroundColor": "#000000",
-    "cover": "/images/sababa/cover.png"
+    "cover": "/images/sababa/cover.jpg",
+    "links": [
+      {
+        "text": "Calameo",
+        "url": "https://www.calameo.com/read/0072628114f7ef8b0d367"
+      }
+    ],
+    "creditsList": [
+      {
+        "role": "Tutor",
+        "name": "Igor Mukhin",
+        "url": "https://igormukhin.ru/"
+      }
+    ]
   },
   {
     "id": "crypto-anarchist-manifesto",
@@ -368,7 +1074,8 @@
       }
     ],
     "backgroundColor": "#000000",
-    "cover": "/images/ctypto/cover.png"
+    "cover": "/images/ctypto/cover.png",
+    "hidden": true
   },
   {
     "id": "chaos-construction-demoscene-fest",
@@ -376,23 +1083,293 @@
     "shortTitle": "Chaos Construction",
     "type": "Identity, Generative",
     "year": "2025",
+    "sortDate": "2025-06-25",
     "description": "",
     "images": [],
-    "contentBlocks": [],
-    "backgroundColor": "#000000",
-    "cover": "/images/cc25/cover.png"
+    "contentBlocks": [
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://player.vimeo.com/video/1096232035?autoplay=0&amp;loop=0&amp;muted=0&amp;autopause=0&amp;badge=0&amp;color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "The Chaos Constructions festival is a non-commercial creative event on modern and retro computers. The main directions are the demoscene and interest in programming, the internal structure of modern and retro computers.\nChaos is the creation of something new from emptiness. Programmers also create art using only code. All graphics are formed around the main idea and metaphor of \"art of digital chaos\"."
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/kybjXq3b3gMoBFiSyLVDsQ\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/tc8ifYahH8edcqEPEZuiux\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/eeqTaoh2cKxJW8U6rXj89x\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/mQ5WnVF6cn7hHeLa2BEC83\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/cc25/1-1.gif",
+        "right": "/images/cc25/1-2.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/ddFdTFKSZHjwNsYVvZwtNG\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/24RyyUrkGvvSpSPhLwER7b\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/cc25/2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/51SU76qC15oYWqYCqQEe6J\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/cc25/3-1.jpg",
+        "right": "/images/cc25/3-2.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<div style=\"position: relative; padding-top: 56.25%; width: 100%\"><iframe src=\"https://kinescope.io/embed/vPRFad88JFL49LJS8v1ahk\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/ac96tjLyTRYVfL765KRUCt\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/qHNAgLKhTqUxqekhUDBCNd\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/fsLFXxA7hNKcn3VMZ4jnjw\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"2560\" height=\"1440\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/cc25/4.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/cc25/5-1.gif",
+        "right": "/images/cc25/5-2.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/cc25/6.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/cc25/7-1.jpg",
+        "right": "/images/cc25/7-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/cc25/8.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/cc25/9.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/cc25/10-1.jpg",
+        "right": "/images/cc25/10-2.jpg"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/jWzUGAmD3nEX1A8zqw93sr\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/cc25/11-1.jpg",
+        "right": "/images/cc25/11-2.jpg"
+      },
+      {
+        "type": "image",
+        "src": "/images/cc25/12.png"
+      }
+    ],
+    "backgroundColor": "##000000",
+    "cover": "/images/cc25/cover.png",
+    "awards": [
+      {
+        "place": "Commended",
+        "festival": "World Brand Design Awards 25-26",
+        "nomination": "Student Identity: Brand Design Creation"
+      }
+    ]
   },
   {
     "id": "trash-aesthetics-visual-culture-of-waste",
     "title": "Trash Aesthetics. Visual Culture of Waste",
     "shortTitle": "Trash Aesthetics",
-    "type": "Type design, book, Visual Research",
+    "type": "Type design, Book, Visual Research",
     "year": "2025",
+    "sortDate": "2025-12-25",
     "description": "",
     "images": [],
-    "contentBlocks": [],
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/trash/1.png"
+      },
+      {
+        "type": "text",
+        "content": "Trash creates a unique aesthetic—chaos, wear and tear, random combinations of shapes and materials. This expressiveness is increasingly being used in fashion, advertising, and art as a source of new visual solutions. Could trash become a fully-fledged visual language of popular culture?"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/3.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/4.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/5.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/6.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/7.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/trash/8-1.png",
+        "right": "/images/trash/8-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/9.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/10.gif"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/11.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/12.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/13.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/14.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/15.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/16.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/trash/17-1.png",
+        "right": "/images/trash/17-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/18.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/19.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/trash/20-1.png",
+        "right": "/images/trash/20-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/21.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/22.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/23.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/24.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/25.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/26.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/27.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/28.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/29.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/30.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/31.png"
+      },
+      {
+        "type": "text",
+        "content": "Garbage, one way or another, is perceived as something base and unpleasant. In this form, it can never enter the masses. Nevertheless, with certain transformations, and especially with claims of recycling or aestheticization, waste becomes a fully-fledged visual language of popular culture."
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/32.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/trash/33.png"
+      }
+    ],
     "backgroundColor": "#000000",
-    "cover": "/images/trash/cover.png"
+    "cover": "/images/trash/cover.png",
+    "links": [
+      {
+        "text": "Calameo",
+        "url": "https://www.calameo.com/read/0072628113e8132eb9390"
+      }
+    ]
   },
   {
     "id": "w-dotorg-dymshits-partners-rebranding",
@@ -400,6 +1377,7 @@
     "shortTitle": "Dymshits",
     "type": "Identity, Generative",
     "year": "2025",
+    "sortDate": "2025-08-18",
     "description": "",
     "images": [],
     "contentBlocks": [
@@ -413,11 +1391,11 @@
       },
       {
         "type": "image",
-        "src": "/public/images/dym/1.png"
+        "src": "/images/dym/1.png"
       },
       {
         "type": "image",
-        "src": "/public/images/dym/2.png"
+        "src": "/images/dym/2.png"
       },
       {
         "type": "video",
@@ -433,7 +1411,7 @@
       },
       {
         "type": "image",
-        "src": "/public/images/dym/3.png"
+        "src": "/images/dym/3.png"
       },
       {
         "type": "video",
@@ -441,7 +1419,7 @@
       },
       {
         "type": "image",
-        "src": "/public/images/dym/4.png"
+        "src": "/images/dym/4.png"
       },
       {
         "type": "video",
@@ -449,7 +1427,7 @@
       },
       {
         "type": "image",
-        "src": "/public/images/dym/5 copy.png"
+        "src": "/images/dym/5 copy.png"
       },
       {
         "type": "video",
@@ -462,14 +1440,46 @@
       {
         "type": "video",
         "embed": "<iframe src=\"https://player.vimeo.com/video/1110109674?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
-      },
-      {
-        "type": "text",
-        "content": "Арсений Кутовой — стратег\nОльга Кутовая — арт-директор\nВиталий Шадрин — дизайнер\nВасилий Алеев — дизайнер\nСоня Пичевская — дизайнер\nВасилий Сиванюк — фронтенд-разработчик\nПавел Марков — программист"
       }
     ],
     "backgroundColor": "##FBFBFB",
-    "cover": "/images/dym/cover.png"
+    "cover": "/images/dym/cover.png",
+    "links": [
+      {
+        "text": "Original case",
+        "url": "https://www.dotorg.ru/portfolio/dnp-rebranding"
+      }
+    ],
+    "creditsList": [
+      {
+        "role": "Strategist",
+        "name": "Arseniy Kutovoy"
+      },
+      {
+        "role": "Art Director",
+        "name": "Olga Kutovaya"
+      },
+      {
+        "role": "Designer",
+        "name": "Vitaly Shadrin"
+      },
+      {
+        "role": "Designer",
+        "name": "Vasilii Aleev"
+      },
+      {
+        "role": "Designer",
+        "name": "Sonya Pichevskaya"
+      },
+      {
+        "role": "Front-end developer",
+        "name": "Vasily Sivanyuk"
+      },
+      {
+        "role": "Programmer",
+        "name": "Pavel Markov"
+      }
+    ]
   },
   {
     "id": "w-dotorg-css-rebranding",
@@ -477,6 +1487,7 @@
     "shortTitle": "CSS",
     "type": "Identity, Motion",
     "year": "2025",
+    "sortDate": "2025-09-22",
     "description": "",
     "images": [],
     "contentBlocks": [
@@ -506,7 +1517,7 @@
       },
       {
         "type": "image",
-        "src": "public/images/css/2.png"
+        "src": "/images/css/2.png"
       },
       {
         "type": "video",
@@ -518,11 +1529,11 @@
       },
       {
         "type": "image",
-        "src": "public/images/css/3.png"
+        "src": "/images/css/3.png"
       },
       {
         "type": "image",
-        "src": "public/images/css/4.png"
+        "src": "/images/css/4.png"
       },
       {
         "type": "video",
@@ -535,10 +1546,6 @@
       {
         "type": "video",
         "embed": "<iframe src=\"https://player.vimeo.com/video/1120810907?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
-      },
-      {
-        "type": "text",
-        "content": "Олег Трофимович — стратег\nОльга Кутовая — арт-директор\nЕкатерина Антонова — ведущий дизайнер\nВиктория Трубицина — старший дизайнер\nВиталий Шадрин — старший дизайнер\nВасилий Алеев — дизайнер\nЛада Бурова — дизайнер\nСоня Пичевская — дизайнер\nАндрей Шматько — 3D-визуализатор\nПавел Парамонов — фотограф\nУльяна Уступная и Степан Верба — модели\nВасилий Сиванюк — фронтенд-разработчик\nПавел Марков — программист"
       }
     ],
     "backgroundColor": "##ffffff",
@@ -546,9 +1553,238 @@
     "awards": [
       {
         "place": "Gold",
-        "festival": "Sreda New Design Festival"
+        "festival": "Sreda New Design Festival 2025",
+        "nomination": "—"
       }
     ],
-    "credits": "Олег Трофимович — стратег\nОльга Кутовая — арт-директор\nЕкатерина Антонова — ведущий дизайнер\nВиктория Трубицина — старший дизайнер\nВиталий Шадрин — старший дизайнер\nВасилий Алеев — дизайнер\nЛада Бурова — дизайнер\nСоня Пичевская — дизайнер\nАндрей Шматько — 3D-визуализатор\nПавел Парамонов — фотограф\nУльяна Уступная и Степан Верба — модели\nВасилий Сиванюк — фронтенд-разработчик\nПавел Марков — программист"
+    "links": [
+      {
+        "text": "Original case",
+        "url": "https://www.dotorg.ru/portfolio/css-branding"
+      }
+    ],
+    "creditsList": [
+      {
+        "role": "Strategist",
+        "name": "Oleg Trofimovich"
+      },
+      {
+        "role": "Art Director",
+        "name": "Olga Kutovaya"
+      },
+      {
+        "role": "Lead Designer",
+        "name": "Ekaterina Antonova"
+      },
+      {
+        "role": "Senior Designer",
+        "name": "Victoria Trubitsina"
+      },
+      {
+        "role": "Senior Designer",
+        "name": "Vitaly Shadrin"
+      },
+      {
+        "role": "Designer",
+        "name": "Vasilii Aleev"
+      },
+      {
+        "role": "Designer",
+        "name": "Lada Burova"
+      },
+      {
+        "role": "Designer",
+        "name": "Sonya Pichevskaya"
+      },
+      {
+        "role": "3D visualizer",
+        "name": "Andrey Shmatko"
+      },
+      {
+        "role": "Photographer",
+        "name": "Pavel Paramonov"
+      },
+      {
+        "role": "Model",
+        "name": "Ulyana Ustupnaya"
+      },
+      {
+        "role": "Model",
+        "name": "Stepan Verba"
+      },
+      {
+        "role": "Front-end developer",
+        "name": "Vasily Sivanyuk"
+      },
+      {
+        "role": "Programmer",
+        "name": "Pavel Markov"
+      }
+    ]
+  },
+  {
+    "id": "museum-of-garbage",
+    "title": "Museum of Garbage",
+    "shortTitle": "Museum of Garbage",
+    "description": "",
+    "type": "Identity",
+    "year": "2026",
+    "sortDate": "2026-08-15",
+    "images": [],
+    "contentBlocks": [
+      {
+        "type": "image",
+        "src": "/images/mumu/1.png"
+      },
+      {
+        "type": "text",
+        "content": "The Garbage Museum is a contemporary art museum where trash becomes an artistic statement.\n\nThis is the BÜRO art group's space in the Kaluga and Kaliningrad regions. Its collection features over 600 works by artists from 25 countries, created from recycled materials and waste. The museum explores the value in what is typically considered unnecessary, expanding the boundaries of material and form through contemporary artistic expression."
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/2yN44n1rS2xgEtGm8AA77W\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"2560\" height=\"1440\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "text",
+        "content": "The new positioning conveys the Museum's value through artistic expression. It conveys the idea that art doesn't have to be perfect and glossy; it exists for everyone and can express meaning and emotion even through trash. Furthermore, the exhibition and the museum's positioning have an environmental subtext that runs through all aspects without being intrusive."
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/2.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/mumu/3-1.png",
+        "right": "/images/mumu/3-2.png"
+      },
+      {
+        "type": "text",
+        "content": "A museum is a system in which every discovered object is assigned a new code. The identity visualizes not the object, but its re-encoding. Once in the museum space, trash acquires meaning, beginning to speak for itself."
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/4.png"
+      },
+      {
+        "type": "text",
+        "content": "To visualize this idea, a generative typography tool was developed for creating fonts with unique glyph states. The symbols are assembled from abstract particles, referencing the creation of art objects from waste. Rotating both the sculpture and the font creates a radically different sensory experience."
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/nMsctX57q5LrAjyHKHDoEY\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/h1hi8dDswhX8BYEqBiBeca\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"2560\" height=\"1440\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/24t1gBS9wzHFf8vjJYgfa4\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/5.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/ihLTZkDNoxjUH6YM5bzid6\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/jpNyLpiLWJMRodkFxjKnVM\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/0phqHn7k6nw8pnoD4npFyN\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1600\" height=\"900\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/mumu/6-1.png",
+        "right": "/images/mumu/6-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/7.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/9XgMxtQS5W8CqAqEwi5wvn\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "split",
+        "left": "/images/mumu/8-1.png",
+        "right": "/images/mumu/8-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/9.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/10.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/mumu/11-1.png",
+        "right": "/images/mumu/11-2.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/b4kMNFysU9ns7Fv2uwq3xu\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/4UGZAXjUAVbJEthLhHnG6G\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/dGWk1z1CPCsvjANkcDfxgp\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/xsveiKxgmWBUJCHwEW4Rwm\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/gbzwGfiy1y9j2wGejALAPN\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"1920\" height=\"1080\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/12.png"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/owpA5DVhWaTTYVYX28S31o\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"2560\" height=\"1440\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "video",
+        "embed": "<iframe src=\"https://kinescope.io/embed/6QbGCffSpuXpkEXixewkjq\" allow=\"autoplay; picture-in-picture\" frameborder=\"0\" allowfullscreen width=\"560\" height=\"315\" sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/13.png"
+      },
+      {
+        "type": "split",
+        "left": "/images/mumu/14-1.png",
+        "right": "/images/mumu/14-2.png"
+      },
+      {
+        "type": "image",
+        "src": "/images/mumu/15.png"
+      }
+    ],
+    "backgroundColor": "#fbfbfb",
+    "creditsList": [
+      {
+        "role": "Designer",
+        "name": "Vasilii Aleev"
+      },
+      {
+        "role": "Tutor",
+        "name": "Aleksandr Petukhov",
+        "url": "https://www.behance.net/selectamilo"
+      }
+    ]
   }
 ]

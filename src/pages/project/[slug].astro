@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InnerPageHeader from '../../components/InnerPageHeader.astro';
-import { getProjects, getContentBlocks } from '../../lib/projects';
+import { getVisibleProjects, getContentBlocks } from '../../lib/projects';
 
 export async function getStaticPaths() {
-  const projects = getProjects();
+  const projects = getVisibleProjects();
   return projects.map((project) => ({
     params: { slug: project.id },
     props: { project },
@@ -16,12 +16,25 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const base = import.meta.env.BASE_URL;
 const blocks = getContentBlocks(project);
 const firstImageOrVideoIndex = blocks.findIndex((b) => b.type === 'image' || b.type === 'video');
 const metaInsertIndex = firstImageOrVideoIndex >= 0 ? firstImageOrVideoIndex + 1 : 0;
 const typeWords = (project.type || '—').split(',').map((s) => s.trim()).filter(Boolean);
-const creditsHtml = project.credits?.trim() ? project.credits.trim().replace(/\n/g, '<br>') : '';
+const creditsRows = (project.creditsList && project.creditsList.length > 0
+  ? project.creditsList
+  : (project.credits || '')
+      .split(/\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const parts = line.split('—');
+        if (parts.length >= 2) {
+          return { role: parts[0].trim(), name: parts.slice(1).join('—').trim(), url: '' };
+        }
+        return { role: '—', name: line, url: '' };
+      }));
+const projectLinks = (project.links || []).filter((item) => item && (item.text || item.url));
+const textBlockHtml = (content: string) => content.replace(/\n/g, '<br>');
 const bgColor = project.backgroundColor || '#FBFBFB';
 const bgNorm = (bgColor || '').replace(/^#/, '').toLowerCase();
 const isDarkBg = bgNorm === '000' || bgNorm === '000000';
@@ -33,7 +46,6 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     <main class="project-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
       <div class="project-page__grid">
         <InnerPageHeader activePage="project" />
-        <a href={`${base}admin/edit/?id=${encodeURIComponent(project.id)}`} class="project-page__edit">Редактировать</a>
         <h1 class="project-title">{project.title}</h1>
         <div class="project-page__content">
           {blocks.map((block, index) => {
@@ -55,7 +67,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
                       <img src={block.src} alt={project.title} loading="lazy" />
                     </div>
                   ) : block.type === 'text' ? (
-                    <div class="content-block content-block--text" set:html={block.content}></div>
+                    <div class="content-block content-block--text" set:html={textBlockHtml(block.content)}></div>
                   ) : block.type === 'split' ? (
                     <div class="content-block content-block--split">
                       <img src={block.left} alt={project.title} loading="lazy" />
@@ -78,7 +90,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
             }
             if (block.type === 'text') {
               return (
-                <div class="content-block content-block--text" set:html={block.content}></div>
+                <div class="content-block content-block--text" set:html={textBlockHtml(block.content)}></div>
               );
             }
             if (block.type === 'split') {
@@ -100,17 +112,36 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
           })}
           {project.awards && project.awards.length > 0 && (
             <div class="content-block content-block--awards">
-              <span class="project-meta__label">Awards</span>
+              <span class="project-meta__label">Reward</span>
               {project.awards.map((a, i) => (
-                <>
+                <div class="project-awards__row">
                   <span class="project-awards__place" style={`grid-column: 2; grid-row: ${i + 1};`}>{a.place}</span>
-                  <span class="project-awards__festival" style={`grid-column: 3; grid-row: ${i + 1};`}>{a.festival}</span>
+                  <span class="project-awards__festival" style={`grid-column: 3 / 5; grid-row: ${i + 1};`}>{a.festival}</span>
+                  <span class="project-awards__nomination" style={`grid-column: 5 / 7; grid-row: ${i + 1};`}>{a.nomination || '—'}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {creditsRows.length > 0 && (
+            <div class="content-block content-block--credits">
+              {creditsRows.map((item) => (
+                <>
+                  <span class="project-credits__role">{item.role || '—'}</span>
+                  {item.url ? (
+                    <a class="project-credits__name" href={item.url} target="_blank" rel="noopener noreferrer">{item.name || '—'}</a>
+                  ) : (
+                    <span class="project-credits__name">{item.name || '—'}</span>
+                  )}
                 </>
               ))}
             </div>
           )}
-          {creditsHtml && (
-            <div class="content-block content-block--credits" set:html={creditsHtml} />
+          {projectLinks.length > 0 && (
+            <div class="content-block content-block--project-links">
+              {projectLinks.map((item) => (
+                <a href={item.url || '#'} target="_blank" rel="noopener noreferrer">{item.text || item.url}</a>
+              ))}
+            </div>
           )}
         </div>
         <div class="index-footer__schk"><a href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">SCHK</a></div>
@@ -152,20 +183,6 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   :global(body.page-project .project-page__grid .page-header) {
     grid-column: 1 / -1;
     grid-row: 1;
-  }
-
-  .project-page__edit {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    display: inline-block;
-    margin-left: 1rem;
-    margin-bottom: 0;
-    font-size: 0.9rem;
-    color: #666;
-  }
-
-  .project-page__edit:hover {
-    color: #000;
   }
 
   .project-title {
@@ -234,11 +251,11 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     margin-top: 10px;
   }
 
-  /* Awards: колонки 1–6 */
+  /* Reward: на той же 12-колоночной сетке, что и страница */
   .content-block--awards {
     grid-column: 1 / 7;
     display: grid;
-    grid-template-columns: auto minmax(5em, 120px) minmax(12em, 1fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 10px var(--grid-gutter);
     align-items: start;
     margin-top: 50px;
@@ -246,10 +263,10 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
 
   .content-block--awards .project-meta__label {
-    grid-column: 1;
+    grid-column: 1 / 2;
     grid-row: 1;
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 16pt;
+    font-size: 14pt;
     font-weight: 500;
     line-height: 1.2;
     color: black;
@@ -257,7 +274,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
 
   .project-awards__place {
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 16pt;
+    font-size: 14pt;
     font-weight: 500;
     line-height: 1.2;
     color: black;
@@ -266,7 +283,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
 
   .project-awards__festival {
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 16pt;
+    font-size: 14pt;
     font-weight: 500;
     line-height: 1.2;
     color: black;
@@ -274,29 +291,78 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     word-wrap: break-word;
   }
 
-  /* Credits: колонки 7–12, переносы строк из админки отображаются как <br> */
+  .project-awards__nomination {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 14pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #B29893;
+    min-width: 0;
+    word-wrap: break-word;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .project-awards__row {
+    display: contents;
+  }
+
+  .project-awards__row:hover .project-awards__nomination {
+    opacity: 1;
+  }
+
+  /* Credits: колонки 7–12, формат роль | имя */
   .content-block--credits {
-    grid-column: 7 / 13;
+    grid-column: 7 / 10;
     margin-top: 50px;
     margin-bottom: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: var(--grid-gutter);
+    row-gap: 0.35rem;
+  }
+
+  .project-credits__role,
+  .project-credits__name {
     font-family: 'SuisseIntl', sans-serif;
     font-size: 12px;
     font-weight: 500;
+    line-height: 1.2;
     color: black;
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .project-credits__name {
+    grid-column: 2 / 4;
+    text-decoration: none;
+  }
+
+  .project-credits__name[href]:hover {
+    text-decoration: underline;
+  }
+
+  .content-block--project-links {
+    grid-column: 7 / 13;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .content-block--project-links a {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
     line-height: 1.2;
+    color: #B29893;
+    text-decoration: none;
+    word-break: break-word;
   }
 
-  .content-block--credits :global(p),
-  .content-block--credits :global(br) {
-    line-height: 1.2;
-  }
-
-  .content-block--credits :global(p) {
-    margin: 0 0 0.5em;
-  }
-
-  .content-block--credits :global(p:last-child) {
-    margin-bottom: 0;
+  .content-block--project-links a:hover {
+    text-decoration: underline;
   }
 
   .content-block--image {
@@ -451,12 +517,6 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   :global(body.page-project--dark .project-page__grid .project-title) {
     color: white;
   }
-  :global(body.page-project--dark .project-page__grid .project-page__edit) {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  :global(body.page-project--dark .project-page__grid .project-page__edit:hover) {
-    color: white;
-  }
   :global(body.page-project--dark .project-page__grid .content-block--text) {
     color: white;
   }
@@ -470,8 +530,15 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   :global(body.page-project--dark .project-page__grid .content-block--awards .project-awards__festival) {
     color: white;
   }
-  :global(body.page-project--dark .project-page__grid .content-block--credits) {
+  :global(body.page-project--dark .project-page__grid .content-block--awards .project-awards__nomination) {
+    color: #B29893;
+  }
+  :global(body.page-project--dark .project-page__grid .content-block--credits .project-credits__role),
+  :global(body.page-project--dark .project-page__grid .content-block--credits .project-credits__name) {
     color: white;
+  }
+  :global(body.page-project--dark .project-page__grid .content-block--project-links a) {
+    color: #B29893;
   }
   :global(body.page-project--dark .project-page__grid .index-footer__schk),
   :global(body.page-project--dark .project-page__grid .index-footer__text),
@@ -484,17 +551,123 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     color: inherit;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1280px) {
     .project-title {
-      font-size: 2.5rem;
-      letter-spacing: -0.02em;
+      font-size: clamp(3rem, 7vw, 4.5rem);
+      letter-spacing: -0.03em;
+      margin-top: 220px;
+    }
+    .content-block--text {
+      font-size: 14pt;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .project-title {
+      margin-top: 170px;
+    }
+    .content-block--meta {
+      grid-column: 1 / 5;
+    }
+    .content-block--text {
+      grid-column: 5 / 13;
+    }
+    .content-block--awards {
+      grid-column: 1 / 8;
+    }
+    .content-block--credits,
+    .content-block--project-links {
+      grid-column: 8 / 13;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .project-title {
+      grid-column: 1 / -1;
+      margin-top: 120px;
     }
     .content-block--meta,
-    .content-block--awards {
+    .content-block--text,
+    .content-block--awards,
+    .content-block--credits,
+    .content-block--project-links {
       grid-column: 1 / -1;
     }
     .content-block--credits {
-      grid-column: 1 / -1;
+      grid-template-columns: minmax(7rem, 32%) 1fr;
+    }
+    .project-credits__name {
+      grid-column: 2 / 3;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .project-title {
+      font-size: clamp(2rem, 9vw, 2.75rem);
+      letter-spacing: -0.02em;
+      margin-top: 90px;
+    }
+    .content-block--meta {
+      grid-template-columns: 1fr;
+      gap: 8px 0;
+      margin-top: 32px;
+      margin-bottom: 32px;
+    }
+    .content-block--meta .project-meta__value-list {
+      grid-column: 1;
+    }
+    .content-block--meta .project-meta__label--year,
+    .content-block--meta .project-meta__value-list--year {
+      margin-top: 0;
+    }
+    .content-block--text,
+    .content-block--image,
+    .content-block--split,
+    .content-block--video,
+    .content-block--awards,
+    .content-block--credits,
+    .content-block--project-links {
+      margin-top: 32px;
+      margin-bottom: 32px;
+    }
+    .content-block--split {
+      grid-template-columns: 1fr;
+    }
+    .content-block--awards {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      row-gap: 8px;
+    }
+    .project-awards__place {
+      grid-column: 2 / 4 !important;
+      font-size: 14px;
+      white-space: normal;
+    }
+    .project-awards__festival {
+      grid-column: 4 / 10 !important;
+      font-size: 14px;
+    }
+    .project-awards__nomination {
+      grid-column: 10 / 13 !important;
+      font-size: 14px;
+      opacity: 1;
+    }
+    .content-block--awards .project-meta__label {
+      font-size: 14px;
+    }
+    .content-block--credits {
+      grid-template-columns: minmax(6.5rem, 35%) 1fr;
+      row-gap: 0.45rem;
+    }
+    .project-credits__role,
+    .project-credits__name,
+    .content-block--project-links a {
+      font-size: 14px;
+    }
+    .project-credits__name {
+      grid-column: 2 / 3;
+    }
+    .project-awards__row:hover .project-awards__nomination {
+      opacity: 1;
     }
   }
 </style>

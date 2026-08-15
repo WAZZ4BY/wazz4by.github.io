@@ -1,0 +1,252 @@
+---
+const base = import.meta.env.BASE_URL;
+const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
+---
+
+<div class="mobile-global-nav" data-mobile-global-nav>
+  <a href={base === '/' ? '/' : base} class="mobile-global-nav__logo" aria-label="Vasilii Aleev">
+    <img class="mobile-global-nav__logo-img" src={logoSrc} width="155" height="22" alt="" />
+  </a>
+  <button
+    type="button"
+    class="mobile-global-nav__toggle"
+    id="mobileGlobalNavToggle"
+    aria-controls="mobileGlobalNavOverlay"
+    aria-expanded="false"
+    aria-label="Open menu"
+  >
+    <span class="mobile-global-nav__line" aria-hidden="true"></span>
+    <span class="mobile-global-nav__line" aria-hidden="true"></span>
+  </button>
+  <div class="mobile-global-nav__overlay" id="mobileGlobalNavOverlay" aria-hidden="true">
+    <nav class="mobile-global-nav__links" aria-label="Mobile navigation">
+      <a href={`${base}index/`}>Index</a>
+      <a href={`${base}research/`}>Research</a>
+      <a href={`${base}info/`}>Info</a>
+    </nav>
+    <a class="mobile-global-nav__schk" href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">schk</a>
+  </div>
+</div>
+
+<style>
+  .mobile-global-nav {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-global-nav {
+      --mobile-menu-size-open: min(calc(100vw - 32px), calc(100vh - 32px));
+    }
+
+    :global(.home-mobile-toggle),
+    :global(.home-mobile-overlay),
+    :global(.index-mobile-toggle),
+    :global(.index-mobile-overlay) {
+      display: none !important;
+    }
+
+    :global(.page-header),
+    :global(.site-header) {
+      display: none !important;
+    }
+
+    .mobile-global-nav {
+      display: block;
+    }
+
+    .mobile-global-nav__logo {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      z-index: 2050;
+      line-height: 0;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .mobile-global-nav__logo-img {
+      display: block;
+      width: auto;
+      height: 22px;
+      max-width: none;
+    }
+
+    :global(body.is-home) .mobile-global-nav__logo {
+      display: none;
+    }
+
+    :global(body.is-home .home-hero) {
+      display: flex !important;
+    }
+
+    :global(body.is-home .home-hero__side) {
+      display: none !important;
+    }
+
+    :global(body.is-home .home-hero__row) {
+      grid-template-columns: 1fr !important;
+      row-gap: 0 !important;
+      justify-items: center;
+    }
+
+    :global(body.is-home .home-hero__logo-link) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .mobile-global-nav__toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 50px;
+      height: 50px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      cursor: pointer;
+      z-index: 2400;
+      appearance: none;
+      -webkit-appearance: none;
+      overflow: visible;
+      clip-path: none;
+    }
+
+    .mobile-global-nav__line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 24px;
+      height: 4px;
+      border-radius: 0;
+      background: #000;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+
+    .mobile-global-nav__line:first-child {
+      transform: translate(-50%, calc(-50% - 5px));
+    }
+
+    .mobile-global-nav__line:last-child {
+      transform: translate(-50%, calc(-50% + 5px));
+    }
+
+    .mobile-global-nav__overlay {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 50px;
+      height: 50px;
+      z-index: 2300;
+      background: rgba(0, 0, 0, 0.2);
+      -webkit-backdrop-filter: blur(34px);
+      backdrop-filter: blur(34px);
+      padding: 20px;
+      opacity: 1;
+      pointer-events: none;
+      overflow: hidden;
+      box-sizing: border-box;
+      border-radius: 10px;
+      transition:
+        width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.28s ease,
+        -webkit-backdrop-filter 0.28s ease,
+        backdrop-filter 0.28s ease;
+    }
+
+    :global(body.global-mobile-menu-open) .mobile-global-nav__overlay {
+      width: var(--mobile-menu-size-open);
+      height: var(--mobile-menu-size-open);
+      pointer-events: auto;
+    }
+
+    .mobile-global-nav__links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      margin: 0;
+      opacity: 0;
+      transition: opacity 0.16s ease;
+    }
+
+    .mobile-global-nav__links a,
+    .mobile-global-nav__schk {
+      font-family: 'SuisseIntl', sans-serif;
+      font-size: clamp(2rem, 10vw, 72px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: #000;
+      text-decoration: none;
+    }
+
+    .mobile-global-nav__links a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .mobile-global-nav__schk {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-transform: lowercase;
+      opacity: 0;
+      transition: opacity 0.16s ease;
+    }
+
+    :global(body.global-mobile-menu-open) .mobile-global-nav__links,
+    :global(body.global-mobile-menu-open) .mobile-global-nav__schk {
+      opacity: 1;
+      transition-delay: 0.08s;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const root = document.querySelector('[data-mobile-global-nav]');
+    if (!root) return;
+
+    const toggle = document.getElementById('mobileGlobalNavToggle');
+    const overlay = document.getElementById('mobileGlobalNavOverlay');
+    if (!toggle || !overlay) return;
+
+    function closeMenu() {
+      document.body.classList.remove('global-mobile-menu-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open menu');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function openMenu() {
+      document.body.classList.add('global-mobile-menu-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Close menu');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    toggle.addEventListener('click', function () {
+      if (document.body.classList.contains('global-mobile-menu-open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    overlay.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        closeMenu();
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768) closeMenu();
+    });
+  })();
+</script>

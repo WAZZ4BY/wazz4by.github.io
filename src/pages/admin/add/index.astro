@@ -26,18 +26,30 @@ const base = import.meta.env.BASE_URL;
           <input type="text" id="addType" placeholder="Type design, Motion, Identity…" />
           <label>Год</label>
           <input type="text" id="addYear" placeholder="2025" />
+          <label>Точная дата для сортировки</label>
+          <input type="date" id="addSortDate" />
+          <label class="admin-checkbox-label">
+            <input type="checkbox" id="addHidden" />
+            Скрыть проект с сайта
+          </label>
+          <p class="admin-hint">Скрытый проект сохранится в данных, но не будет показан на сайте.</p>
           <label>Цвет фона страницы</label>
           <div class="admin-color-row">
             <input type="color" id="addBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
             <input type="text" id="addBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
           </div>
           <label>Awards (награды)</label>
-          <p class="admin-hint">В конце проекта: место и название фестиваля.</p>
+          <p class="admin-hint">В конце проекта: место, фестиваль и номинация.</p>
           <div id="addAwardsList" class="awards-list"></div>
           <button type="button" class="secondary" id="addAwardBtn" style="margin-top:0.5rem;">+ Добавить награду</button>
           <label style="margin-top:1rem;">Credits (кредиты)</label>
-          <p class="admin-hint">Текст в конце проекта мелким шрифтом. Можно HTML.</p>
-          <textarea id="addCredits" rows="4" placeholder="Например: Дизайн — Василий Алеев"></textarea>
+          <p class="admin-hint">Одна строка = одна роль и имя. Можно добавить ссылку к имени.</p>
+          <div id="addCreditsList" class="credits-list"></div>
+          <button type="button" class="secondary" id="addCreditBtn" style="margin-top:0.5rem;">+ Добавить кредит</button>
+          <label>Ссылки проекта</label>
+          <p class="admin-hint">Добавьте текст ссылки и URL.</p>
+          <div id="addLinksList" class="links-list"></div>
+          <button type="button" class="secondary" id="addLinkBtn" style="margin-top:0.5rem;">+ Добавить ссылку</button>
           <label>Контент (блоки)</label>
           <p class="admin-hint">Текст — колонки 5–12. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
           <div id="addContentBlocksList" class="content-blocks-list"></div>
@@ -235,12 +247,40 @@ const base = import.meta.env.BASE_URL;
         const addRow = function () {
           const row = document.createElement('div');
           row.className = 'award-row';
-          row.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+          row.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <input type="text" class="award-nomination" placeholder="Номинация" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
           list.appendChild(row);
           row.querySelector('.remove-award').addEventListener('click', function () { row.remove(); });
         };
         addRow();
         document.getElementById('addAwardBtn').addEventListener('click', addRow);
+      })();
+
+      (function () {
+        const list = document.getElementById('addLinksList');
+        if (!list) return;
+        const addRow = function () {
+          const row = document.createElement('div');
+          row.className = 'link-row';
+          row.innerHTML = '<input type="text" class="project-link-text" placeholder="Текст ссылки" /> <input type="url" class="project-link-url" placeholder="https://example.com" /> <button type="button" class="danger remove-link" title="Удалить">×</button>';
+          list.appendChild(row);
+          row.querySelector('.remove-link').addEventListener('click', function () { row.remove(); });
+        };
+        addRow();
+        document.getElementById('addLinkBtn').addEventListener('click', addRow);
+      })();
+
+      (function () {
+        const list = document.getElementById('addCreditsList');
+        if (!list) return;
+        const addRow = function () {
+          const row = document.createElement('div');
+          row.className = 'credit-row';
+          row.innerHTML = '<input type="text" class="credit-role" placeholder="Роль" /> <input type="text" class="credit-name" placeholder="Имя" /> <input type="url" class="credit-url" placeholder="https://example.com (необязательно)" /> <button type="button" class="danger remove-credit" title="Удалить">×</button>';
+          list.appendChild(row);
+          row.querySelector('.remove-credit').addEventListener('click', function () { row.remove(); });
+        };
+        addRow();
+        document.getElementById('addCreditBtn').addEventListener('click', addRow);
       })();
 
       document.getElementById('addForm').addEventListener('submit', function (e) {
@@ -250,12 +290,38 @@ const base = import.meta.env.BASE_URL;
         const addBgHex = document.getElementById('addBackgroundColorHex').value.trim();
         const addBgColor = document.getElementById('addBackgroundColor').value;
         const awards = [];
+        const creditsList = [];
+        const links = [];
         document.querySelectorAll('#addAwardsList .award-row').forEach(function (row) {
           const placeEl = row.querySelector('.award-place');
           const festivalEl = row.querySelector('.award-festival');
+          const nominationEl = row.querySelector('.award-nomination');
           const place = placeEl ? placeEl.value.trim() : '';
           const festival = festivalEl ? festivalEl.value.trim() : '';
-          if (place || festival) awards.push({ place: place || '—', festival: festival || '—' });
+          const nomination = nominationEl ? nominationEl.value.trim() : '';
+          if (place || festival || nomination) {
+            awards.push({ place: place || '—', festival: festival || '—', nomination: nomination || '—' });
+          }
+        });
+        document.querySelectorAll('#addLinksList .link-row').forEach(function (row) {
+          const textEl = row.querySelector('.project-link-text');
+          const urlEl = row.querySelector('.project-link-url');
+          const text = textEl ? textEl.value.trim() : '';
+          const url = urlEl ? urlEl.value.trim() : '';
+          if (text || url) {
+            links.push({ text: text || '—', url: url || '#' });
+          }
+        });
+        document.querySelectorAll('#addCreditsList .credit-row').forEach(function (row) {
+          const roleEl = row.querySelector('.credit-role');
+          const nameEl = row.querySelector('.credit-name');
+          const urlEl = row.querySelector('.credit-url');
+          const role = roleEl ? roleEl.value.trim() : '';
+          const name = nameEl ? nameEl.value.trim() : '';
+          const url = urlEl ? urlEl.value.trim() : '';
+          if (role || name || url) {
+            creditsList.push({ role: role || '—', name: name || '—', url: url || undefined });
+          }
         });
         const newProject = {
           id: slugify(title),
@@ -264,12 +330,15 @@ const base = import.meta.env.BASE_URL;
           description: '',
           type: document.getElementById('addType').value.trim(),
           year: document.getElementById('addYear').value.trim(),
+          sortDate: document.getElementById('addSortDate').value.trim() || undefined,
           images: [],
           contentBlocks: contentBlocks.slice(),
           backgroundColor: addBgHex || addBgColor || undefined,
           awards: awards.length > 0 ? awards : undefined,
-          credits: document.getElementById('addCredits').value.trim() || undefined
+          links: links.length > 0 ? links : undefined,
+          creditsList: creditsList.length > 0 ? creditsList : undefined
         };
+        if (document.getElementById('addHidden').checked) newProject.hidden = true;
         sessionStorage.setItem(NEW_PROJECT_KEY, JSON.stringify(newProject));
         window.location.href = base + 'admin/';
       });

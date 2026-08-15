@@ -26,7 +26,7 @@ const base = import.meta.env.BASE_URL;
       .admin-section.admin-section--wide { max-width: none; width: 100%; }
       .admin-section h2 { margin: 0 0 1rem; font-size: 1.15rem; }
       .admin-page label { display: block; margin-bottom: 0.25rem; font-weight: 500; font-size: 0.9rem; }
-      .admin-page input[type="text"], .admin-page input[type="password"], .admin-page textarea, .admin-page select { width: 100%; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 1rem; border: 1px solid #ddd; border-radius: 4px; }
+      .admin-page input[type="text"], .admin-page input[type="password"], .admin-page input[type="url"], .admin-page input[type="date"], .admin-page textarea, .admin-page select { width: 100%; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 1rem; border: 1px solid #ddd; border-radius: 4px; }
       .admin-page textarea { min-height: 80px; resize: vertical; }
       .admin-page button { padding: 0.5rem 1rem; font-size: 0.95rem; cursor: pointer; border-radius: 4px; border: none; }
       .admin-page button.primary { background: #000; color: #fff; }
@@ -42,7 +42,11 @@ const base = import.meta.env.BASE_URL;
       .admin-page .status.ok { color: #080; }
       .admin-page .status.err { color: #c00; }
       .admin-page .project-list { list-style: none; padding: 0; margin: 0; }
-      .admin-page .project-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+      .admin-page .project-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee; gap: 0.75rem; }
+      .admin-page .project-list li.project-list__item--hidden { opacity: 0.55; }
+      .admin-page .project-list__title { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+      .admin-page .project-list__badge { flex-shrink: 0; font-size: 0.75rem; font-weight: 600; color: #666; background: #eee; padding: 0.15rem 0.45rem; border-radius: 999px; }
+      .admin-page .project-list__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; justify-content: flex-end; }
       .admin-page .project-list li:last-child { border-bottom: none; }
       .admin-page .project-list a { margin-right: 0.5rem; }
       .admin-page .mb-2 { margin-bottom: 1.5rem; }
@@ -65,6 +69,8 @@ const base = import.meta.env.BASE_URL;
       .admin-page .admin-color-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
       .admin-page .admin-color-row input[type="color"] { width: 48px; height: 38px; padding: 2px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; }
       .admin-page .admin-color-row input[type="text"] { flex: 1; margin-bottom: 0; }
+      .admin-page .admin-checkbox-label { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; font-weight: 500; font-size: 0.9rem; }
+      .admin-page .admin-checkbox-label input[type="checkbox"] { width: auto; margin: 0; }
       .admin-page .content-blocks-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem; }
       .admin-page .content-blocks-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
       .admin-page .content-block-card { padding: 1rem; background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px; }
@@ -85,7 +91,19 @@ const base = import.meta.env.BASE_URL;
       .admin-page .award-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
       .admin-page .award-row .award-place { flex: 1; margin-bottom: 0; }
       .admin-page .award-row .award-festival { flex: 1; margin-bottom: 0; }
+      .admin-page .award-row .award-nomination { flex: 1; margin-bottom: 0; }
       .admin-page .award-row .remove-award { flex-shrink: 0; padding: 4px 8px; font-size: 0.9rem; }
+      .admin-page .links-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0; }
+      .admin-page .link-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+      .admin-page .link-row .project-link-text { flex: 1; margin-bottom: 0; }
+      .admin-page .link-row .project-link-url { flex: 1; margin-bottom: 0; }
+      .admin-page .link-row .remove-link { flex-shrink: 0; padding: 4px 8px; font-size: 0.9rem; }
+      .admin-page .credits-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0; }
+      .admin-page .credit-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+      .admin-page .credit-row .credit-role { flex: 1; margin-bottom: 0; }
+      .admin-page .credit-row .credit-name { flex: 1; margin-bottom: 0; }
+      .admin-page .credit-row .credit-url { flex: 1; margin-bottom: 0; }
+      .admin-page .credit-row .remove-credit { flex-shrink: 0; padding: 4px 8px; font-size: 0.9rem; }
     </style>
   </head>
   <body>

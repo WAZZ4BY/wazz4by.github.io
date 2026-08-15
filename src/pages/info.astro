@@ -289,79 +289,141 @@ import InnerPageHeader from '../components/InnerPageHeader.astro';
   }
 
   @media (max-width: 768px) {
-    .info-intro {
-      font-size: clamp(1.5rem, 7.5vw, 2.75rem);
-      letter-spacing: -0.03em;
-      margin-top: min(100px, 18vh);
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 0 8px;
+      align-items: start;
     }
 
-    .info-split {
-      gap: 28px;
-      margin-top: 32px;
-    }
-
-    .info-pair {
-      grid-template-columns: minmax(5rem, 28%) 1fr;
-      gap: 0 var(--grid-gutter);
+    .info-split,
+    .info-split__left,
+    .info-split__right,
+    .info-reward-row {
+      display: contents;
     }
 
     .info-pair__label,
-    .info-pair__value {
-      grid-column: unset;
-    }
-
-    .info-quote {
-      font-size: 12px;
-      line-height: 1.35;
-      max-width: 100%;
-    }
-
-    .info-contacts-line {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px 28px;
-      width: 100%;
-    }
-
+    .info-pair__value,
+    .info-reward-label,
+    .info-reward-years,
     .info-contacts-handles,
     .info-contacts-short {
       font-size: 14px;
+      font-weight: 500;
+      line-height: 1.2;
+      overflow-wrap: normal;
+      word-break: keep-all;
+      hyphens: none;
+    }
+
+    /* Local text-block grid: slightly wider first columns */
+    .info-split__left .info-pair {
+      display: grid;
+      grid-column: 1 / 9;
+      grid-template-columns: 1.25fr 1.25fr repeat(6, minmax(0, 1fr));
+      gap: 0 8px;
+      align-items: start;
+      min-width: 0;
+    }
+
+    /* 1) Large quote: columns 1-7 */
+    .info-intro {
+      grid-column: 1 / 8;
+      grid-row: 1;
+      margin-top: 180px;
+      margin-bottom: 0;
+      font-size: clamp(2.1rem, 10.2vw, 4.1rem);
+      letter-spacing: -0.03em;
+      line-height: 0.96;
+    }
+
+    /* 2) Small quote: columns 3-8, offset 10 */
+    .info-quote {
+      grid-column: 3 / 9;
+      grid-row: 2;
+      margin-top: 10px;
+      margin-bottom: 0;
+      font-size: 12px;
+      line-height: 1.2;
+      text-align: left;
+      max-width: 100%;
+    }
+
+    /* 3) Contacts: columns 5-7 and 8, offset 40 */
+    .info-contacts-line {
+      grid-column: 5 / 9;
+      grid-row: 3;
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0 8px;
+      align-items: start;
+      width: 100%;
+      min-width: 0;
     }
 
     .info-contacts-handles {
-      white-space: nowrap;
+      grid-column: 1 / 4;
+      white-space: normal;
+      overflow: visible;
+      margin: 0;
     }
 
     .info-contacts-short {
+      grid-column: 4 / 5;
       text-align: left;
       white-space: nowrap;
+      margin: 0;
     }
 
-    .info-reward-row {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 28px;
+    /* 4) Name / Based / Alive block: offset 70 */
+    .info-split__left .info-pair:nth-child(1) {
+      grid-row: 4;
+      margin-top: 70px;
     }
 
-    .info-reward-label,
-    .info-reward-years,
+    .info-split__left .info-pair:nth-child(1) .info-pair__label {
+      grid-column: 1 / 3;
+      margin-top: 0;
+    }
+
+    .info-split__left .info-pair:nth-child(1) .info-pair__value {
+      grid-column: 3 / 6;
+      margin-top: 0;
+    }
+
+    /* 5) Education / Work block: offset 40 */
+    .info-split__left .info-pair:nth-child(2) {
+      grid-row: 5;
+      margin-top: 40px;
+    }
+
+    .info-split__left .info-pair:nth-child(2) .info-pair__label {
+      grid-column: 1 / 3;
+      margin-top: 0;
+    }
+
+    .info-split__left .info-pair:nth-child(2) .info-pair__value {
+      grid-column: 3 / 9;
+      margin-top: 0;
+    }
+
+    /* 6) Reward block: offset 40 */
+    .info-reward-label {
+      grid-column: 1 / 3;
+      grid-row: 6;
+      margin-top: 40px;
+    }
+
+    .info-reward-years {
+      grid-column: 3 / 6;
+      grid-row: 6;
+      margin-top: 40px;
+    }
+
     .info-reward-pairs {
-      grid-column: unset;
-      width: 100%;
-    }
-
-    .info-reward-years,
-    .info-reward-pairs {
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    .info-reward-pairs span {
-      display: block;
-      margin-bottom: 0.35em;
+      display: none;
     }
   }
 </style>

@@ -1,21 +1,29 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InnerPageHeader from '../../components/InnerPageHeader.astro';
-import { getProjects, getProjectImageUrls } from '../../lib/projects';
+import { getVisibleProjects, getProjectHoverMedia } from '../../lib/projects';
 
 const base = import.meta.env.BASE_URL;
-const projectImagesById: Record<string, string[]> = {};
-for (const p of getProjects()) {
-  projectImagesById[p.id] = getProjectImageUrls(p);
+const projectMediaById: Record<string, ReturnType<typeof getProjectHoverMedia>> = {};
+for (const p of getVisibleProjects()) {
+  projectMediaById[p.id] = getProjectHoverMedia(p);
 }
-const projectImagesJson = JSON.stringify(projectImagesById);
+const projectMediaJson = JSON.stringify(projectMediaById);
 
-const projects = getProjects()
+function getProjectSortTimestamp(project: { sortDate?: string; year?: string }) {
+  const sortDate = String(project.sortDate || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(sortDate)) {
+    const ts = Date.parse(sortDate + 'T00:00:00Z');
+    if (!Number.isNaN(ts)) return ts;
+  }
+  const year = parseInt(String(project.year || ''), 10) || 0;
+  return Date.UTC(year, 0, 1);
+}
+
+const projects = getVisibleProjects()
   .slice()
   .sort((a, b) => {
-    const yA = parseInt(String(a.year || ''), 10) || 0;
-    const yB = parseInt(String(b.year || ''), 10) || 0;
-    return yB - yA; // newest first, как при первой загрузке в скрипте
+    return getProjectSortTimestamp(b) - getProjectSortTimestamp(a); // newest first
   });
 
 function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
@@ -45,7 +53,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
           {projects.map((p) => {
             const titleParts = splitProjectTitle(p);
             return (
-              <a href={`${base}project/${p.id}/`} class="index-list__row" data-year={p.year || ''} data-cover={p.cover || ''} data-project-id={p.id}>
+              <a href={`${base}project/${p.id}/`} class="index-list__row" data-year={p.year || ''} data-sort-date={p.sortDate || ''} data-cover={p.cover || ''} data-project-id={p.id}>
                 <span class="index-list__name">
                   <span class="index-list__name-short">{titleParts.short}</span><span class="index-list__name-tail">{titleParts.tail}</span>
                 </span>
@@ -65,7 +73,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       <div class="index-footer__links"><a href="https://www.instagram.com/wazz4by" target="_blank" rel="noopener noreferrer">Ig</a><br/><a href="https://t.me/waz4by" target="_blank" rel="noopener noreferrer">Tg</a><br/><a href="https://www.behance.net/wazz4by/" target="_blank" rel="noopener noreferrer">Be</a></div>
     </div>
   </div>
-  <script type="application/json" id="indexProjectImagesData" set:html={projectImagesJson} />
+  <script type="application/json" id="indexProjectMediaData" set:html={projectMediaJson} />
 </BaseLayout>
 
 <style>
@@ -76,10 +84,15 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     grid-template-rows: auto auto 1fr auto;
     gap: 0 var(--grid-gutter);
     position: relative;
+    flex: 1;
+    min-height: calc(100vh - var(--page-header-height));
   }
 
   :global(body.page-index .inner-page) {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
   :global(body.page-index .index2__grid .page-header) {
     grid-column: 1 / -1;
@@ -271,20 +284,36 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     z-index: 0;
     overflow: hidden;
   }
-  :global(body.page-index .index-hover-scatter img) {
+  :global(body.page-index .index-hover-scatter__item) {
     position: fixed;
     width: var(--index-hover-col-w, 120px);
     max-width: min(
       var(--index-hover-col-w, 120px),
       calc((2 * (100vw - 11 * var(--grid-gutter, 20px)) / 12) + var(--grid-gutter, 20px))
     );
-    height: auto;
     max-height: 45vh;
-    object-fit: contain;
     pointer-events: none;
     opacity: 0;
     animation: index-hover-float-in 0.22s ease forwards;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+  }
+  :global(body.page-index .index-hover-scatter__item img) {
+    width: 100%;
+    height: auto;
+    max-height: 45vh;
+    object-fit: contain;
+    display: block;
+  }
+  :global(body.page-index .index-hover-scatter__item--video) {
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+  :global(body.page-index .index-hover-scatter__item--video iframe) {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
   }
   @keyframes index-hover-float-in {
     from {
@@ -296,6 +325,12 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       transform: scale(1);
     }
   }
+
+  @media (max-width: 768px) {
+    :global(body.page-index .index2__grid .page-header) {
+      display: none;
+    }
+  }
 </style>
 
 <script define:vars={{ base }}>
@@ -305,15 +340,15 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     const preview = document.getElementById('indexListPreview');
     const previewImg = document.getElementById('indexListPreviewImg');
     const scatterEl = document.getElementById('indexHoverScatter');
-    const imagesDataEl = document.getElementById('indexProjectImagesData');
+    const mediaDataEl = document.getElementById('indexProjectMediaData');
     if (!list || !yearBtn) return;
 
-    let projectImagesMap = {};
-    if (imagesDataEl && imagesDataEl.textContent) {
+    let projectMediaMap = {};
+    if (mediaDataEl && mediaDataEl.textContent) {
       try {
-        projectImagesMap = JSON.parse(imagesDataEl.textContent) || {};
+        projectMediaMap = JSON.parse(mediaDataEl.textContent) || {};
       } catch (e) {
-        projectImagesMap = {};
+        projectMediaMap = {};
       }
     }
 
@@ -344,14 +379,45 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       if (scatterEl) scatterEl.innerHTML = '';
     }
 
+    function extractIframeSrc(raw) {
+      const s = String(raw || '').trim();
+      const m = s.match(/<iframe[\s\S]*?src=["']([^"']+)["']/i);
+      if (m && m[1]) return m[1].trim();
+      return s;
+    }
+
+    function getHoverVideoSrc(embed) {
+      let src = extractIframeSrc(embed);
+      if (!src) return '';
+      const vimeoPlayer = src.match(/player\.vimeo\.com\/video\/(\d+)/);
+      if (vimeoPlayer) {
+        return 'https://player.vimeo.com/video/' + vimeoPlayer[1] + '?background=1&autoplay=1&loop=1&muted=1&autopause=0&title=0&byline=0&portrait=0';
+      }
+      const vimeoPage = src.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+      if (vimeoPage) {
+        return 'https://player.vimeo.com/video/' + vimeoPage[1] + '?background=1&autoplay=1&loop=1&muted=1&autopause=0&title=0&byline=0&portrait=0';
+      }
+      if (/kinescope\.(io|ru)\/embed\//.test(src)) {
+        return src + (src.includes('?') ? '&' : '?') + 'autoplay=1&muted=1&loop=1';
+      }
+      return src;
+    }
+
+    function resolveImageUrl(src) {
+      const path = String(src || '').replace(/^\//, '');
+      if (!path) return '';
+      const baseUrl = base.endsWith('/') ? base : base + '/';
+      return /^https?:/i.test(path) ? path : baseUrl + path;
+    }
+
     function showScatter(projectId) {
       if (!scatterEl) return;
       clearScatter();
-      const urls = projectImagesMap[projectId];
-      if (!urls || !urls.length) return;
-      const n = Math.min(urls.length, randomInt(3, 6));
+      const items = projectMediaMap[projectId];
+      if (!items || !items.length) return;
+      const n = Math.min(items.length, randomInt(3, 6));
       const count = Math.max(1, n);
-      const picked = shufflePick(urls, count);
+      const picked = shufflePick(items, count);
       const colW = twoColumnsWidthPx();
       document.documentElement.style.setProperty('--index-hover-col-w', colW + 'px');
       const vw = window.innerWidth;
@@ -360,16 +426,30 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       const maxH = Math.min(vh * 0.45, colW * 3);
       const rangeX = Math.max(0, vw - colW - 2 * pad);
       const rangeY = Math.max(0, vh - maxH - 2 * pad);
-      const baseUrl = base.endsWith('/') ? base : base + '/';
-      picked.forEach(function (src) {
-        const img = document.createElement('img');
-        const path = String(src).replace(/^\//, '');
-        img.src = /^https?:/i.test(path) ? path : baseUrl + path;
-        img.alt = '';
-        img.loading = 'eager';
-        img.style.left = pad + Math.random() * rangeX + 'px';
-        img.style.top = pad + Math.random() * rangeY + 'px';
-        scatterEl.appendChild(img);
+      picked.forEach(function (item) {
+        const wrap = document.createElement('div');
+        wrap.className = 'index-hover-scatter__item' + (item.type === 'video' ? ' index-hover-scatter__item--video' : '');
+        wrap.style.left = pad + Math.random() * rangeX + 'px';
+        wrap.style.top = pad + Math.random() * rangeY + 'px';
+
+        if (item.type === 'video') {
+          const videoSrc = getHoverVideoSrc(item.embed);
+          if (!videoSrc) return;
+          const iframe = document.createElement('iframe');
+          iframe.src = videoSrc;
+          iframe.setAttribute('frameborder', '0');
+          iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+          iframe.setAttribute('loading', 'eager');
+          wrap.appendChild(iframe);
+        } else {
+          const img = document.createElement('img');
+          img.src = resolveImageUrl(item.src);
+          img.alt = '';
+          img.loading = 'eager';
+          wrap.appendChild(img);
+        }
+
+        scatterEl.appendChild(wrap);
       });
     }
 
@@ -413,12 +493,22 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     });
 
     function sortRows() {
+      function getSortTimestamp(row) {
+        const sortDate = String(row.dataset.sortDate || '').trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(sortDate)) {
+          const ts = Date.parse(sortDate + 'T00:00:00Z');
+          if (!Number.isNaN(ts)) return ts;
+        }
+        const y = parseInt(String(row.dataset.year || ''), 10) || 0;
+        return Date.UTC(y, 0, 1);
+      }
+
       const rows = Array.from(list.querySelectorAll('.index-list__row'));
       rows.sort(function (a, b) {
-        const yA = parseInt(a.dataset.year, 10) || 0;
-        const yB = parseInt(b.dataset.year, 10) || 0;
-        if (newestFirst) return yB - yA;
-        return yA - yB;
+        const tA = getSortTimestamp(a);
+        const tB = getSortTimestamp(b);
+        if (newestFirst) return tB - tA;
+        return tA - tB;
       });
       rows.forEach(function (row) { list.appendChild(row); });
     }

@@ -5,10 +5,17 @@ interface Props {
 
 const { activePage } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
 ---
 
 <header class="page-header">
-  <div class="page-header__vasilii"><b><a href={base}>Vasilii Aleev</a></b></div>
+  <div class="page-header__vasilii">
+    <b>
+      <a href={base} aria-label="Vasilii Aleev">
+        <img class="page-header__logo" src={logoSrc} width="155" height="22" alt="" />
+      </a>
+    </b>
+  </div>
   <nav class="page-header__nav">
     <span class="page-header__nav-item">
       {activePage === 'index' ? <b><a href={`${base}index/`}>Index</a></b> : <a href={`${base}index/`}>Index</a>}

@@ -27,6 +27,8 @@ const base = import.meta.env.BASE_URL;
           <input type="text" id="editType" />
           <label>Год</label>
           <input type="text" id="editYear" />
+          <label>Точная дата для сортировки</label>
+          <input type="date" id="editSortDate" />
           <label>Цвет фона страницы</label>
           <div class="admin-color-row">
             <input type="color" id="editBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
@@ -34,13 +36,23 @@ const base = import.meta.env.BASE_URL;
           </div>
           <label>Обложка (превью при наведении на Index)</label>
           <input type="text" id="editCover" placeholder="/images/cover.jpg или URL" />
+          <label class="admin-checkbox-label">
+            <input type="checkbox" id="editHidden" />
+            Скрыть проект с сайта
+          </label>
+          <p class="admin-hint">Скрытый проект остаётся в данных, но не показывается в Index и недоступен по прямой ссылке.</p>
           <label>Awards (награды)</label>
-          <p class="admin-hint">В конце проекта: левая колонка — место, правая — название фестиваля. Одна строка = одна награда.</p>
+          <p class="admin-hint">В конце проекта: место, фестиваль и номинация. Одна строка = одна награда.</p>
           <div id="editAwardsList" class="awards-list"></div>
           <button type="button" class="secondary" id="addAwardBtn" style="margin-top:0.5rem;">+ Добавить награду</button>
           <label style="margin-top:1rem;">Credits (кредиты)</label>
-          <p class="admin-hint">Текст в конце проекта мелким шрифтом (как в футере). Можно HTML.</p>
-          <textarea id="editCredits" rows="4" placeholder="Например: Дизайн — Василий Алеев"></textarea>
+          <p class="admin-hint">Одна строка = роль и имя. Можно добавить ссылку к имени.</p>
+          <div id="editCreditsList" class="credits-list"></div>
+          <button type="button" class="secondary" id="addCreditBtn" style="margin-top:0.5rem;">+ Добавить кредит</button>
+          <label>Ссылки проекта</label>
+          <p class="admin-hint">Добавьте текст ссылки и URL.</p>
+          <div id="editLinksList" class="links-list"></div>
+          <button type="button" class="secondary" id="addLinkBtn" style="margin-top:0.5rem;">+ Добавить ссылку</button>
           <label>Контент (блоки)</label>
           <p class="admin-hint">Текст — колонки 5–12, стиль как в футере. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — вставьте embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
           <div id="contentBlocksList" class="content-blocks-list"></div>
@@ -134,9 +146,13 @@ const base = import.meta.env.BASE_URL;
         rows.forEach(function (row) {
           const placeEl = row.querySelector('.award-place');
           const festivalEl = row.querySelector('.award-festival');
+          const nominationEl = row.querySelector('.award-nomination');
           const place = placeEl ? placeEl.value.trim() : '';
           const festival = festivalEl ? festivalEl.value.trim() : '';
-          if (place || festival) awards.push({ place: place || '—', festival: festival || '—' });
+          const nomination = nominationEl ? nominationEl.value.trim() : '';
+          if (place || festival || nomination) {
+            awards.push({ place: place || '—', festival: festival || '—', nomination: nomination || '—' });
+          }
         });
         return awards;
       }
@@ -144,10 +160,10 @@ const base = import.meta.env.BASE_URL;
       function renderAwards(awards) {
         const list = document.getElementById('editAwardsList');
         list.innerHTML = '';
-        (awards && awards.length ? awards : [{ place: '', festival: '' }]).forEach(function (a) {
+        (awards && awards.length ? awards : [{ place: '', festival: '', nomination: '' }]).forEach(function (a) {
           const row = document.createElement('div');
           row.className = 'award-row';
-          row.innerHTML = '<input type="text" class="award-place" placeholder="Место" value="' + esc(a.place) + '" /> <input type="text" class="award-festival" placeholder="Фестиваль" value="' + esc(a.festival) + '" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+          row.innerHTML = '<input type="text" class="award-place" placeholder="Место" value="' + esc(a.place) + '" /> <input type="text" class="award-festival" placeholder="Фестиваль" value="' + esc(a.festival) + '" /> <input type="text" class="award-nomination" placeholder="Номинация" value="' + esc(a.nomination || '') + '" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
           list.appendChild(row);
         });
         list.querySelectorAll('.remove-award').forEach(function (btn) {
@@ -156,9 +172,101 @@ const base = import.meta.env.BASE_URL;
             if (list.querySelectorAll('.award-row').length === 0) {
               const r = document.createElement('div');
               r.className = 'award-row';
-              r.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+              r.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <input type="text" class="award-nomination" placeholder="Номинация" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
               list.appendChild(r);
               r.querySelector('.remove-award').addEventListener('click', function () { r.remove(); });
+            }
+          });
+        });
+      }
+
+      function collectLinks() {
+        const rows = document.querySelectorAll('#editLinksList .link-row');
+        const links = [];
+        rows.forEach(function (row) {
+          const textEl = row.querySelector('.project-link-text');
+          const urlEl = row.querySelector('.project-link-url');
+          const text = textEl ? textEl.value.trim() : '';
+          const url = urlEl ? urlEl.value.trim() : '';
+          if (text || url) links.push({ text: text || '—', url: url || '#' });
+        });
+        return links;
+      }
+
+      function renderLinks(links) {
+        const list = document.getElementById('editLinksList');
+        list.innerHTML = '';
+        (links && links.length ? links : [{ text: '', url: '' }]).forEach(function (item) {
+          const row = document.createElement('div');
+          row.className = 'link-row';
+          row.innerHTML = '<input type="text" class="project-link-text" placeholder="Текст ссылки" value="' + esc(item.text) + '" /> <input type="url" class="project-link-url" placeholder="https://example.com" value="' + esc(item.url) + '" /> <button type="button" class="danger remove-link" title="Удалить">×</button>';
+          list.appendChild(row);
+        });
+        list.querySelectorAll('.remove-link').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            btn.closest('.link-row').remove();
+            if (list.querySelectorAll('.link-row').length === 0) {
+              const r = document.createElement('div');
+              r.className = 'link-row';
+              r.innerHTML = '<input type="text" class="project-link-text" placeholder="Текст ссылки" /> <input type="url" class="project-link-url" placeholder="https://example.com" /> <button type="button" class="danger remove-link" title="Удалить">×</button>';
+              list.appendChild(r);
+              r.querySelector('.remove-link').addEventListener('click', function () { r.remove(); });
+            }
+          });
+        });
+      }
+
+      function parseLegacyCredits(raw) {
+        const text = String(raw || '').trim();
+        if (!text) return [];
+        return text
+          .split(/\n+/)
+          .map(function (line) { return line.trim(); })
+          .filter(Boolean)
+          .map(function (line) {
+            const parts = line.split('—');
+            if (parts.length >= 2) {
+              return { role: parts[0].trim(), name: parts.slice(1).join('—').trim(), url: '' };
+            }
+            return { role: '—', name: line, url: '' };
+          });
+      }
+
+      function collectCreditsList() {
+        const rows = document.querySelectorAll('#editCreditsList .credit-row');
+        const creditsList = [];
+        rows.forEach(function (row) {
+          const roleEl = row.querySelector('.credit-role');
+          const nameEl = row.querySelector('.credit-name');
+          const urlEl = row.querySelector('.credit-url');
+          const role = roleEl ? roleEl.value.trim() : '';
+          const name = nameEl ? nameEl.value.trim() : '';
+          const url = urlEl ? urlEl.value.trim() : '';
+          if (role || name || url) {
+            creditsList.push({ role: role || '—', name: name || '—', url: url || undefined });
+          }
+        });
+        return creditsList;
+      }
+
+      function renderCreditsList(creditsList) {
+        const list = document.getElementById('editCreditsList');
+        list.innerHTML = '';
+        (creditsList && creditsList.length ? creditsList : [{ role: '', name: '', url: '' }]).forEach(function (item) {
+          const row = document.createElement('div');
+          row.className = 'credit-row';
+          row.innerHTML = '<input type="text" class="credit-role" placeholder="Роль" value="' + esc(item.role) + '" /> <input type="text" class="credit-name" placeholder="Имя" value="' + esc(item.name) + '" /> <input type="url" class="credit-url" placeholder="https://example.com (необязательно)" value="' + esc(item.url || '') + '" /> <button type="button" class="danger remove-credit" title="Удалить">×</button>';
+          list.appendChild(row);
+        });
+        list.querySelectorAll('.remove-credit').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            btn.closest('.credit-row').remove();
+            if (list.querySelectorAll('.credit-row').length === 0) {
+              const r = document.createElement('div');
+              r.className = 'credit-row';
+              r.innerHTML = '<input type="text" class="credit-role" placeholder="Роль" /> <input type="text" class="credit-name" placeholder="Имя" /> <input type="url" class="credit-url" placeholder="https://example.com (необязательно)" /> <button type="button" class="danger remove-credit" title="Удалить">×</button>';
+              list.appendChild(r);
+              r.querySelector('.remove-credit').addEventListener('click', function () { r.remove(); });
             }
           });
         });
@@ -288,9 +396,31 @@ const base = import.meta.env.BASE_URL;
         const list = document.getElementById('editAwardsList');
         const row = document.createElement('div');
         row.className = 'award-row';
-        row.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
+        row.innerHTML = '<input type="text" class="award-place" placeholder="Место" /> <input type="text" class="award-festival" placeholder="Фестиваль" /> <input type="text" class="award-nomination" placeholder="Номинация" /> <button type="button" class="danger remove-award" title="Удалить">×</button>';
         list.appendChild(row);
         row.querySelector('.remove-award').addEventListener('click', function () {
+          row.remove();
+        });
+      });
+
+      document.getElementById('addLinkBtn').addEventListener('click', function () {
+        const list = document.getElementById('editLinksList');
+        const row = document.createElement('div');
+        row.className = 'link-row';
+        row.innerHTML = '<input type="text" class="project-link-text" placeholder="Текст ссылки" /> <input type="url" class="project-link-url" placeholder="https://example.com" /> <button type="button" class="danger remove-link" title="Удалить">×</button>';
+        list.appendChild(row);
+        row.querySelector('.remove-link').addEventListener('click', function () {
+          row.remove();
+        });
+      });
+
+      document.getElementById('addCreditBtn').addEventListener('click', function () {
+        const list = document.getElementById('editCreditsList');
+        const row = document.createElement('div');
+        row.className = 'credit-row';
+        row.innerHTML = '<input type="text" class="credit-role" placeholder="Роль" /> <input type="text" class="credit-name" placeholder="Имя" /> <input type="url" class="credit-url" placeholder="https://example.com (необязательно)" /> <button type="button" class="danger remove-credit" title="Удалить">×</button>';
+        list.appendChild(row);
+        row.querySelector('.remove-credit').addEventListener('click', function () {
           row.remove();
         });
       });
@@ -301,20 +431,25 @@ const base = import.meta.env.BASE_URL;
         const bgHex = document.getElementById('editBackgroundColorHex').value.trim();
         const bgColor = document.getElementById('editBackgroundColor').value;
         const awards = collectAwards();
+        const links = collectLinks();
+        const creditsList = collectCreditsList();
         const edited = {
           id: project.id,
           title: document.getElementById('editTitle').value.trim(),
           shortTitle: document.getElementById('editShortTitle').value.trim() || undefined,
           type: document.getElementById('editType').value.trim(),
           year: document.getElementById('editYear').value.trim(),
+          sortDate: document.getElementById('editSortDate').value.trim() || undefined,
           description: project.description || '',
           images: project.images || [],
           contentBlocks: contentBlocks.slice(),
           backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined,
           cover: document.getElementById('editCover').value.trim() || undefined,
           awards: awards.length > 0 ? awards : undefined,
-          credits: document.getElementById('editCredits').value.trim() || undefined
+          links: links.length > 0 ? links : undefined,
+          creditsList: creditsList.length > 0 ? creditsList : undefined
         };
+        if (document.getElementById('editHidden').checked) edited.hidden = true;
         setEditedProject(project.id, edited);
         document.getElementById('loadStatus').textContent = 'Изменения сохранены в черновик. Перейдите в список проектов и нажмите «Сохранить в GitHub».';
         document.getElementById('loadStatus').className = 'status ok';
@@ -365,9 +500,16 @@ const base = import.meta.env.BASE_URL;
           document.getElementById('editShortTitle').value = project.shortTitle || '';
           document.getElementById('editType').value = project.type || '';
           document.getElementById('editYear').value = project.year || '';
+          document.getElementById('editSortDate').value = project.sortDate || '';
           document.getElementById('editCover').value = project.cover || '';
+          document.getElementById('editHidden').checked = Boolean(project.hidden);
           renderAwards(project.awards && project.awards.length ? project.awards : []);
-          document.getElementById('editCredits').value = project.credits || '';
+          renderLinks(project.links && project.links.length ? project.links : []);
+          renderCreditsList(
+            project.creditsList && project.creditsList.length
+              ? project.creditsList
+              : parseLegacyCredits(project.credits || '')
+          );
           const bg = (project.backgroundColor || '').trim();
           if (bg && /^#[0-9A-Fa-f]{6}$/.test(bg)) {
             document.getElementById('editBackgroundColor').value = bg.slice(1);

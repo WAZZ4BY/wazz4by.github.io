@@ -5,6 +5,7 @@ interface Props {
 
 const { variant = 'inner' } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
 const pathname = Astro.url.pathname;
 const pathWithoutBase = pathname.replace(new RegExp('^' + base.replace(/\/$/, '') + '\\/?'), '') || '';
 const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
@@ -14,7 +15,9 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
   <div class="site-header__container">
     <div class="site-header__grid">
       <div class="site-header__left">
-        <a href={base === '/' ? '/' : base}>Vasilii Aleev</a>
+        <a href={base === '/' ? '/' : base} aria-label="Vasilii Aleev">
+          <img class="site-header__logo" src={logoSrc} width="155" height="22" alt="" />
+        </a>
       </div>
       <nav class="site-header__center">
       {variant === 'home' ? (

@@ -2,13 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MediaCard from '../components/MediaCard.astro';
 import { getHomeMediaCards } from '../lib/homeMediaCards';
-import { getProjects } from '../lib/projects';
+import { getVisibleProjects } from '../lib/projects';
 
 const base = import.meta.env.BASE_URL;
 const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
 
 const homeMediaCards = getHomeMediaCards();
-const projects = getProjects();
+const projects = getVisibleProjects();
 const projectById = new Map(projects.map((p) => [p.id, p.title]));
 
 function projectTitleFromHref(href?: string): string {
@@ -102,6 +102,8 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     max-width: 100%;
     min-height: 100vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
     background: #FBFBFB;
     --home-logo-width: 155px;
     --home-logo-height: 22px;
@@ -205,32 +207,24 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
 
     .home-hero__row {
       grid-template-columns: 1fr;
-      row-gap: 20px;
+      row-gap: 0;
       justify-items: center;
     }
 
     .home-hero__side--left,
     .home-hero__side--right {
-      justify-content: center;
-      width: 100%;
+      display: none;
     }
 
     .home-hero__logo-link {
       grid-column: 1;
-      grid-row: 2;
-    }
-
-    .home-hero__side--left {
       grid-row: 1;
-    }
-
-    .home-hero__side--right {
-      grid-row: 3;
     }
 
     .home-hero__link {
       font-size: 12px;
     }
+
   }
 
   .sr-only {
@@ -307,6 +301,10 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     margin-top: 50px;
     width: 100%;
     box-sizing: border-box;
+  }
+
+  :global(body.is-home .home-media-showcase) {
+    flex: 1;
   }
 
   :global(body.is-home .home-footer__grid) {
