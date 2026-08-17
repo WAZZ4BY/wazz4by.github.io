@@ -12,6 +12,9 @@ interface Props {
 
 const { title, variant = 'inner', bodyClass, hideHeader } = Astro.props;
 const bodyClasses = [variant === 'home' ? 'is-home' : 'is-inner', bodyClass].filter(Boolean).join(' ');
+const documentTitle = variant === 'home' || !title || title === 'Vasilii Aleev'
+  ? 'Vasilii Aleev'
+  : `${title} — Vasilii Aleev`;
 ---
 
 <!doctype html>
@@ -20,9 +23,10 @@ const bodyClasses = [variant === 'home' ? 'is-home' : 'is-inner', bodyClass].fil
     <meta charset="UTF-8" />
     <meta name="description" content="Vasilii Aleev - Portfolio" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + 'favicon.svg'} />
+    <link rel="icon" type="image/webp" href={import.meta.env.BASE_URL + 'images/icon/icon.webp'} />
+    <link rel="icon" type="image/png" href={import.meta.env.BASE_URL + 'images/icon/icon.png'} />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{documentTitle}</title>
   </head>
   <body class={bodyClasses}>
     {!hideHeader && <SiteHeader variant={variant} />}
