@@ -7,7 +7,6 @@ const base = import.meta.env.BASE_URL;
   <div id="admin-root">
     <div id="gate" class="gate">
       <h1>Вход в админку</h1>
-      <p>Введите пароль. По умолчанию: <code>admin</code>.</p>
       <input type="password" id="password" placeholder="Пароль" autocomplete="current-password" />
       <button type="button" id="loginBtn" class="primary">Войти</button>
       <p id="gateError" class="error" style="display:none;"></p>
@@ -45,16 +44,18 @@ const base = import.meta.env.BASE_URL;
 
       <section class="admin-section admin-section--wide admin-pane" id="researchCardsPane">
         <h2>Карточки Research</h2>
-        <p class="admin-hint">Квадратные контейнеры на вкладке Research. Для режима <code>image</code> указывайте путь к <code>webp</code> (или <code>gif</code> для анимации). PNG/JPG при вводе и загрузке автоматически сохраняются как WebP. Для режима <code>kinescope</code> вставляйте ссылку или iframe embed. Карточки сортируются по номеру: больший номер выше.</p>
+        <p class="admin-hint">Сетка 5 — основной просмотр и редактирование. Лента — вертикальный предпросмотр как на сайте (название слева, медиа по центру, дата справа). Список — компактное редактирование. Для <code>image</code> указывайте путь к <code>webp</code> или <code>gif</code>. Для видео вставляйте ссылку или iframe. Доп. фото показываются справа на странице карточки. Макс. ширина — 4 или 6 колонок в центре ленты. Карточки сортируются по номеру: от меньшего к большему.</p>
         <p id="researchCardsLoadStatus" class="status">Загрузка…</p>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
           <button type="button" id="addResearchCardBtn" class="secondary">+ Добавить карточку</button>
-          <button type="button" id="researchViewListBtn" class="primary">Список</button>
-          <button type="button" id="researchViewGridBtn" class="secondary">Сетка 5</button>
-          <button type="button" id="researchViewPreviewBtn" class="secondary">Мини-превью</button>
-          <label for="researchCardScaleRange" style="margin:0 0 0 0.5rem;font-weight:500;">Масштаб карточек</label>
-          <input type="range" id="researchCardScaleRange" min="70" max="140" step="5" value="100" style="width:170px;margin:0;" />
-          <span id="researchCardScaleValue" style="min-width:3ch;">100%</span>
+          <button type="button" id="researchViewGridBtn" class="primary">Сетка 5</button>
+          <button type="button" id="researchViewListBtn" class="secondary">Список</button>
+          <button type="button" id="researchViewPreviewBtn" class="secondary">Лента</button>
+          <span id="researchCardScaleWrap" style="display:flex;gap:0.5rem;align-items:center;margin-left:0.5rem;">
+            <label for="researchCardScaleRange" style="margin:0;font-weight:500;">Масштаб карточек</label>
+            <input type="range" id="researchCardScaleRange" min="70" max="140" step="5" value="100" style="width:170px;margin:0;" />
+            <span id="researchCardScaleValue" style="min-width:3ch;">100%</span>
+          </span>
         </div>
         <div id="researchCardsEditor"></div>
         <div style="margin-top:1rem;">
@@ -86,7 +87,7 @@ const base = import.meta.env.BASE_URL;
   <script define:vars={{ base }}>
     (function () {
       const STORAGE_KEY = 'admin_authed';
-      const PASSWORD = 'admin';
+      const PASSWORD = 'admin12345';
       const REPO_KEY = 'admin_gh_repo';
 
       const gate = document.getElementById('gate');
@@ -150,7 +151,7 @@ const base = import.meta.env.BASE_URL;
       let projects = [];
       let homeMediaCards = [];
       let researchCards = [];
-      let researchCardsView = 'list';
+      let researchCardsView = 'grid';
       let researchCardsScale = 100;
       let draggedResearchIndex = null;
 
@@ -303,7 +304,20 @@ const base = import.meta.env.BASE_URL;
         };
       }
 
-      function normalizeResearchCard(card, fallbackNumber) {
+      function parseResearchSideSrcs(c, keepEmpty) {
+        const out = [];
+        function push(item) {
+          if (typeof item !== 'string') return;
+          const trimmed = item.trim();
+          if (!keepEmpty && !trimmed) return;
+          out.push(trimmed ? toWebpPath(trimmed) : '');
+        }
+        if (c && Array.isArray(c.sideSrcs)) c.sideSrcs.forEach(push);
+        else if (c && typeof c.sideSrc === 'string') push(c.sideSrc);
+        return out;
+      }
+
+      function normalizeResearchCard(card, fallbackNumber, keepEmptyExtras) {
         const c = card || {};
         const parsedNumber = Number(c.number);
         const rawDate = typeof c.date === 'string' ? c.date : '';
@@ -317,20 +331,22 @@ const base = import.meta.env.BASE_URL;
           alt: typeof c.alt === 'string' ? c.alt : '',
           as: as,
           caption: typeof c.caption === 'string' ? c.caption : '',
-          date: normalizedDate
+          date: normalizedDate,
+          text: typeof c.text === 'string' ? c.text : '',
+          sideSrcs: parseResearchSideSrcs(c, keepEmptyExtras),
+          spanW: Number(c.spanW) === 6 ? 6 : 4
         };
       }
 
       function sortResearchCards() {
         researchCards.sort(function (a, b) {
-          return Number(b.number || 0) - Number(a.number || 0);
+          return Number(a.number || 0) - Number(b.number || 0);
         });
       }
 
       function reindexResearchCards() {
-        const total = researchCards.length;
         researchCards.forEach(function (card, index) {
-          card.number = total - index;
+          card.number = index + 1;
         });
       }
 
@@ -351,9 +367,11 @@ const base = import.meta.env.BASE_URL;
         const listBtn = document.getElementById('researchViewListBtn');
         const gridBtn = document.getElementById('researchViewGridBtn');
         const previewBtn = document.getElementById('researchViewPreviewBtn');
+        const scaleWrap = document.getElementById('researchCardScaleWrap');
         if (listBtn) listBtn.className = researchCardsView === 'list' ? 'primary' : 'secondary';
         if (gridBtn) gridBtn.className = researchCardsView === 'grid' ? 'primary' : 'secondary';
         if (previewBtn) previewBtn.className = researchCardsView === 'preview' ? 'primary' : 'secondary';
+        if (scaleWrap) scaleWrap.style.display = researchCardsView === 'grid' ? 'flex' : 'none';
       }
 
       function syncResearchScaleUi() {
@@ -457,13 +475,28 @@ const base = import.meta.env.BASE_URL;
         return s;
       }
 
-      function getKinescopeEmbedUrl(raw) {
+      function getKinescopeEmbedUrl(raw, withAutoplay) {
         const s = extractIframeSrc(raw);
         if (!s) return '';
-        if (/kinescope\.(io|ru)\/embed\//.test(s)) return s;
-        const m = s.match(/https?:\/\/(?:kinescope\.(?:io|ru))\/([^/?#]+)/);
-        if (m && m[1]) return 'https://kinescope.io/embed/' + m[1] + '?autoplay=1&muted=1';
-        return s;
+        let url = s;
+        if (!/kinescope\.(io|ru)\/embed\//.test(s)) {
+          const m = s.match(/https?:\/\/(?:kinescope\.(?:io|ru))\/([^/?#]+)/);
+          if (m && m[1]) url = 'https://kinescope.io/embed/' + m[1];
+        }
+        try {
+          const u = new URL(url);
+          if (withAutoplay) {
+            u.searchParams.set('autoplay', '1');
+            u.searchParams.set('muted', '1');
+          } else {
+            u.searchParams.set('autoplay', '0');
+            u.searchParams.delete('muted');
+            u.searchParams.delete('mute');
+          }
+          return u.toString();
+        } catch (_) {
+          return url;
+        }
       }
 
       function renderHomeMediaCardsEditor() {
@@ -654,6 +687,38 @@ const base = import.meta.env.BASE_URL;
         });
       }
 
+      function hydrateLazyIframes(root) {
+        if (!root) return;
+        const iframes = root.querySelectorAll('iframe[data-src]');
+        if (!iframes.length) return;
+        const io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            const src = el.getAttribute('data-src');
+            if (src && el.getAttribute('src') !== src) el.src = src;
+            io.unobserve(el);
+          });
+        }, { rootMargin: '240px' });
+        iframes.forEach(function (el) { io.observe(el); });
+      }
+
+      function kinescopeAspectCss(src) {
+        const pad = String(src || '').match(/padding-top:\s*([\d.]+)%/i);
+        if (pad) {
+          const pct = Number(pad[1]);
+          if (Number.isFinite(pct) && pct > 0) return String(100 / pct);
+        }
+        const widthMatch = String(src || '').match(/\bwidth=["'](\d+)["']/i);
+        const heightMatch = String(src || '').match(/\bheight=["'](\d+)["']/i);
+        if (widthMatch && heightMatch) {
+          const width = Number(widthMatch[1]);
+          const height = Number(heightMatch[1]);
+          if (width > 0 && height > 0) return String(width / height);
+        }
+        return '16 / 9';
+      }
+
       function renderResearchCardsEditor() {
         const container = document.getElementById('researchCardsEditor');
         if (!container) return;
@@ -664,48 +729,108 @@ const base = import.meta.env.BASE_URL;
         const listMode = researchCardsView === 'list';
         const previewMode = researchCardsView === 'preview';
         const wrapper = document.createElement('div');
-        wrapper.style.cssText = listMode
-          ? 'display:block;'
-          : (previewMode
-            ? 'display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.5rem;align-items:start;'
-            : 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0.75rem;align-items:start;');
+        if (listMode) wrapper.className = 'research-admin-list';
+        else if (previewMode) wrapper.className = 'research-admin-feed';
+        else wrapper.style.cssText = 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0.75rem;align-items:start;';
         container.appendChild(wrapper);
 
-        function getResearchCardPreviewHtml(card) {
+        function getResearchCardPreviewHtml(card, mode) {
           const item = normalizeResearchCard(card, 0);
-          if (!item.src) return '<span style="font-size:12px;color:#666;">Превью появится после заполнения src</span>';
+          if (!item.src) return '<span style="font-size:11px;color:#666;">Нет src</span>';
           if (item.as === 'kinescope') {
-            return '<iframe src="' + esc(getKinescopeEmbedUrl(item.src)) + '" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:220px;display:block;border:0;"></iframe>';
+            const embed = esc(getKinescopeEmbedUrl(item.src, false));
+            if (mode === 'feed') {
+              return '<div style="position:relative;width:100%;aspect-ratio:' + kinescopeAspectCss(item.src) + ';background:#111;"><iframe data-src="' + embed + '" title="Видео" frameborder="0" allow="fullscreen; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;display:block;border:0;"></iframe></div>';
+            }
+            const height = mode === 'list' ? '220px' : '100%';
+            return '<iframe data-src="' + embed + '" title="Видео" frameborder="0" allow="fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:' + height + ';display:block;border:0;background:#111;"></iframe>';
           }
-          return '<img src="' + esc(item.src) + '" alt="" style="width:100%;max-height:220px;object-fit:contain;display:block;" />';
+          if (mode === 'feed') {
+            return '<img src="' + esc(item.src) + '" alt="" style="width:100%;height:auto;display:block;" />';
+          }
+          return '<img src="' + esc(item.src) + '" alt="" style="width:100%;height:100%;object-fit:contain;display:block;" />';
+        }
+
+        function getResearchExtrasHtml(item, i) {
+          const extras = Array.isArray(item.sideSrcs) ? item.sideSrcs : [];
+          const tiles = extras.map(function (src, j) {
+            const thumb = src
+              ? '<img src="' + esc(src) + '" alt="" />'
+              : '<span style="font-size:11px;color:#888;">Нет файла</span>';
+            return (
+              '<div class="research-admin-extra" data-i="' + i + '" data-j="' + j + '">' +
+                '<div class="research-admin-extra__thumb">' + thumb + '</div>' +
+                '<input type="text" class="research-card-extra-src" data-i="' + i + '" data-j="' + j + '" value="' + esc(src || '') + '" placeholder="/images/research/photo.webp" />' +
+                '<div class="research-admin-extra__btns">' +
+                  '<button type="button" class="secondary upload-research-card-extra" data-i="' + i + '" data-j="' + j + '">Файл</button>' +
+                  '<button type="button" class="danger remove-research-card-extra" data-i="' + i + '" data-j="' + j + '">×</button>' +
+                '</div>' +
+                '<input type="file" class="research-card-extra-file" data-i="' + i + '" data-j="' + j + '" accept=".webp,.gif,.jpg,.jpeg,.png,image/webp,image/gif,image/jpeg,image/png" style="display:none;" />' +
+              '</div>'
+            );
+          }).join('');
+          return (
+            '<div class="research-admin-extras" data-i="' + i + '">' +
+              tiles +
+              '<button type="button" class="secondary research-admin-extras__add add-research-card-extra" data-i="' + i + '">+ Фото</button>' +
+            '</div>'
+          );
         }
 
         function updateResearchCardPreview(i) {
           const preview = container.querySelector('.research-card-preview[data-i="' + i + '"]');
           if (!preview) return;
-          preview.innerHTML = getResearchCardPreviewHtml(researchCards[i] || {});
+          const mode = listMode ? 'list' : (previewMode ? 'feed' : 'grid');
+          preview.innerHTML = getResearchCardPreviewHtml(researchCards[i] || {}, mode);
+          hydrateLazyIframes(preview);
         }
 
         researchCards.forEach(function (card, i) {
-          const item = normalizeResearchCard(card, i + 1);
+          const item = normalizeResearchCard(card, i + 1, true);
           const row = document.createElement('div');
-          row.style.cssText = listMode
-            ? 'margin-bottom:1rem;padding:1rem;border:1px solid #ddd;border-radius:6px;'
-            : (previewMode
-              ? 'padding:0.35rem;border:1px solid #ddd;border-radius:6px;background:#fff;'
-              : 'padding:0.75rem;border:1px solid #ddd;border-radius:6px;background:#fff;zoom:' + researchCardsScale + '%;');
           row.setAttribute('draggable', 'true');
           row.setAttribute('data-i', String(i));
           if (previewMode) {
+            row.className = 'research-admin-feed__row' + (item.spanW === 6 ? ' research-admin-feed__row--w6' : '');
             row.innerHTML =
-              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.4rem;">' +
-                '<strong style="font-size:0.8rem;">#' + esc(item.number) + '</strong>' +
-                '<span title="Перетащите для смены порядка" style="font-size:0.8rem;color:#666;cursor:grab;">↕</span>' +
+              '<span class="research-admin-feed__name">' + esc(item.caption || '') + '</span>' +
+              '<div class="research-card-preview research-admin-feed__media" data-i="' + i + '">' +
+                getResearchCardPreviewHtml(item, 'feed') +
               '</div>' +
-              '<div class="research-card-preview" data-i="' + i + '" style="border:1px solid #eee;background:#f8f8f8;aspect-ratio:1/1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
-                getResearchCardPreviewHtml(item) +
+              '<span class="research-admin-feed__date">' + esc(item.date || '') + '</span>';
+          } else if (listMode) {
+            row.className = 'research-admin-list__card';
+            row.innerHTML =
+              '<div class="research-admin-list__inner">' +
+                '<div class="research-card-preview research-admin-list__thumb" data-i="' + i + '">' +
+                  getResearchCardPreviewHtml(item, 'list') +
+                '</div>' +
+                '<div class="research-admin-list__fields">' +
+                  '<div class="research-admin-list__row">' +
+                    '<label class="research-admin-list__num">№<input type="number" class="research-card-number" data-i="' + i + '" min="0" step="1" value="' + esc(item.number) + '" /></label>' +
+                    '<label class="research-admin-list__as">Режим<select class="research-card-as" data-i="' + i + '"><option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option><option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>видео</option></select></label>' +
+                    '<label class="research-admin-list__span">Ширина<select class="research-card-spanw" data-i="' + i + '"><option value="4"' + (item.spanW === 6 ? '' : ' selected') + '>4</option><option value="6"' + (item.spanW === 6 ? ' selected' : '') + '>6</option></select></label>' +
+                    '<label class="research-admin-list__grow">Src<textarea class="research-card-src" data-i="' + i + '" rows="3" placeholder="/images/research/photo.webp или Kinescope">' + esc(item.src) + '</textarea></label>' +
+                    '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '" style="padding:0.28rem 0.5rem;font-size:0.78rem;">Загрузить</button>' +
+                    '<input type="file" class="research-card-file" data-i="' + i + '" accept=".webp,.gif,.jpg,.jpeg,.png,image/webp,image/gif,image/jpeg,image/png" style="display:none;" />' +
+                  '</div>' +
+                  '<div class="research-admin-list__row">' +
+                    '<label class="research-admin-list__grow">Подпись<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="Название" /></label>' +
+                    '<label class="research-admin-list__grow">Alt<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание" /></label>' +
+                    '<label class="research-admin-list__date">Дата<input type="text" class="research-card-date" data-i="' + i + '" value="' + esc(item.date || '') + '" placeholder="06.2026" /></label>' +
+                  '</div>' +
+                  '<div class="research-admin-list__row">' +
+                    '<label class="research-admin-list__grow">Текст<textarea class="research-card-text" data-i="' + i + '" rows="2" placeholder="Текст справа в просмотре">' + esc(item.text || '') + '</textarea></label>' +
+                  '</div>' +
+                  getResearchExtrasHtml(item, i) +
+                '</div>' +
+                '<div class="research-admin-list__actions">' +
+                  '<span title="Перетащите для смены порядка" style="font-size:0.85rem;color:#666;cursor:grab;">↕</span>' +
+                  '<button type="button" class="danger delete-research-card" data-i="' + i + '">Удалить</button>' +
+                '</div>' +
               '</div>';
           } else {
+            row.style.cssText = 'padding:0.75rem;border:1px solid #ddd;border-radius:6px;background:#fff;zoom:' + researchCardsScale + '%;';
             row.innerHTML =
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">' +
               '<strong>Карточка #' + esc(item.number) + '</strong>' +
@@ -715,12 +840,17 @@ const base = import.meta.env.BASE_URL;
               '</div>' +
             '</div>' +
             '<div style="display:grid;gap:0.5rem;">' +
-              '<label>Номер (сортировка по убыванию)</label>' +
+              '<label>Номер</label>' +
               '<input type="number" class="research-card-number" data-i="' + i + '" min="0" step="1" value="' + esc(item.number) + '" />' +
               '<label>Режим</label>' +
               '<select class="research-card-as" data-i="' + i + '">' +
                 '<option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option>' +
-                '<option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>kinescope</option>' +
+                '<option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>видео</option>' +
+              '</select>' +
+              '<label>Макс. ширина (колонки)</label>' +
+              '<select class="research-card-spanw" data-i="' + i + '">' +
+                '<option value="4"' + (item.spanW === 6 ? '' : ' selected') + '>4</option>' +
+                '<option value="6"' + (item.spanW === 6 ? ' selected' : '') + '>6</option>' +
               '</select>' +
               '<label>Источник (src)</label>' +
               '<input type="text" class="research-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/research/photo.webp или ссылка/iframe Kinescope" />' +
@@ -734,14 +864,29 @@ const base = import.meta.env.BASE_URL;
               '<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="Подпись в полноэкранном просмотре" />' +
               '<label>Дата (MM.YYYY)</label>' +
               '<input type="text" class="research-card-date" data-i="' + i + '" value="' + esc(item.date || '') + '" placeholder="06.2026" />' +
-              '<div class="research-card-preview" data-i="' + i + '" style="margin-top:0.25rem;border:1px solid #eee;background:#f8f8f8;' + (listMode ? 'min-height:120px;' : 'aspect-ratio:1/1;min-height:0;') + 'display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
-                getResearchCardPreviewHtml(item) +
+              '<label>Доп. фото</label>' +
+              getResearchExtrasHtml(item, i) +
+              '<label>Текст</label>' +
+              '<textarea class="research-card-text" data-i="' + i + '" rows="3" placeholder="Текст в колонках 5–12">' + esc(item.text || '') + '</textarea>' +
+              '<div class="research-card-preview" data-i="' + i + '" style="margin-top:0.25rem;border:1px solid #eee;background:#f8f8f8;aspect-ratio:1/1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+                getResearchCardPreviewHtml(item, 'grid') +
               '</div>' +
             '</div>';
           }
           wrapper.appendChild(row);
 
+          row.addEventListener('mousedown', function (e) {
+            const interactive = e.target.closest('button, input, textarea, select, label, .research-admin-extras, .research-admin-extra');
+            row.setAttribute('draggable', interactive ? 'false' : 'true');
+          });
+          row.addEventListener('mouseup', function () {
+            row.setAttribute('draggable', 'true');
+          });
           row.addEventListener('dragstart', function (e) {
+            if (e.target.closest('button, input, textarea, select, label, .research-admin-extras, .research-admin-extra')) {
+              e.preventDefault();
+              return;
+            }
             draggedResearchIndex = i;
             row.style.opacity = '0.6';
             if (e.dataTransfer) {
@@ -788,6 +933,12 @@ const base = import.meta.env.BASE_URL;
             updateResearchCardPreview(i);
           });
         });
+        container.querySelectorAll('.research-card-spanw').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards[i].spanW = this.value === '6' ? 6 : 4;
+          });
+        });
         container.querySelectorAll('.research-card-src').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
@@ -821,6 +972,46 @@ const base = import.meta.env.BASE_URL;
             this.value = researchCards[i].date || '';
           });
         });
+        container.querySelectorAll('.research-card-extra-src').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const j = parseInt(this.getAttribute('data-j'), 10);
+            if (!Array.isArray(researchCards[i].sideSrcs)) researchCards[i].sideSrcs = [];
+            const value = toWebpPath(this.value.trim());
+            if (value !== this.value.trim()) this.value = value;
+            researchCards[i].sideSrcs[j] = value;
+            const wrap = this.closest('.research-admin-extra');
+            const thumb = wrap ? wrap.querySelector('.research-admin-extra__thumb') : null;
+            if (thumb) thumb.innerHTML = value ? '<img src="' + esc(value) + '" alt="" />' : '<span style="font-size:11px;color:#888;">Нет файла</span>';
+          });
+        });
+        container.querySelectorAll('.add-research-card-extra').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            if (!Array.isArray(researchCards[i].sideSrcs)) researchCards[i].sideSrcs = [];
+            researchCards[i].sideSrcs.push('');
+            renderResearchCardsEditor();
+          });
+        });
+        container.querySelectorAll('.remove-research-card-extra').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const j = parseInt(this.getAttribute('data-j'), 10);
+            if (!Array.isArray(researchCards[i].sideSrcs)) return;
+            researchCards[i].sideSrcs.splice(j, 1);
+            renderResearchCardsEditor();
+          });
+        });
+        container.querySelectorAll('.research-card-text').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            researchCards[i].text = this.value;
+          });
+        });
         container.querySelectorAll('.delete-research-card').forEach(function (btn) {
           btn.addEventListener('click', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
@@ -844,7 +1035,7 @@ const base = import.meta.env.BASE_URL;
             if (!file) return;
             const statusEl = document.getElementById('researchCardsGhStatus');
             if (researchCards[i].as === 'kinescope') {
-              statusEl.textContent = 'Для режима kinescope вставьте ссылку или iframe в поле src.';
+              statusEl.textContent = 'Для видео вставьте ссылку или iframe в поле src.';
               statusEl.className = 'status';
               this.value = '';
               return;
@@ -875,6 +1066,50 @@ const base = import.meta.env.BASE_URL;
             }
           });
         });
+        container.querySelectorAll('.upload-research-card-extra').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = this.getAttribute('data-i');
+            const j = this.getAttribute('data-j');
+            const input = container.querySelector('.research-card-extra-file[data-i="' + i + '"][data-j="' + j + '"]');
+            if (input) input.click();
+          });
+        });
+        container.querySelectorAll('.research-card-extra-file').forEach(function (inp) {
+          inp.addEventListener('change', async function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const j = parseInt(this.getAttribute('data-j'), 10);
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('researchCardsGhStatus');
+            const lowerName = (file.name || '').toLowerCase();
+            const allowedByMime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type);
+            const allowedByExt = /\.(jpe?g|png|gif|webp)$/.test(lowerName);
+            if (!allowedByMime && !allowedByExt) {
+              statusEl.textContent = 'Можно загружать WebP, GIF, JPG или PNG.';
+              statusEl.className = 'status err';
+              this.value = '';
+              return;
+            }
+            try {
+              statusEl.textContent = 'Загрузка доп. фото в GitHub…';
+              statusEl.className = 'status';
+              const uploadedPath = await uploadFileToGitHub(file, 'public/images/research', 'Upload research extra image from admin');
+              if (!Array.isArray(researchCards[i].sideSrcs)) researchCards[i].sideSrcs = [];
+              researchCards[i].sideSrcs[j] = uploadedPath;
+              statusEl.textContent = 'Фото загружено: ' + uploadedPath;
+              statusEl.className = 'status ok';
+              renderResearchCardsEditor();
+            } catch (e) {
+              statusEl.textContent = 'Ошибка загрузки: ' + e.message;
+              statusEl.className = 'status err';
+            } finally {
+              this.value = '';
+            }
+          });
+        });
+        hydrateLazyIframes(container);
       }
 
       function parseRepoAndToken(statusEl) {
@@ -1163,7 +1398,10 @@ const base = import.meta.env.BASE_URL;
           alt: '',
           as: 'image',
           caption: '',
-          date: ''
+          date: '',
+          text: '',
+          sideSrcs: [],
+          spanW: 4
         });
         sortResearchCards();
         renderResearchCardsEditor();
@@ -1255,7 +1493,7 @@ const base = import.meta.env.BASE_URL;
         const value = Number(this.value);
         researchCardsScale = Number.isFinite(value) ? Math.max(70, Math.min(140, Math.round(value))) : 100;
         syncResearchScaleUi();
-        if (researchCardsView === 'grid' || researchCardsView === 'preview') renderResearchCardsEditor();
+        if (researchCardsView === 'grid') renderResearchCardsEditor();
       });
 
       function initApp() {

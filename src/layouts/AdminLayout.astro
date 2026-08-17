@@ -105,6 +105,39 @@ const base = import.meta.env.BASE_URL;
       .admin-page .credit-row .credit-name { flex: 1; margin-bottom: 0; }
       .admin-page .credit-row .credit-url { flex: 1; margin-bottom: 0; }
       .admin-page .credit-row .remove-credit { flex-shrink: 0; padding: 4px 8px; font-size: 0.9rem; }
+      .research-admin-feed { display: flex; flex-direction: column; gap: 0; max-width: 1100px; margin: 0 auto; }
+      .research-admin-feed__row { display: grid; grid-template-columns: minmax(72px, 1fr) minmax(140px, 33%) minmax(64px, 1fr); align-items: center; column-gap: 12px; padding: 0; background: transparent; border: none; cursor: grab; }
+      .research-admin-feed__row--w6 { grid-template-columns: minmax(72px, 1fr) minmax(180px, 50%) minmax(64px, 1fr); }
+      .research-admin-feed__name, .research-admin-feed__date { font-size: 13px; line-height: 1.2; min-width: 0; overflow-wrap: break-word; }
+      .research-admin-feed__name { justify-self: start; text-align: left; }
+      .research-admin-feed__date { justify-self: end; text-align: right; }
+      .research-admin-feed__media { width: 100%; overflow: hidden; background: #f8f8f8; display: flex; align-items: center; justify-content: center; }
+      .research-admin-feed__media img { width: 100%; height: auto; display: block; }
+      .research-admin-list { display: flex; flex-direction: column; gap: 0.85rem; }
+      .research-admin-list__card { padding: 1rem 1.15rem; border: 1px solid #ddd; border-radius: 8px; background: #fff; min-height: calc((100vh - 17rem) / 3); }
+      .research-admin-list__inner { display: grid; grid-template-columns: 220px minmax(0, 1fr) auto; gap: 0.9rem 1.1rem; align-items: stretch; min-height: 220px; }
+      .research-admin-list__thumb { width: 220px; height: 220px; border: 1px solid #eee; background: #f8f8f8; overflow: hidden; display: flex; align-items: center; justify-content: center; align-self: center; }
+      .research-admin-list__thumb img, .research-admin-list__thumb iframe { width: 100%; height: 100%; object-fit: contain; display: block; border: 0; }
+      .research-admin-list__fields { display: flex; flex-direction: column; gap: 0.65rem; min-width: 0; justify-content: center; }
+      .research-admin-list__row { display: flex; flex-wrap: wrap; gap: 0.55rem 0.7rem; align-items: end; }
+      .research-admin-list__row label { margin: 0; font-size: 0.8rem; font-weight: 500; color: #555; display: flex; flex-direction: column; gap: 0.2rem; }
+      .research-admin-list__grow { flex: 1 1 160px; min-width: 0; }
+      .research-admin-list__num { width: 5.2rem; flex: 0 0 5.2rem; }
+      .research-admin-list__as { width: 8.4rem; flex: 0 0 8.4rem; }
+      .research-admin-list__span { width: 6.2rem; flex: 0 0 6.2rem; }
+      .research-admin-list__date { width: 7.2rem; flex: 0 0 7.2rem; }
+      .research-admin-list input, .research-admin-list select, .research-admin-list textarea { margin-bottom: 0 !important; padding: 0.5rem 0.65rem !important; font-size: 0.95rem !important; }
+      .research-admin-list textarea { min-height: 4.6rem !important; resize: vertical; }
+      .research-admin-list__actions { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 0.5rem; }
+      .research-admin-list__actions button { padding: 0.4rem 0.7rem; font-size: 0.9rem; }
+      .research-admin-extras { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start; }
+      .research-admin-extra { width: 112px; display: flex; flex-direction: column; gap: 0.25rem; }
+      .research-admin-extra__thumb { width: 112px; height: 112px; border: 1px solid #eee; background: #f4f4f4; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+      .research-admin-extra__thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+      .research-admin-extra input[type="text"] { width: 100%; margin-bottom: 0 !important; padding: 0.25rem 0.35rem !important; font-size: 0.72rem !important; }
+      .research-admin-extra__btns { display: flex; gap: 0.25rem; }
+      .research-admin-extra__btns button { padding: 0.2rem 0.35rem; font-size: 0.72rem; flex: 1; }
+      .research-admin-extras__add { align-self: stretch; min-height: 112px; min-width: 112px; display: flex; align-items: center; justify-content: center; border: 1px dashed #bbb; background: #fafafa; color: #333; font-size: 0.85rem; }
     </style>
   </head>
   <body>

@@ -1,0 +1,22 @@
+---
+description: Research page visual presets and how to restore them
+globs: src/pages/research.astro,src/styles/global.css,src/research-presets/**
+alwaysApply: false
+---
+
+# Research presets
+
+If the user asks to restore **конфигурация 1** / **preset 1** / **вариант 1**:
+
+1. Copy `src/research-presets/1/research.astro` → `src/pages/research.astro`
+2. Replace the `/* Research page */` block in `src/styles/global.css` with `src/research-presets/1/research.css`
+
+## Preset 1
+
+- Base image width: **2 columns**
+- Fish-eye: `transform: scale(1 → 2)` toward viewport center (max visual width = 4 cols)
+- Images overlap when scaled up; layout height does not change
+- Infinite loop via 3 copies + `scrollTo` by period
+- Native scroll (no `scrollBy` compensation)
+
+Do not delete `src/research-presets/1/` unless the user asks.
