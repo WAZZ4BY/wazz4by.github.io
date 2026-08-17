@@ -8,14 +8,14 @@
     "sortDate": "2023-11-05",
     "description": "",
     "images": [
-      "/images/destul/1.png",
-      "/images/destul/2.png",
-      "/images/destul/3.png"
+      "/images/destul/1.webp",
+      "/images/destul/2.webp",
+      "/images/destul/3.webp"
     ],
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/destul/1.png"
+        "src": "/images/destul/1.webp"
       },
       {
         "type": "text",
@@ -31,15 +31,15 @@
       },
       {
         "type": "image",
-        "src": "/images/destul/2.png"
+        "src": "/images/destul/2.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/3.png"
+        "src": "/images/destul/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/4.png"
+        "src": "/images/destul/4.webp"
       },
       {
         "type": "text",
@@ -47,11 +47,11 @@
       },
       {
         "type": "image",
-        "src": "/images/destul/5.png"
+        "src": "/images/destul/5.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/6.png"
+        "src": "/images/destul/6.webp"
       },
       {
         "type": "video",
@@ -59,12 +59,12 @@
       },
       {
         "type": "image",
-        "src": "/images/destul/8.png"
+        "src": "/images/destul/8.webp"
       },
       {
         "type": "split",
-        "left": "/images/destul/9-1.png",
-        "right": "/images/destul/9-2.png"
+        "left": "/images/destul/9-1.webp",
+        "right": "/images/destul/9-2.webp"
       },
       {
         "type": "video",
@@ -72,46 +72,46 @@
       },
       {
         "type": "image",
-        "src": "/images/destul/10.png"
+        "src": "/images/destul/10.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/11.png"
+        "src": "/images/destul/11.webp"
       },
       {
         "type": "split",
         "left": "/images/destul/12-1.gif",
-        "right": "/images/destul/12-2.png"
+        "right": "/images/destul/12-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/13.png"
+        "src": "/images/destul/13.webp"
       },
       {
         "type": "split",
-        "left": "/images/destul/14-1.png",
-        "right": "/images/destul/14-2.png"
+        "left": "/images/destul/14-1.webp",
+        "right": "/images/destul/14-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/15.png"
+        "src": "/images/destul/15.webp"
       },
       {
         "type": "split",
-        "left": "/images/destul/16-1.png",
-        "right": "/images/destul/16-2.png"
+        "left": "/images/destul/16-1.webp",
+        "right": "/images/destul/16-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/17.png"
+        "src": "/images/destul/17.webp"
       },
       {
         "type": "image",
-        "src": "/images/destul/18.jpg"
+        "src": "/images/destul/18.webp"
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/destul/cover.jpg",
+    "cover": "/images/destul/cover.webp",
     "awards": [
       {
         "place": "Silver",
@@ -131,7 +131,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/interior/1.jpg"
+        "src": "/images/interior/1.webp"
       },
       {
         "type": "text",
@@ -139,7 +139,7 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/2.jpg"
+        "src": "/images/interior/2.webp"
       },
       {
         "type": "video",
@@ -147,19 +147,19 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/3.jpg"
+        "src": "/images/interior/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/4.jpg"
+        "src": "/images/interior/4.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/5.jpg"
+        "src": "/images/interior/5.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/7.jpg"
+        "src": "/images/interior/7.webp"
       },
       {
         "type": "image",
@@ -167,15 +167,15 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/9.jpg"
+        "src": "/images/interior/9.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/10.jpg"
+        "src": "/images/interior/10.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/11.jpg"
+        "src": "/images/interior/11.webp"
       },
       {
         "type": "text",
@@ -187,11 +187,11 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/13.jpg"
+        "src": "/images/interior/13.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/14.jpg"
+        "src": "/images/interior/14.webp"
       },
       {
         "type": "image",
@@ -199,11 +199,11 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/16.jpg"
+        "src": "/images/interior/16.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/17.jpg"
+        "src": "/images/interior/17.webp"
       },
       {
         "type": "video",
@@ -215,7 +215,7 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/19.jpg"
+        "src": "/images/interior/19.webp"
       },
       {
         "type": "image",
@@ -223,7 +223,7 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/21.jpg"
+        "src": "/images/interior/21.webp"
       },
       {
         "type": "image",
@@ -231,11 +231,11 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/23.jpg"
+        "src": "/images/interior/23.webp"
       },
       {
         "type": "image",
-        "src": "/images/interior/24.jpg"
+        "src": "/images/interior/24.webp"
       },
       {
         "type": "video",
@@ -243,7 +243,7 @@
       },
       {
         "type": "image",
-        "src": "/images/interior/25.jpg"
+        "src": "/images/interior/25.webp"
       },
       {
         "type": "text",
@@ -251,7 +251,7 @@
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/interior/cover.jpg",
+    "cover": "/images/interior/cover.webp",
     "links": [
       {
         "text": "Calameo",
@@ -279,7 +279,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/boop/1.jpg"
+        "src": "/images/boop/1.webp"
       },
       {
         "type": "text",
@@ -287,60 +287,60 @@
       },
       {
         "type": "image",
-        "src": "/images/boop/2.jpg"
+        "src": "/images/boop/2.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/3.jpg"
+        "src": "/images/boop/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/4.jpg"
+        "src": "/images/boop/4.webp"
       },
       {
         "type": "split",
         "left": "/images/boop/5-1.gif",
-        "right": "/images/boop/5-2.jpg"
+        "right": "/images/boop/5-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/6.jpg"
+        "src": "/images/boop/6.webp"
       },
       {
         "type": "split",
-        "left": "/images/boop/7-1.jpg",
-        "right": "/images/boop/7-2.jpg"
+        "left": "/images/boop/7-1.webp",
+        "right": "/images/boop/7-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/8.png"
+        "src": "/images/boop/8.webp"
       },
       {
         "type": "split",
-        "left": "/images/boop/9-1.jpg",
-        "right": "/images/boop/9-2.jpg"
+        "left": "/images/boop/9-1.webp",
+        "right": "/images/boop/9-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/10.jpg"
+        "src": "/images/boop/10.webp"
       },
       {
         "type": "split",
-        "left": "/images/boop/11-1.png",
-        "right": "/images/boop/11-2.png"
+        "left": "/images/boop/11-1.webp",
+        "right": "/images/boop/11-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/12.jpg"
+        "src": "/images/boop/12.webp"
       },
       {
         "type": "split",
-        "left": "/images/boop/13-1.jpg",
-        "right": "/images/boop/13-2.jpg"
+        "left": "/images/boop/13-1.webp",
+        "right": "/images/boop/13-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/boop/14.jpg"
+        "src": "/images/boop/14.webp"
       },
       {
         "type": "image",
@@ -348,7 +348,7 @@
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/boop/cover.png",
+    "cover": "/images/boop/cover.webp",
     "awards": [
       {
         "place": "Gold",
@@ -407,7 +407,7 @@
       },
       {
         "type": "image",
-        "src": "/images/calendar/2.jpg"
+        "src": "/images/calendar/2.webp"
       },
       {
         "type": "text",
@@ -415,19 +415,19 @@
       },
       {
         "type": "image",
-        "src": "/images/calendar/3.png"
+        "src": "/images/calendar/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/4.png"
+        "src": "/images/calendar/4.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/5.png"
+        "src": "/images/calendar/5.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/6.png"
+        "src": "/images/calendar/6.webp"
       },
       {
         "type": "image",
@@ -435,27 +435,27 @@
       },
       {
         "type": "image",
-        "src": "/images/calendar/8.png"
+        "src": "/images/calendar/8.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/9.png"
+        "src": "/images/calendar/9.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/10.png"
+        "src": "/images/calendar/10.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/11.png"
+        "src": "/images/calendar/11.webp"
       },
       {
         "type": "image",
-        "src": "/images/calendar/12.png"
+        "src": "/images/calendar/12.webp"
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/calendar/cover.png",
+    "cover": "/images/calendar/cover.webp",
     "awards": [
       {
         "place": "Bronze",
@@ -511,12 +511,12 @@
       },
       {
         "type": "split",
-        "left": "/images/bioart/3-1.png",
-        "right": "/images/bioart/3-2.png"
+        "left": "/images/bioart/3-1.webp",
+        "right": "/images/bioart/3-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/bioart/4.png"
+        "src": "/images/bioart/4.webp"
       },
       {
         "type": "video",
@@ -528,11 +528,11 @@
       },
       {
         "type": "image",
-        "src": "/images/bioart/5.png"
+        "src": "/images/bioart/5.webp"
       },
       {
         "type": "image",
-        "src": "/images/bioart/6.png"
+        "src": "/images/bioart/6.webp"
       },
       {
         "type": "video",
@@ -540,8 +540,8 @@
       },
       {
         "type": "split",
-        "left": "/images/bioart/7-1.png",
-        "right": "/images/bioart/7-2.png"
+        "left": "/images/bioart/7-1.webp",
+        "right": "/images/bioart/7-2.webp"
       },
       {
         "type": "video",
@@ -549,16 +549,16 @@
       },
       {
         "type": "image",
-        "src": "/images/bioart/8.png"
+        "src": "/images/bioart/8.webp"
       },
       {
         "type": "split",
-        "left": "/images/bioart/9-1.png",
-        "right": "/images/bioart/9-2.png"
+        "left": "/images/bioart/9-1.webp",
+        "right": "/images/bioart/9-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/bioart/10.png"
+        "src": "/images/bioart/10.webp"
       },
       {
         "type": "video",
@@ -566,7 +566,7 @@
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/bioart/cover.png",
+    "cover": "/images/bioart/cover.webp",
     "awards": [
       {
         "place": "Silver",
@@ -592,7 +592,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/snve/1.jpg"
+        "src": "/images/snve/1.webp"
       },
       {
         "type": "text",
@@ -604,12 +604,12 @@
       },
       {
         "type": "image",
-        "src": "/images/snve/2.jpg"
+        "src": "/images/snve/2.webp"
       },
       {
         "type": "split",
-        "left": "/images/snve/3-1.jpg",
-        "right": "/images/snve/3-2.jpg"
+        "left": "/images/snve/3-1.webp",
+        "right": "/images/snve/3-2.webp"
       },
       {
         "type": "image",
@@ -618,7 +618,7 @@
       {
         "type": "split",
         "left": "/images/snve/5-1.gif",
-        "right": "/images/snve/5-2.png"
+        "right": "/images/snve/5-2.webp"
       },
       {
         "type": "image",
@@ -630,7 +630,7 @@
       },
       {
         "type": "image",
-        "src": "/images/snve/8.jpg"
+        "src": "/images/snve/8.webp"
       },
       {
         "type": "image",
@@ -638,7 +638,7 @@
       },
       {
         "type": "split",
-        "left": "/images/snve/10-1.jpg",
+        "left": "/images/snve/10-1.webp",
         "right": "/images/snve/10-2.gif"
       },
       {
@@ -647,7 +647,7 @@
       },
       {
         "type": "image",
-        "src": "/images/snve/11.jpg"
+        "src": "/images/snve/11.webp"
       },
       {
         "type": "video",
@@ -655,19 +655,19 @@
       },
       {
         "type": "image",
-        "src": "/images/snve/12.jpg"
+        "src": "/images/snve/12.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/13.jpg"
+        "src": "/images/snve/13.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/14.jpg"
+        "src": "/images/snve/14.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/15.jpg"
+        "src": "/images/snve/15.webp"
       },
       {
         "type": "video",
@@ -675,49 +675,49 @@
       },
       {
         "type": "split",
-        "left": "/images/snve/16-1.jpg",
-        "right": "/images/snve/16-2.jpg"
+        "left": "/images/snve/16-1.webp",
+        "right": "/images/snve/16-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/17.jpg"
+        "src": "/images/snve/17.webp"
       },
       {
         "type": "split",
         "left": "/images/snve/18-1.gif",
-        "right": "/images/snve/18-2.jpg"
+        "right": "/images/snve/18-2.webp"
       },
       {
         "type": "split",
-        "left": "/images/snve/19-1.jpg",
-        "right": "/images/snve/19-2.jpg"
+        "left": "/images/snve/19-1.webp",
+        "right": "/images/snve/19-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/20.jpg"
+        "src": "/images/snve/20.webp"
       },
       {
         "type": "split",
-        "left": "/images/snve/21-1.jpg",
-        "right": "/images/snve/21-2.jpg"
+        "left": "/images/snve/21-1.webp",
+        "right": "/images/snve/21-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/22.jpg"
+        "src": "/images/snve/22.webp"
       },
       {
         "type": "image",
-        "src": "/images/snve/23.jpg"
+        "src": "/images/snve/23.webp"
       },
       {
         "type": "split",
-        "left": "/images/snve/24-1.jpg",
-        "right": "/images/snve/24-2.jpg"
+        "left": "/images/snve/24-1.webp",
+        "right": "/images/snve/24-2.webp"
       },
       {
         "type": "split",
-        "left": "/images/snve/25-1.jpg",
-        "right": "/images/snve/25-2.jpg"
+        "left": "/images/snve/25-1.webp",
+        "right": "/images/snve/25-2.webp"
       },
       {
         "type": "video",
@@ -725,7 +725,7 @@
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/snve/cover.png"
+    "cover": "/images/snve/cover.webp"
   },
   {
     "id": "last-days-of-sababa",
@@ -738,7 +738,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/sababa/1.jpg"
+        "src": "/images/sababa/1.webp"
       },
       {
         "type": "text",
@@ -746,108 +746,108 @@
       },
       {
         "type": "image",
-        "src": "/images/sababa/2.jpg"
+        "src": "/images/sababa/2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/3.jpg"
+        "src": "/images/sababa/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/4.jpg"
+        "src": "/images/sababa/4.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/5.jpg"
+        "src": "/images/sababa/5.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/6-1.jpg",
-        "right": "/images/sababa/6-2.jpg"
+        "left": "/images/sababa/6-1.webp",
+        "right": "/images/sababa/6-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/7.jpg"
+        "src": "/images/sababa/7.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/8.jpg"
+        "src": "/images/sababa/8.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/9.jpg"
+        "src": "/images/sababa/9.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/10.jpg"
+        "src": "/images/sababa/10.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/11.jpg"
+        "src": "/images/sababa/11.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/12.jpg"
+        "src": "/images/sababa/12.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/13.jpg"
+        "src": "/images/sababa/13.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/14.jpg"
+        "src": "/images/sababa/14.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/15.jpg"
+        "src": "/images/sababa/15.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/16.jpg"
+        "src": "/images/sababa/16.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/17.jpg"
+        "src": "/images/sababa/17.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/18.jpg"
+        "src": "/images/sababa/18.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/19.jpg"
+        "src": "/images/sababa/19.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/20.jpg"
+        "src": "/images/sababa/20.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/21.jpg"
+        "src": "/images/sababa/21.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/22.jpg"
+        "src": "/images/sababa/22.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/23.jpg"
+        "src": "/images/sababa/23.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/24.jpg"
+        "src": "/images/sababa/24.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/25.jpg"
+        "src": "/images/sababa/25.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/26.jpg"
+        "src": "/images/sababa/26.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/27.jpg"
+        "src": "/images/sababa/27.webp"
       },
       {
         "type": "image",
@@ -855,101 +855,101 @@
       },
       {
         "type": "image",
-        "src": "/images/sababa/29.jpg"
+        "src": "/images/sababa/29.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/30.jpg"
+        "src": "/images/sababa/30.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/31.jpg"
+        "src": "/images/sababa/31.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/32.jpg"
+        "src": "/images/sababa/32.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/33.jpg"
+        "src": "/images/sababa/33.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/34-1.jpg",
-        "right": "/images/sababa/34-2.jpg"
+        "left": "/images/sababa/34-1.webp",
+        "right": "/images/sababa/34-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/35.jpg"
+        "src": "/images/sababa/35.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/36.jpg"
+        "src": "/images/sababa/36.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/37-1.jpg",
-        "right": "/images/sababa/37-2.jpg"
+        "left": "/images/sababa/37-1.webp",
+        "right": "/images/sababa/37-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/38.jpg"
+        "src": "/images/sababa/38.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/39.jpg"
+        "src": "/images/sababa/39.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/40.jpg"
+        "src": "/images/sababa/40.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/41-1.jpg",
-        "right": "/images/sababa/41-2.jpg"
+        "left": "/images/sababa/41-1.webp",
+        "right": "/images/sababa/41-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/42.jpg"
+        "src": "/images/sababa/42.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/43.jpg"
+        "src": "/images/sababa/43.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/44.jpg"
+        "src": "/images/sababa/44.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/45.jpg"
+        "src": "/images/sababa/45.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/46-1.jpg",
-        "right": "/images/sababa/46-2.jpg"
+        "left": "/images/sababa/46-1.webp",
+        "right": "/images/sababa/46-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/47.jpg"
+        "src": "/images/sababa/47.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/48.jpg"
+        "src": "/images/sababa/48.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/49.jpg"
+        "src": "/images/sababa/49.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/50-1.jpg",
-        "right": "/images/sababa/50-2.jpg"
+        "left": "/images/sababa/50-1.webp",
+        "right": "/images/sababa/50-2.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/51-1.jpg",
-        "right": "/images/sababa/51-2.jpg"
+        "left": "/images/sababa/51-1.webp",
+        "right": "/images/sababa/51-2.webp"
       },
       {
         "type": "image",
@@ -957,66 +957,66 @@
       },
       {
         "type": "image",
-        "src": "/images/sababa/53.jpg"
+        "src": "/images/sababa/53.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/54-1.jpg",
-        "right": "/images/sababa/54-2.jpg"
+        "left": "/images/sababa/54-1.webp",
+        "right": "/images/sababa/54-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/55.jpg"
+        "src": "/images/sababa/55.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/56.jpg"
+        "src": "/images/sababa/56.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/57.jpg"
+        "src": "/images/sababa/57.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/58.jpg"
+        "src": "/images/sababa/58.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/59.jpg"
+        "src": "/images/sababa/59.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/60.jpg"
+        "src": "/images/sababa/60.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/61-1.jpg",
-        "right": "/images/sababa/61-2.jpg"
+        "left": "/images/sababa/61-1.webp",
+        "right": "/images/sababa/61-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/62.jpg"
+        "src": "/images/sababa/62.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/63.jpg"
+        "src": "/images/sababa/63.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/64.jpg"
+        "src": "/images/sababa/64.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/65.jpg"
+        "src": "/images/sababa/65.webp"
       },
       {
         "type": "split",
-        "left": "/images/sababa/66-1.jpg",
-        "right": "/images/sababa/66-2.jpg"
+        "left": "/images/sababa/66-1.webp",
+        "right": "/images/sababa/66-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/sababa/67.jpg"
+        "src": "/images/sababa/67.webp"
       },
       {
         "type": "text",
@@ -1024,7 +1024,7 @@
       }
     ],
     "backgroundColor": "#000000",
-    "cover": "/images/sababa/cover.jpg",
+    "cover": "/images/sababa/cover.webp",
     "links": [
       {
         "text": "Calameo",
@@ -1074,7 +1074,7 @@
       }
     ],
     "backgroundColor": "#000000",
-    "cover": "/images/ctypto/cover.png",
+    "cover": "/images/ctypto/cover.webp",
     "hidden": true
   },
   {
@@ -1114,7 +1114,7 @@
       {
         "type": "split",
         "left": "/images/cc25/1-1.gif",
-        "right": "/images/cc25/1-2.jpg"
+        "right": "/images/cc25/1-2.webp"
       },
       {
         "type": "video",
@@ -1126,7 +1126,7 @@
       },
       {
         "type": "image",
-        "src": "/images/cc25/2.png"
+        "src": "/images/cc25/2.webp"
       },
       {
         "type": "video",
@@ -1134,8 +1134,8 @@
       },
       {
         "type": "split",
-        "left": "/images/cc25/3-1.jpg",
-        "right": "/images/cc25/3-2.jpg"
+        "left": "/images/cc25/3-1.webp",
+        "right": "/images/cc25/3-2.webp"
       },
       {
         "type": "video",
@@ -1155,7 +1155,7 @@
       },
       {
         "type": "image",
-        "src": "/images/cc25/4.png"
+        "src": "/images/cc25/4.webp"
       },
       {
         "type": "split",
@@ -1164,25 +1164,25 @@
       },
       {
         "type": "image",
-        "src": "/images/cc25/6.png"
+        "src": "/images/cc25/6.webp"
       },
       {
         "type": "split",
-        "left": "/images/cc25/7-1.jpg",
-        "right": "/images/cc25/7-2.jpg"
+        "left": "/images/cc25/7-1.webp",
+        "right": "/images/cc25/7-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/cc25/8.png"
+        "src": "/images/cc25/8.webp"
       },
       {
         "type": "image",
-        "src": "/images/cc25/9.png"
+        "src": "/images/cc25/9.webp"
       },
       {
         "type": "split",
-        "left": "/images/cc25/10-1.jpg",
-        "right": "/images/cc25/10-2.jpg"
+        "left": "/images/cc25/10-1.webp",
+        "right": "/images/cc25/10-2.webp"
       },
       {
         "type": "video",
@@ -1190,16 +1190,16 @@
       },
       {
         "type": "split",
-        "left": "/images/cc25/11-1.jpg",
-        "right": "/images/cc25/11-2.jpg"
+        "left": "/images/cc25/11-1.webp",
+        "right": "/images/cc25/11-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/cc25/12.png"
+        "src": "/images/cc25/12.webp"
       }
     ],
     "backgroundColor": "##000000",
-    "cover": "/images/cc25/cover.png",
+    "cover": "/images/cc25/cover.webp",
     "awards": [
       {
         "place": "Commended",
@@ -1220,7 +1220,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/trash/1.png"
+        "src": "/images/trash/1.webp"
       },
       {
         "type": "text",
@@ -1228,36 +1228,36 @@
       },
       {
         "type": "image",
-        "src": "/images/trash/2.png"
+        "src": "/images/trash/2.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/3.png"
+        "src": "/images/trash/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/4.png"
+        "src": "/images/trash/4.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/5.png"
+        "src": "/images/trash/5.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/6.png"
+        "src": "/images/trash/6.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/7.png"
+        "src": "/images/trash/7.webp"
       },
       {
         "type": "split",
-        "left": "/images/trash/8-1.png",
-        "right": "/images/trash/8-2.png"
+        "left": "/images/trash/8-1.webp",
+        "right": "/images/trash/8-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/9.png"
+        "src": "/images/trash/9.webp"
       },
       {
         "type": "image",
@@ -1265,89 +1265,89 @@
       },
       {
         "type": "image",
-        "src": "/images/trash/11.png"
+        "src": "/images/trash/11.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/12.png"
+        "src": "/images/trash/12.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/13.png"
+        "src": "/images/trash/13.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/14.png"
+        "src": "/images/trash/14.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/15.png"
+        "src": "/images/trash/15.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/16.png"
+        "src": "/images/trash/16.webp"
       },
       {
         "type": "split",
-        "left": "/images/trash/17-1.png",
-        "right": "/images/trash/17-2.png"
+        "left": "/images/trash/17-1.webp",
+        "right": "/images/trash/17-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/18.png"
+        "src": "/images/trash/18.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/19.png"
+        "src": "/images/trash/19.webp"
       },
       {
         "type": "split",
-        "left": "/images/trash/20-1.png",
-        "right": "/images/trash/20-2.png"
+        "left": "/images/trash/20-1.webp",
+        "right": "/images/trash/20-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/21.png"
+        "src": "/images/trash/21.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/22.png"
+        "src": "/images/trash/22.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/23.png"
+        "src": "/images/trash/23.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/24.png"
+        "src": "/images/trash/24.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/25.png"
+        "src": "/images/trash/25.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/26.png"
+        "src": "/images/trash/26.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/27.png"
+        "src": "/images/trash/27.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/28.png"
+        "src": "/images/trash/28.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/29.png"
+        "src": "/images/trash/29.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/30.png"
+        "src": "/images/trash/30.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/31.png"
+        "src": "/images/trash/31.webp"
       },
       {
         "type": "text",
@@ -1355,15 +1355,15 @@
       },
       {
         "type": "image",
-        "src": "/images/trash/32.png"
+        "src": "/images/trash/32.webp"
       },
       {
         "type": "image",
-        "src": "/images/trash/33.png"
+        "src": "/images/trash/33.webp"
       }
     ],
     "backgroundColor": "#000000",
-    "cover": "/images/trash/cover.png",
+    "cover": "/images/trash/cover.webp",
     "links": [
       {
         "text": "Calameo",
@@ -1391,11 +1391,11 @@
       },
       {
         "type": "image",
-        "src": "/images/dym/1.png"
+        "src": "/images/dym/1.webp"
       },
       {
         "type": "image",
-        "src": "/images/dym/2.png"
+        "src": "/images/dym/2.webp"
       },
       {
         "type": "video",
@@ -1411,7 +1411,7 @@
       },
       {
         "type": "image",
-        "src": "/images/dym/3.png"
+        "src": "/images/dym/3.webp"
       },
       {
         "type": "video",
@@ -1419,7 +1419,7 @@
       },
       {
         "type": "image",
-        "src": "/images/dym/4.png"
+        "src": "/images/dym/4.webp"
       },
       {
         "type": "video",
@@ -1427,7 +1427,7 @@
       },
       {
         "type": "image",
-        "src": "/images/dym/5 copy.png"
+        "src": "/images/dym/5 copy.webp"
       },
       {
         "type": "video",
@@ -1443,7 +1443,7 @@
       }
     ],
     "backgroundColor": "##FBFBFB",
-    "cover": "/images/dym/cover.png",
+    "cover": "/images/dym/cover.webp",
     "links": [
       {
         "text": "Original case",
@@ -1517,7 +1517,7 @@
       },
       {
         "type": "image",
-        "src": "/images/css/2.png"
+        "src": "/images/css/2.webp"
       },
       {
         "type": "video",
@@ -1529,11 +1529,11 @@
       },
       {
         "type": "image",
-        "src": "/images/css/3.png"
+        "src": "/images/css/3.webp"
       },
       {
         "type": "image",
-        "src": "/images/css/4.png"
+        "src": "/images/css/4.webp"
       },
       {
         "type": "video",
@@ -1549,7 +1549,7 @@
       }
     ],
     "backgroundColor": "##ffffff",
-    "cover": "/images/css/cover.png",
+    "cover": "/images/css/cover.webp",
     "awards": [
       {
         "place": "Gold",
@@ -1634,7 +1634,7 @@
     "contentBlocks": [
       {
         "type": "image",
-        "src": "/images/mumu/1.png"
+        "src": "/images/mumu/1.webp"
       },
       {
         "type": "text",
@@ -1650,12 +1650,12 @@
       },
       {
         "type": "image",
-        "src": "/images/mumu/2.png"
+        "src": "/images/mumu/2.webp"
       },
       {
         "type": "split",
-        "left": "/images/mumu/3-1.png",
-        "right": "/images/mumu/3-2.png"
+        "left": "/images/mumu/3-1.webp",
+        "right": "/images/mumu/3-2.webp"
       },
       {
         "type": "text",
@@ -1663,7 +1663,7 @@
       },
       {
         "type": "image",
-        "src": "/images/mumu/4.png"
+        "src": "/images/mumu/4.webp"
       },
       {
         "type": "text",
@@ -1683,7 +1683,7 @@
       },
       {
         "type": "image",
-        "src": "/images/mumu/5.png"
+        "src": "/images/mumu/5.webp"
       },
       {
         "type": "video",
@@ -1699,12 +1699,12 @@
       },
       {
         "type": "split",
-        "left": "/images/mumu/6-1.png",
-        "right": "/images/mumu/6-2.png"
+        "left": "/images/mumu/6-1.webp",
+        "right": "/images/mumu/6-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/mumu/7.png"
+        "src": "/images/mumu/7.webp"
       },
       {
         "type": "video",
@@ -1712,21 +1712,21 @@
       },
       {
         "type": "split",
-        "left": "/images/mumu/8-1.png",
-        "right": "/images/mumu/8-2.png"
+        "left": "/images/mumu/8-1.webp",
+        "right": "/images/mumu/8-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/mumu/9.png"
+        "src": "/images/mumu/9.webp"
       },
       {
         "type": "image",
-        "src": "/images/mumu/10.png"
+        "src": "/images/mumu/10.webp"
       },
       {
         "type": "split",
-        "left": "/images/mumu/11-1.png",
-        "right": "/images/mumu/11-2.png"
+        "left": "/images/mumu/11-1.webp",
+        "right": "/images/mumu/11-2.webp"
       },
       {
         "type": "video",
@@ -1750,7 +1750,7 @@
       },
       {
         "type": "image",
-        "src": "/images/mumu/12.png"
+        "src": "/images/mumu/12.webp"
       },
       {
         "type": "video",
@@ -1762,16 +1762,16 @@
       },
       {
         "type": "image",
-        "src": "/images/mumu/13.png"
+        "src": "/images/mumu/13.webp"
       },
       {
         "type": "split",
-        "left": "/images/mumu/14-1.png",
-        "right": "/images/mumu/14-2.png"
+        "left": "/images/mumu/14-1.webp",
+        "right": "/images/mumu/14-2.webp"
       },
       {
         "type": "image",
-        "src": "/images/mumu/15.png"
+        "src": "/images/mumu/15.webp"
       }
     ],
     "backgroundColor": "#fbfbfb",

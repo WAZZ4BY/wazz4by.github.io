@@ -45,7 +45,7 @@ const base = import.meta.env.BASE_URL;
 
       <section class="admin-section admin-section--wide admin-pane" id="researchCardsPane">
         <h2>Карточки Research</h2>
-        <p class="admin-hint">Квадратные контейнеры на вкладке Research. Для режима <code>image</code> можно загружать только <code>jpg</code>, <code>png</code> и <code>gif</code>. Для режима <code>kinescope</code> вставляйте ссылку или iframe embed. Карточки сортируются по номеру: больший номер выше.</p>
+        <p class="admin-hint">Квадратные контейнеры на вкладке Research. Для режима <code>image</code> указывайте путь к <code>webp</code> (или <code>gif</code> для анимации). PNG/JPG при вводе и загрузке автоматически сохраняются как WebP. Для режима <code>kinescope</code> вставляйте ссылку или iframe embed. Карточки сортируются по номеру: больший номер выше.</p>
         <p id="researchCardsLoadStatus" class="status">Загрузка…</p>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
           <button type="button" id="addResearchCardBtn" class="secondary">+ Добавить карточку</button>
@@ -206,6 +206,7 @@ const base = import.meta.env.BASE_URL;
               });
             } catch (_) {}
           }
+          projects = projects.map(rewriteProjectImagePaths);
           status.textContent = 'Загружено проектов: ' + projects.length + ' (скрытых: ' + projects.filter(function (p) { return p.hidden; }).length + ')';
           status.className = 'status ok';
           renderProjectList();
@@ -289,12 +290,14 @@ const base = import.meta.env.BASE_URL;
       function normalizeHomeMediaCard(card) {
         const c = card || {};
         const ratio = HOME_MEDIA_RATIOS.includes(c.ratio) ? c.ratio : 'aspect-16-9';
+        const as = c.as === 'video' || c.as === 'vimeo' || c.as === 'kinescope' ? c.as : 'image';
+        const src = typeof c.src === 'string' ? c.src : '';
         return {
           href: typeof c.href === 'string' ? c.href : '/index/',
-          src: typeof c.src === 'string' ? c.src : '',
+          src: as === 'image' ? toWebpPath(src) : src,
           alt: typeof c.alt === 'string' ? c.alt : '',
           ratio: ratio,
-          as: c.as === 'video' || c.as === 'vimeo' || c.as === 'kinescope' ? c.as : 'image',
+          as: as,
           size: c.size === 'wide' ? 'wide' : 'normal',
           edge: c.edge === 'left' || c.edge === 'right' ? c.edge : 'auto'
         };
@@ -306,11 +309,13 @@ const base = import.meta.env.BASE_URL;
         const rawDate = typeof c.date === 'string' ? c.date : '';
         const m = rawDate.trim().match(/^(\d{1,2})[.\-/](\d{4})$/);
         const normalizedDate = m ? String(m[1]).padStart(2, '0') + '.' + m[2] : '';
+        const as = c.as === 'kinescope' ? 'kinescope' : 'image';
+        const src = typeof c.src === 'string' ? c.src : '';
         return {
           number: Number.isFinite(parsedNumber) ? Math.max(0, Math.round(parsedNumber)) : fallbackNumber,
-          src: typeof c.src === 'string' ? c.src : '',
+          src: as === 'image' ? toWebpPath(src) : src,
           alt: typeof c.alt === 'string' ? c.alt : '',
-          as: c.as === 'kinescope' ? 'kinescope' : 'image',
+          as: as,
           caption: typeof c.caption === 'string' ? c.caption : '',
           date: normalizedDate
         };
@@ -411,6 +416,30 @@ const base = import.meta.env.BASE_URL;
           .replace(/>/g, '&gt;');
       }
 
+      function toWebpPath(url) {
+        const u = String(url || '').trim();
+        if (!u || u.indexOf('<') !== -1 || /^https?:\/\//i.test(u)) return u;
+        return u.replace(/\.(png|jpe?g)(\?.*)?$/i, '.webp$2');
+      }
+
+      function rewriteProjectImagePaths(project) {
+        if (!project || typeof project !== 'object') return project;
+        const next = Object.assign({}, project);
+        if (typeof next.cover === 'string') next.cover = toWebpPath(next.cover);
+        if (Array.isArray(next.images)) next.images = next.images.map(toWebpPath);
+        if (Array.isArray(next.contentBlocks)) {
+          next.contentBlocks = next.contentBlocks.map(function (block) {
+            if (!block || typeof block !== 'object') return block;
+            const b = Object.assign({}, block);
+            if (typeof b.src === 'string') b.src = toWebpPath(b.src);
+            if (typeof b.left === 'string') b.left = toWebpPath(b.left);
+            if (typeof b.right === 'string') b.right = toWebpPath(b.right);
+            return b;
+          });
+        }
+        return next;
+      }
+
       function extractIframeSrc(raw) {
         const s = String(raw || '').trim();
         const m = s.match(/<iframe[\s\S]*?src=["']([^"']+)["']/i);
@@ -479,7 +508,7 @@ const base = import.meta.env.BASE_URL;
             '</div>' +
             '<div style="display:grid;gap:0.5rem;">' +
               '<label>Источник (src)</label>' +
-              '<input type="text" class="home-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/main/photo.jpg" />' +
+              '<input type="text" class="home-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/main/photo.webp" />' +
               '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">' +
                 '<button type="button" class="secondary upload-home-card-image" data-i="' + i + '">Загрузить фото в GitHub</button>' +
                 '<input type="file" class="home-card-file" data-i="' + i + '" accept="image/*" style="display:none;" />' +
@@ -508,7 +537,13 @@ const base = import.meta.env.BASE_URL;
         container.querySelectorAll('.home-card-src').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
-            homeMediaCards[i].src = this.value.trim();
+            const as = homeMediaCards[i].as;
+            let value = this.value.trim();
+            if (as === 'image') {
+              value = toWebpPath(value);
+              if (value !== this.value.trim()) this.value = value;
+            }
+            homeMediaCards[i].src = value;
             updateHomeCardPreview(i);
           });
         });
@@ -688,10 +723,10 @@ const base = import.meta.env.BASE_URL;
                 '<option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>kinescope</option>' +
               '</select>' +
               '<label>Источник (src)</label>' +
-              '<input type="text" class="research-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/research/photo.jpg или ссылка/iframe Kinescope" />' +
+              '<input type="text" class="research-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/research/photo.webp или ссылка/iframe Kinescope" />' +
               '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">' +
-                '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '">Загрузить JPG/PNG/GIF в GitHub</button>' +
-                '<input type="file" class="research-card-file" data-i="' + i + '" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif" style="display:none;" />' +
+                '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '">Загрузить WebP/GIF в GitHub</button>' +
+                '<input type="file" class="research-card-file" data-i="' + i + '" accept=".webp,.gif,.jpg,.jpeg,.png,image/webp,image/gif,image/jpeg,image/png" style="display:none;" />' +
               '</div>' +
               '<label>Alt</label>' +
               '<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание изображения" />' +
@@ -756,7 +791,12 @@ const base = import.meta.env.BASE_URL;
         container.querySelectorAll('.research-card-src').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
-            researchCards[i].src = this.value.trim();
+            let value = this.value.trim();
+            if (researchCards[i].as !== 'kinescope') {
+              value = toWebpPath(value);
+              if (value !== this.value.trim()) this.value = value;
+            }
+            researchCards[i].src = value;
             updateResearchCardPreview(i);
           });
         });
@@ -810,10 +850,10 @@ const base = import.meta.env.BASE_URL;
               return;
             }
             const lowerName = (file.name || '').toLowerCase();
-            const allowedByMime = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
-            const allowedByExt = /\.(jpe?g|png|gif)$/.test(lowerName);
+            const allowedByMime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type);
+            const allowedByExt = /\.(jpe?g|png|gif|webp)$/.test(lowerName);
             if (!allowedByMime && !allowedByExt) {
-              statusEl.textContent = 'Можно загружать только JPG, PNG или GIF.';
+              statusEl.textContent = 'Можно загружать WebP, GIF, JPG или PNG.';
               statusEl.className = 'status err';
               this.value = '';
               return;
@@ -865,6 +905,28 @@ const base = import.meta.env.BASE_URL;
         return safe || 'image';
       }
 
+      async function maybeConvertUploadToWebp(file) {
+        const name = String(file.name || 'image').toLowerCase();
+        if (file.type === 'image/gif' || name.endsWith('.gif')) return file;
+        if (file.type === 'image/webp' || name.endsWith('.webp')) return file;
+        if (!(file.type === 'image/png' || file.type === 'image/jpeg' || /\.(png|jpe?g)$/.test(name))) return file;
+        const bitmap = await createImageBitmap(file);
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(bitmap, 0, 0);
+        bitmap.close();
+        const blob = await new Promise(function (resolve, reject) {
+          canvas.toBlob(function (b) {
+            if (b) resolve(b);
+            else reject(new Error('Не удалось конвертировать в WebP'));
+          }, 'image/webp', 0.8);
+        });
+        const webpName = String(file.name || 'image').replace(/\.(png|jpe?g)$/i, '.webp');
+        return new File([blob], /\.webp$/i.test(webpName) ? webpName : webpName + '.webp', { type: 'image/webp' });
+      }
+
       async function fileToBase64(file) {
         const buffer = await file.arrayBuffer();
         const bytes = new Uint8Array(buffer);
@@ -884,7 +946,8 @@ const base = import.meta.env.BASE_URL;
 
         sessionStorage.setItem(REPO_KEY, gh.repo);
 
-        const fileName = Date.now() + '-' + sanitizeFileName(file.name);
+        const uploadFile = await maybeConvertUploadToWebp(file);
+        const fileName = Date.now() + '-' + sanitizeFileName(uploadFile.name);
         const contentPath = targetDir + '/' + fileName;
         const apiUrl = 'https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + contentPath;
 
@@ -902,7 +965,7 @@ const base = import.meta.env.BASE_URL;
 
         const body = {
           message: commitMessage,
-          content: await fileToBase64(file),
+          content: await fileToBase64(uploadFile),
           branch: 'main'
         };
         if (sha) body.sha = sha;
@@ -959,7 +1022,7 @@ const base = import.meta.env.BASE_URL;
             const err = await getRes.json().catch(() => ({}));
             throw new Error(err.message || getRes.statusText);
           }
-          const content = JSON.stringify(projects, null, 2);
+          const content = JSON.stringify(projects.map(rewriteProjectImagePaths), null, 2);
           const body = { message: 'Update projects.json from admin', content: btoa(unescape(encodeURIComponent(content))), branch: 'main' };
           if (sha) body.sha = sha;
           const putRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
@@ -982,7 +1045,7 @@ const base = import.meta.env.BASE_URL;
       });
 
       document.getElementById('downloadBtn').addEventListener('click', function () {
-        const json = JSON.stringify(projects, null, 2);
+        const json = JSON.stringify(projects.map(rewriteProjectImagePaths), null, 2);
         const blob = new Blob([json], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);

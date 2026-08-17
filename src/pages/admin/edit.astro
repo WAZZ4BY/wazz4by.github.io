@@ -35,7 +35,8 @@ const base = import.meta.env.BASE_URL;
             <input type="text" id="editBackgroundColorHex" placeholder="#FBFBFB или оставьте пустым" />
           </div>
           <label>Обложка (превью при наведении на Index)</label>
-          <input type="text" id="editCover" placeholder="/images/cover.jpg или URL" />
+          <input type="text" id="editCover" placeholder="/images/cover.webp или URL" />
+          <p class="admin-hint">Путь к файлу в <code>public</code>, например <code>/images/cover.webp</code>. PNG/JPG в пути автоматически заменяются на WebP.</p>
           <label class="admin-checkbox-label">
             <input type="checkbox" id="editHidden" />
             Скрыть проект с сайта
@@ -139,6 +140,23 @@ const base = import.meta.env.BASE_URL;
       }
 
       function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+      function toWebpPath(url) {
+        const u = String(url || '').trim();
+        if (!u || u.indexOf('<') !== -1 || /^https?:\/\//i.test(u)) return u;
+        return u.replace(/\.(png|jpe?g)(\?.*)?$/i, '.webp$2');
+      }
+
+      function rewriteBlocks(blocks) {
+        return (blocks || []).map(function (block) {
+          if (!block || typeof block !== 'object') return block;
+          const b = Object.assign({}, block);
+          if (typeof b.src === 'string') b.src = toWebpPath(b.src);
+          if (typeof b.left === 'string') b.left = toWebpPath(b.left);
+          if (typeof b.right === 'string') b.right = toWebpPath(b.right);
+          return b;
+        });
+      }
 
       function collectAwards() {
         const rows = document.querySelectorAll('#editAwardsList .award-row');
@@ -276,7 +294,7 @@ const base = import.meta.env.BASE_URL;
         const u = (url || '').trim();
         if (!u) return '';
         if (u.startsWith('http')) return u;
-        return getBase() + u.replace(/^\//, '');
+        return getBase() + toWebpPath(u).replace(/^\//, '');
       }
 
       function renderBlocks() {
@@ -291,11 +309,11 @@ const base = import.meta.env.BASE_URL;
             inner = '<div class="content-block-card__row"><span class="content-block-card__type">Текст</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea" rows="3" placeholder="Текст (колонки 5–12)">' + esc(block.content || '') + '</textarea>';
           } else if (block.type === 'image') {
             const imgSrc = resolveImgUrl(block.src || '');
-            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Изображение</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><input type="text" class="content-block-card__url" value="' + esc(block.src || '') + '" placeholder="/images/photo.jpg" /><div class="content-block-card__preview">' + (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div>';
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Изображение</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><input type="text" class="content-block-card__url" value="' + esc(block.src || '') + '" placeholder="/images/photo.webp" /><div class="content-block-card__preview">' + (imgSrc ? '<img src="' + esc(imgSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div>';
           } else if (block.type === 'split') {
             const leftSrc = resolveImgUrl(block.left || '');
             const rightSrc = resolveImgUrl(block.right || '');
-            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Сплит</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><div class="content-block-card__split-fields"><input type="text" class="content-block-card__url" value="' + esc(block.left || '') + '" placeholder="Левое изображение" data-side="left" /><input type="text" class="content-block-card__url" value="' + esc(block.right || '') + '" placeholder="Правое изображение" data-side="right" /></div><div class="content-block-card__preview content-block-card__preview--split"><div class="content-block-card__preview-item">' + (leftSrc ? '<img src="' + esc(leftSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div><div class="content-block-card__preview-item">' + (rightSrc ? '<img src="' + esc(rightSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div></div>';
+            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Сплит</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><div class="content-block-card__split-fields"><input type="text" class="content-block-card__url" value="' + esc(block.left || '') + '" placeholder="/images/left.webp" data-side="left" /><input type="text" class="content-block-card__url" value="' + esc(block.right || '') + '" placeholder="/images/right.webp" data-side="right" /></div><div class="content-block-card__preview content-block-card__preview--split"><div class="content-block-card__preview-item">' + (leftSrc ? '<img src="' + esc(leftSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div><div class="content-block-card__preview-item">' + (rightSrc ? '<img src="' + esc(rightSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div></div>';
           } else if (block.type === 'video') {
             inner = '<div class="content-block-card__row"><span class="content-block-card__type">Видео (Vimeo)</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea content-block-card__textarea--embed" rows="4" placeholder="Вставьте embed-код (iframe) с Vimeo">' + esc(block.embed || '') + '</textarea>';
           }
@@ -324,8 +342,10 @@ const base = import.meta.env.BASE_URL;
             const urlInput = card.querySelector('.content-block-card__url');
             const previewWrap = card.querySelector('.content-block-card__preview');
             function updateImagePreview() {
-              contentBlocks[index].src = urlInput.value.trim();
-              const src = resolveImgUrl(urlInput.value.trim());
+              const value = toWebpPath(urlInput.value.trim());
+              if (value !== urlInput.value.trim()) urlInput.value = value;
+              contentBlocks[index].src = value;
+              const src = resolveImgUrl(value);
               if (!previewWrap) return;
               if (src) {
                 let img = previewWrap.querySelector('img');
@@ -343,8 +363,12 @@ const base = import.meta.env.BASE_URL;
             const rightInput = card.querySelector('input[data-side="right"]');
             const previewWrap = card.querySelector('.content-block-card__preview--split');
             function updateSplitPreviews() {
-              contentBlocks[index].left = leftInput.value.trim();
-              contentBlocks[index].right = rightInput.value.trim();
+              const left = toWebpPath(leftInput.value.trim());
+              const right = toWebpPath(rightInput.value.trim());
+              if (left !== leftInput.value.trim()) leftInput.value = left;
+              if (right !== rightInput.value.trim()) rightInput.value = right;
+              contentBlocks[index].left = left;
+              contentBlocks[index].right = right;
               if (!previewWrap) return;
               const items = previewWrap.querySelectorAll('.content-block-card__preview-item');
               [leftInput.value.trim(), rightInput.value.trim()].forEach(function (val, i) {
@@ -442,9 +466,9 @@ const base = import.meta.env.BASE_URL;
           sortDate: document.getElementById('editSortDate').value.trim() || undefined,
           description: project.description || '',
           images: project.images || [],
-          contentBlocks: contentBlocks.slice(),
+          contentBlocks: rewriteBlocks(contentBlocks),
           backgroundColor: bgHex || (bgColor && bgColor.startsWith('#') ? bgColor : bgColor ? '#' + bgColor : '') || undefined,
-          cover: document.getElementById('editCover').value.trim() || undefined,
+          cover: toWebpPath(document.getElementById('editCover').value.trim()) || undefined,
           awards: awards.length > 0 ? awards : undefined,
           links: links.length > 0 ? links : undefined,
           creditsList: creditsList.length > 0 ? creditsList : undefined
@@ -475,7 +499,7 @@ const base = import.meta.env.BASE_URL;
           const edited = getEditedProjects();
           if (edited[projectId]) {
             project = edited[projectId];
-            contentBlocks = (project.contentBlocks || []).map(function (b) { return { ...b }; });
+            contentBlocks = rewriteBlocks((project.contentBlocks || []).map(function (b) { return { ...b }; }));
           } else {
             project = allProjects.find(function (p) { return p.id === projectId; });
             if (!project) {
@@ -484,14 +508,14 @@ const base = import.meta.env.BASE_URL;
               return;
             }
             if (project.contentBlocks && project.contentBlocks.length > 0) {
-              contentBlocks = project.contentBlocks.map(function (b) { return { ...b }; });
+              contentBlocks = rewriteBlocks(project.contentBlocks.map(function (b) { return { ...b }; }));
             } else {
               contentBlocks = [];
               if (project.description && project.description.trim()) {
                 contentBlocks.push({ type: 'text', content: project.description.trim() });
               }
               (project.images || []).forEach(function (src) {
-                if (src && src.trim()) contentBlocks.push({ type: 'image', src: src.trim() });
+                if (src && src.trim()) contentBlocks.push({ type: 'image', src: toWebpPath(src.trim()) });
               });
             }
           }
@@ -501,7 +525,7 @@ const base = import.meta.env.BASE_URL;
           document.getElementById('editType').value = project.type || '';
           document.getElementById('editYear').value = project.year || '';
           document.getElementById('editSortDate').value = project.sortDate || '';
-          document.getElementById('editCover').value = project.cover || '';
+          document.getElementById('editCover').value = toWebpPath(project.cover || '');
           document.getElementById('editHidden').checked = Boolean(project.hidden);
           renderAwards(project.awards && project.awards.length ? project.awards : []);
           renderLinks(project.links && project.links.length ? project.links : []);
@@ -529,6 +553,10 @@ const base = import.meta.env.BASE_URL;
             document.getElementById('editBackgroundColorHex').addEventListener('input', function () {
               const v = this.value.trim();
               if (/^#[0-9A-Fa-f]{6}$/.test(v)) document.getElementById('editBackgroundColor').value = v.slice(1);
+            });
+            document.getElementById('editCover').addEventListener('input', function () {
+              const next = toWebpPath(this.value.trim());
+              if (next !== this.value.trim()) this.value = next;
             });
           }
           renderBlocks();

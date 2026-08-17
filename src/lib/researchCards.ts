@@ -13,11 +13,11 @@ export type ResearchCard = {
 const DATA_PATH = path.join(process.cwd(), 'public/data/research-cards.json');
 
 const DEFAULT_CARDS: ResearchCard[] = [
-  { number: 1, src: '/images/research-1.jpg', alt: 'Research 1' },
-  { number: 2, src: '/images/research-2.jpg', alt: 'Research 2' },
-  { number: 3, src: '/images/research-3.jpg', alt: 'Research 3' },
-  { number: 4, src: '/images/research-4.jpg', alt: 'Research 4' },
-  { number: 5, src: '/images/research-5.jpg', alt: 'Research 5' },
+  { number: 1, src: '/images/research-1.webp', alt: 'Research 1' },
+  { number: 2, src: '/images/research-2.webp', alt: 'Research 2' },
+  { number: 3, src: '/images/research-3.webp', alt: 'Research 3' },
+  { number: 4, src: '/images/research-4.webp', alt: 'Research 4' },
+  { number: 5, src: '/images/research-5.webp', alt: 'Research 5' },
 ];
 
 function normalizeCard(card: unknown, fallbackNumber: number): ResearchCard {

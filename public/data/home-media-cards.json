@@ -1,7 +1,7 @@
 [
   {
     "href": "/project/snve-pereodical/",
-    "src": "/images/main/1.png",
+    "src": "/images/main/1.webp",
     "alt": "SNVE",
     "ratio": "aspect-original",
     "as": "image",
@@ -40,7 +40,7 @@
   },
   {
     "href": "/project/photoelectric-effect-calendar-2025/",
-    "src": "/images/main/5.png",
+    "src": "/images/main/5.webp",
     "alt": "Photoelectric Effect Calendar 2025",
     "ratio": "aspect-16-9",
     "as": "image",
@@ -50,7 +50,7 @@
   },
   {
     "href": "/project/trash-aesthetics-visual-culture-of-waste/",
-    "src": "/images/main/3.png",
+    "src": "/images/main/3.webp",
     "alt": "Trash Aesthetics",
     "ratio": "aspect-3-4",
     "as": "image",
@@ -59,7 +59,7 @@
   },
   {
     "href": "/project/boop-pet-shampoo-packaging/",
-    "src": "/images/main/10.png",
+    "src": "/images/main/10.webp",
     "alt": "Boop",
     "ratio": "aspect-original",
     "as": "image",
@@ -69,7 +69,7 @@
   },
   {
     "href": "/project/chaos-construction-demoscene-fest/",
-    "src": "/images/main/11.png",
+    "src": "/images/main/11.webp",
     "alt": "Chaos Construction",
     "ratio": "aspect-original",
     "as": "image",
@@ -88,7 +88,7 @@
   },
   {
     "href": "/project/hoja-sagrada-yerba-mate-tea/",
-    "src": "/images/main/7.png",
+    "src": "/images/main/7.webp",
     "alt": "Hoja Sagrada",
     "ratio": "aspect-1-1",
     "as": "image",
@@ -97,7 +97,7 @@
   },
   {
     "href": "/project/antre-cheese-appetizers-packaging/",
-    "src": "/images/main/13.png",
+    "src": "/images/main/13.webp",
     "alt": "Antre",
     "ratio": "aspect-original",
     "as": "image",

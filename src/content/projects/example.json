@@ -1,7 +1,7 @@
 {
   "title": "Пример проекта",
   "slug": "example",
-  "cover": "/images/example-cover.jpg",
+  "cover": "/images/example-cover.webp",
   "blocks": [
     {
       "type": "text",
@@ -9,17 +9,17 @@
     },
     {
       "type": "image",
-      "src": "/images/example-1.jpg",
+      "src": "/images/example-1.webp",
       "width": 12
     },
     {
       "type": "image",
-      "src": "/images/example-2.jpg",
+      "src": "/images/example-2.webp",
       "width": 6
     },
     {
       "type": "image",
-      "src": "/images/example-3.jpg",
+      "src": "/images/example-3.webp",
       "width": 6
     },
     {

@@ -30,10 +30,10 @@ export type HomeMediaCard = {
 const DATA_PATH = path.join(process.cwd(), 'public/data/home-media-cards.json');
 
 const DEFAULT_CARDS: HomeMediaCard[] = [
-  { href: '/index/', src: '/images/main/1.png', alt: 'Editorial gallery preview 16 by 9', ratio: 'aspect-16-9', as: 'image', loading: 'lazy', size: 'wide', edge: 'left' },
-  { href: '/index/', src: '/images/main/3.png', alt: 'Editorial gallery preview 3 by 4', ratio: 'aspect-3-4', as: 'image', loading: 'lazy', size: 'normal', edge: 'right' },
-  { href: '/index/', src: '/images/main/5.png', alt: 'Editorial gallery preview 4 by 5', ratio: 'aspect-4-5', as: 'image', loading: 'lazy', size: 'normal', edge: 'left' },
-  { href: '/index/', src: '/images/main/11.png', alt: 'Original aspect media card', ratio: 'aspect-original', as: 'image', loading: 'lazy', size: 'wide', edge: 'right' },
+  { href: '/index/', src: '/images/main/1.webp', alt: 'Editorial gallery preview 16 by 9', ratio: 'aspect-16-9', as: 'image', loading: 'lazy', size: 'wide', edge: 'left' },
+  { href: '/index/', src: '/images/main/3.webp', alt: 'Editorial gallery preview 3 by 4', ratio: 'aspect-3-4', as: 'image', loading: 'lazy', size: 'normal', edge: 'right' },
+  { href: '/index/', src: '/images/main/5.webp', alt: 'Editorial gallery preview 4 by 5', ratio: 'aspect-4-5', as: 'image', loading: 'lazy', size: 'normal', edge: 'left' },
+  { href: '/index/', src: '/images/main/11.webp', alt: 'Original aspect media card', ratio: 'aspect-original', as: 'image', loading: 'lazy', size: 'wide', edge: 'right' },
   { href: '/index/', src: '/images/main/14.gif', alt: 'Free aspect media card', ratio: 'aspect-free', as: 'image', loading: 'lazy', size: 'wide', edge: 'left' },
 ];
 
@@ -53,7 +53,7 @@ export function getHomeMediaCards(): HomeMediaCard[] {
       const src = typeof c.src === 'string' ? c.src.trim() : '';
       return {
         href: typeof c.href === 'string' ? c.href : '/index/',
-        src: src || '/images/main/1.png',
+        src: src || '/images/main/1.webp',
         alt: typeof c.alt === 'string' ? c.alt : '',
         ratio: normalizeRatio(c.ratio),
         as: c.as === 'video' || c.as === 'vimeo' || c.as === 'kinescope' ? c.as : 'image',

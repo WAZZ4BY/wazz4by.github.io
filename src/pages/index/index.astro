@@ -294,9 +294,17 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     max-height: 45vh;
     pointer-events: none;
     opacity: 0;
-    animation: index-hover-float-in 0.22s ease forwards;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    visibility: hidden;
     overflow: hidden;
+  }
+  :global(body.page-index .index-hover-scatter__item--ready) {
+    visibility: visible;
+    animation: index-hover-float-in 0.1s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+  }
+  :global(body.page-index .index-hover-scatter__item--hiding) {
+    visibility: visible;
+    animation: none;
+    transition: opacity 0.1s cubic-bezier(0.33, 0, 0.2, 1);
   }
   :global(body.page-index .index-hover-scatter__item img) {
     width: 100%;
@@ -318,11 +326,9 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
   @keyframes index-hover-float-in {
     from {
       opacity: 0;
-      transform: scale(0.96);
     }
     to {
       opacity: 1;
-      transform: scale(1);
     }
   }
 
@@ -360,7 +366,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       return Math.max(120, 2 * col + gutter);
     }
 
-    function shufflePick(arr, n) {
+    function shuffle(arr) {
       const copy = arr.slice();
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -368,15 +374,121 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
         copy[i] = copy[j];
         copy[j] = t;
       }
-      return copy.slice(0, n);
+      return copy;
+    }
+
+    function shufflePick(arr, n) {
+      return shuffle(arr).slice(0, n);
+    }
+
+    function pickScatterMedia(items, count) {
+      const videos = items.filter(function (item) { return item.type === 'video'; });
+      const images = items.filter(function (item) { return item.type === 'image'; });
+      const picked = [];
+      if (videos.length) {
+        picked.push(shufflePick(videos, 1)[0]);
+      }
+      const imageCount = Math.max(0, count - picked.length);
+      if (imageCount > 0 && images.length) {
+        picked.push.apply(picked, shufflePick(images, Math.min(imageCount, images.length)));
+      }
+      return shuffle(picked);
+    }
+
+    function revealScatterItem(wrap) {
+      if (!wrap || wrap.classList.contains('index-hover-scatter__item--ready')) return;
+      if (wrap.classList.contains('index-hover-scatter__item--hiding')) return;
+      wrap.classList.add('index-hover-scatter__item--ready');
+    }
+
+    function hideScatterItem(wrap) {
+      if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    }
+
+    function fadeOutScatterItem(wrap) {
+      if (!wrap || !wrap.parentNode) return;
+      if (wrap.classList.contains('index-hover-scatter__item--hiding')) return;
+      const current = getComputedStyle(wrap).opacity;
+      wrap.classList.remove('index-hover-scatter__item--ready');
+      wrap.classList.add('index-hover-scatter__item--hiding');
+      wrap.style.animation = 'none';
+      wrap.style.visibility = 'visible';
+      wrap.style.opacity = current;
+      void wrap.offsetWidth;
+      wrap.style.opacity = '0';
+      wrap.addEventListener('transitionend', function onEnd(e) {
+        if (e.propertyName && e.propertyName !== 'opacity') return;
+        wrap.removeEventListener('transitionend', onEnd);
+        hideScatterItem(wrap);
+      });
     }
 
     function randomInt(a, b) {
       return a + Math.floor(Math.random() * (b - a + 1));
     }
 
-    function clearScatter() {
-      if (scatterEl) scatterEl.innerHTML = '';
+    let scatterSession = null;
+    const SCATTER_STAGGER_MS = 70;
+
+    function hideScatter() {
+      const session = scatterSession;
+      scatterSession = null;
+      if (!session) return;
+      session.hiding = true;
+      if (session.revealTimer) {
+        clearTimeout(session.revealTimer);
+        session.revealTimer = null;
+      }
+      if (session.hideTimer) {
+        clearTimeout(session.hideTimer);
+        session.hideTimer = null;
+      }
+
+      const toHide = [];
+      session.wraps.forEach(function (wrap, i) {
+        if (!wrap) return;
+        if (session.revealed[i]) toHide.push(wrap);
+        else hideScatterItem(wrap);
+      });
+
+      let i = 0;
+      function hideNext() {
+        if (i >= toHide.length) return;
+        fadeOutScatterItem(toHide[i]);
+        i++;
+        if (i < toHide.length) {
+          session.hideTimer = setTimeout(hideNext, SCATTER_STAGGER_MS);
+        }
+      }
+      hideNext();
+    }
+
+    function revealScatterLoop(session) {
+      if (!session || session.hiding) return;
+      const idx = session.nextRevealIndex;
+      if (idx >= session.wraps.length) return;
+      if (!session.loaded[idx]) return;
+
+      const wrap = session.wraps[idx];
+      if (wrap && !session.revealed[idx]) {
+        revealScatterItem(wrap);
+        session.revealed[idx] = true;
+      }
+      session.nextRevealIndex++;
+
+      if (session.nextRevealIndex < session.wraps.length) {
+        session.revealTimer = setTimeout(function () {
+          session.revealTimer = null;
+          revealScatterLoop(session);
+        }, SCATTER_STAGGER_MS);
+      }
+    }
+
+    function onScatterItemLoaded(session, index) {
+      if (!session || session.hiding) return;
+      session.loaded[index] = true;
+      if (session.revealTimer) return;
+      if (index === session.nextRevealIndex) revealScatterLoop(session);
     }
 
     function extractIframeSrc(raw) {
@@ -412,12 +524,22 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
 
     function showScatter(projectId) {
       if (!scatterEl) return;
-      clearScatter();
+      hideScatter();
       const items = projectMediaMap[projectId];
       if (!items || !items.length) return;
       const n = Math.min(items.length, randomInt(3, 6));
       const count = Math.max(1, n);
-      const picked = shufflePick(items, count);
+      const picked = pickScatterMedia(items, count);
+      scatterSession = {
+        nextRevealIndex: 0,
+        revealTimer: null,
+        hideTimer: null,
+        hiding: false,
+        loaded: new Array(picked.length).fill(false),
+        revealed: new Array(picked.length).fill(false),
+        wraps: new Array(picked.length).fill(null),
+      };
+      const session = scatterSession;
       const colW = twoColumnsWidthPx();
       document.documentElement.style.setProperty('--index-hover-col-w', colW + 'px');
       const vw = window.innerWidth;
@@ -426,30 +548,56 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       const maxH = Math.min(vh * 0.45, colW * 3);
       const rangeX = Math.max(0, vw - colW - 2 * pad);
       const rangeY = Math.max(0, vh - maxH - 2 * pad);
-      picked.forEach(function (item) {
+      picked.forEach(function (item, index) {
         const wrap = document.createElement('div');
         wrap.className = 'index-hover-scatter__item' + (item.type === 'video' ? ' index-hover-scatter__item--video' : '');
         wrap.style.left = pad + Math.random() * rangeX + 'px';
         wrap.style.top = pad + Math.random() * rangeY + 'px';
+        session.wraps[index] = wrap;
+        scatterEl.appendChild(wrap);
 
         if (item.type === 'video') {
           const videoSrc = getHoverVideoSrc(item.embed);
-          if (!videoSrc) return;
+          if (!videoSrc) {
+            hideScatterItem(wrap);
+            session.wraps[index] = null;
+            session.loaded[index] = true;
+            if (index === session.nextRevealIndex && !session.revealTimer) revealScatterLoop(session);
+            return;
+          }
           const iframe = document.createElement('iframe');
           iframe.src = videoSrc;
           iframe.setAttribute('frameborder', '0');
           iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
           iframe.setAttribute('loading', 'eager');
+          iframe.addEventListener('load', function () {
+            onScatterItemLoaded(session, index);
+          });
+          iframe.addEventListener('error', function () {
+            hideScatterItem(wrap);
+            session.wraps[index] = null;
+            session.loaded[index] = true;
+            if (index === session.nextRevealIndex && !session.revealTimer) revealScatterLoop(session);
+          });
           wrap.appendChild(iframe);
-        } else {
-          const img = document.createElement('img');
-          img.src = resolveImageUrl(item.src);
-          img.alt = '';
-          img.loading = 'eager';
-          wrap.appendChild(img);
+          return;
         }
 
-        scatterEl.appendChild(wrap);
+        const img = document.createElement('img');
+        img.alt = '';
+        img.loading = 'eager';
+        img.addEventListener('load', function () {
+          onScatterItemLoaded(session, index);
+        });
+        img.addEventListener('error', function () {
+          hideScatterItem(wrap);
+          session.wraps[index] = null;
+          session.loaded[index] = true;
+          if (index === session.nextRevealIndex && !session.revealTimer) revealScatterLoop(session);
+        });
+        wrap.appendChild(img);
+        img.src = resolveImageUrl(item.src);
+        if (img.complete && img.naturalWidth > 0) onScatterItemLoaded(session, index);
       });
     }
 
@@ -488,7 +636,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       });
       row.addEventListener('mouseleave', function () {
         showPreview('');
-        clearScatter();
+        hideScatter();
       });
     });
 

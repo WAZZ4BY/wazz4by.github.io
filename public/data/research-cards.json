@@ -9,7 +9,7 @@
   },
   {
     "number": 35,
-    "src": "/images/research/type1.jpeg",
+    "src": "/images/research/type1.webp",
     "alt": "",
     "as": "image",
     "caption": "Falling",
@@ -17,7 +17,7 @@
   },
   {
     "number": 34,
-    "src": "/images/research/bio.jpeg",
+    "src": "/images/research/bio.webp",
     "alt": "",
     "as": "image",
     "caption": "Infusa",
@@ -25,7 +25,7 @@
   },
   {
     "number": 33,
-    "src": "/images/research/brelok.jpeg",
+    "src": "/images/research/brelok.webp",
     "alt": "",
     "as": "image",
     "caption": "Wristband, MM",
@@ -41,7 +41,7 @@
   },
   {
     "number": 31,
-    "src": "/images/research/face.jpeg",
+    "src": "/images/research/face.webp",
     "alt": "",
     "as": "image",
     "caption": "",
@@ -89,7 +89,7 @@
   },
   {
     "number": 25,
-    "src": "/images/research/rope.png",
+    "src": "/images/research/rope.webp",
     "alt": "",
     "as": "image",
     "caption": "",
@@ -161,7 +161,7 @@
   },
   {
     "number": 14,
-    "src": "/images/research/type2.jpeg",
+    "src": "/images/research/type2.webp",
     "alt": "",
     "as": "image",
     "caption": "Positioning, MM",
@@ -169,7 +169,7 @@
   },
   {
     "number": 13,
-    "src": "/images/research/robot.jpg",
+    "src": "/images/research/robot.webp",
     "alt": "",
     "as": "image",
     "caption": "",
@@ -185,7 +185,7 @@
   },
   {
     "number": 11,
-    "src": "/images/research/text2.jpg",
+    "src": "/images/research/text2.webp",
     "alt": "",
     "as": "image",
     "caption": "",
@@ -225,7 +225,7 @@
   },
   {
     "number": 6,
-    "src": "/images/research/sufganiet.jpeg",
+    "src": "/images/research/sufganiet.webp",
     "alt": "",
     "as": "image",
     "caption": "",
@@ -233,7 +233,7 @@
   },
   {
     "number": 5,
-    "src": "/images/research/sababa.jpeg",
+    "src": "/images/research/sababa.webp",
     "alt": "Research 5",
     "as": "image",
     "caption": "The Last Days of Sababa",
@@ -241,7 +241,7 @@
   },
   {
     "number": 4,
-    "src": "/images/research/bisti.jpeg",
+    "src": "/images/research/bisti.webp",
     "alt": "Research 4",
     "as": "image",
     "caption": "",
@@ -249,7 +249,7 @@
   },
   {
     "number": 3,
-    "src": "/images/research/s.png",
+    "src": "/images/research/s.webp",
     "alt": "Research 3",
     "as": "image",
     "caption": "",
