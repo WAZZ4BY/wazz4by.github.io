@@ -51,6 +51,7 @@ function getKinescopeEmbedUrl(raw: string): string {
               data-media-caption={item.caption || ''}
               data-media-date={item.date || ''}
               data-media-text={item.text || ''}
+              data-media-links={JSON.stringify(item.links || [])}
               data-side-srcs={item.sideSrcs.filter(Boolean).map((src) => resolveMediaSrc(src)).join('\n')}
               data-ar={item.aspectRatio}
               data-span-w={maxW}
@@ -59,9 +60,8 @@ function getKinescopeEmbedUrl(raw: string): string {
               <div class="research-card__image" style={`--research-ar: ${item.aspectRatio}`}>
                 {item.as === 'kinescope' ? (
                   <iframe
-                    data-src={getKinescopeEmbedUrl(item.src)}
+                    src={getKinescopeEmbedUrl(item.src)}
                     title={item.alt || label}
-                    loading="lazy"
                     frameborder="0"
                     allow="autoplay; fullscreen; picture-in-picture"
                     allowfullscreen
@@ -229,11 +229,34 @@ function getKinescopeEmbedUrl(raw: string): string {
   :global(.research-lightbox__value--name) { grid-column: 2 / 5; grid-row: 1; }
   :global(.research-lightbox__label--date) { grid-column: 1; grid-row: 2; }
   :global(.research-lightbox__value--date) { grid-column: 2 / 5; grid-row: 2; }
-  :global(.research-lightbox__text) {
+  :global(.research-lightbox__copy) {
     grid-column: 5 / 13;
     grid-row: 1 / span 4;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  :global(.research-lightbox__text) {
     margin: 0;
     white-space: pre-wrap;
+  }
+  :global(.research-lightbox__links) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  :global(.research-lightbox__links a) {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #B29893;
+    text-decoration: none;
+    word-break: break-word;
+  }
+  :global(.research-lightbox__links a:hover) {
+    text-decoration: underline;
   }
 
   :global(.research-lightbox__bar) {
@@ -361,17 +384,36 @@ function getKinescopeEmbedUrl(raw: string): string {
     let isJumping = false;
     let didPlaceMiddle = false;
 
+    function gridCols() {
+      const v = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--grid-cols'), 10);
+      return v > 0 ? v : 12;
+    }
+
     function spanPx(cols, gridWidth, gutter) {
-      const col = (gridWidth - 11 * gutter) / 12;
+      const total = gridCols();
+      const col = (gridWidth - (total - 1) * gutter) / total;
       return cols * col + Math.max(0, cols - 1) * gutter;
+    }
+
+    function researchMinCols() {
+      const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--research-min-cols'));
+      return v > 0 ? v : 2;
+    }
+
+    function researchMaxCols(original) {
+      const override = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--research-max-cols'));
+      if (override > 0) return override;
+      const total = gridCols();
+      if (total === 6) return original >= 6 ? 6 : 4;
+      return original;
     }
 
     function metrics() {
       const gridWidth = grid.clientWidth;
       const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-gutter')) || 20;
-      const minW = spanPx(2, gridWidth, gutter);
+      const minW = spanPx(researchMinCols(), gridWidth, gutter);
       const maxWs = maxSpans.map(function (cols) {
-        return spanPx(cols, gridWidth, gutter);
+        return spanPx(researchMaxCols(cols), gridWidth, gutter);
       });
       const minHeights = aspects.map(function (ar) {
         return minW / ar;
@@ -480,7 +522,6 @@ function getKinescopeEmbedUrl(raw: string): string {
       }
 
       const used = {};
-      const visibleCards = {};
       cards.forEach(function (card) {
         card.style.visibility = 'hidden';
         card.style.pointerEvents = 'none';
@@ -493,7 +534,6 @@ function getKinescopeEmbedUrl(raw: string): string {
         used[slot.idx] = copy + 1;
         const card = pool[slot.idx][Math.min(copy, 2)];
         if (!card) return;
-        visibleCards[card.getAttribute('data-loop-copy') + ':' + slot.idx] = card;
         const wrap = card.querySelector('.research-card__image');
         card.style.visibility = 'visible';
         card.style.pointerEvents = 'auto';
@@ -503,29 +543,6 @@ function getKinescopeEmbedUrl(raw: string): string {
         if (wrap) {
           wrap.style.width = slot.w + 'px';
           wrap.style.transform = 'none';
-        }
-        const iframe = card.querySelector('iframe[data-src]');
-        if (iframe) {
-          const nearView = slot.top < window.innerHeight + 120 && slot.top + slot.h > -120;
-          const want = iframe.getAttribute('data-src');
-          if (nearView && want && iframe.dataset.loaded !== '1') {
-            iframe.src = want;
-            iframe.dataset.loaded = '1';
-          }
-          if (!nearView && iframe.dataset.loaded === '1') {
-            iframe.removeAttribute('src');
-            iframe.dataset.loaded = '';
-          }
-        }
-      });
-
-      cards.forEach(function (card) {
-        const key = card.getAttribute('data-loop-copy') + ':' + card.getAttribute('data-loop-index');
-        if (visibleCards[key]) return;
-        const iframe = card.querySelector('iframe[data-src]');
-        if (iframe && iframe.dataset.loaded === '1') {
-          iframe.removeAttribute('src');
-          iframe.dataset.loaded = '';
         }
       });
     }
@@ -556,7 +573,10 @@ function getKinescopeEmbedUrl(raw: string): string {
           '<span class="research-lightbox__value research-lightbox__value--name"></span>' +
           '<span class="research-lightbox__label research-lightbox__label--date">Date</span>' +
           '<span class="research-lightbox__value research-lightbox__value--date"></span>' +
-          '<p class="research-lightbox__text"></p>' +
+          '<div class="research-lightbox__copy">' +
+            '<p class="research-lightbox__text"></p>' +
+            '<div class="research-lightbox__links"></div>' +
+          '</div>' +
         '</div>' +
       '</div>';
     document.body.appendChild(lightbox);
@@ -573,6 +593,7 @@ function getKinescopeEmbedUrl(raw: string): string {
     const nameEl = lightbox.querySelector('.research-lightbox__value--name');
     const dateEl = lightbox.querySelector('.research-lightbox__value--date');
     const textEl = lightbox.querySelector('.research-lightbox__text');
+    const linksEl = lightbox.querySelector('.research-lightbox__links');
     let slideIndex = 0;
     let slideItems = [];
     let currentTranslate = 0;
@@ -647,9 +668,14 @@ function getKinescopeEmbedUrl(raw: string): string {
       const last = geo.slides.length - 1;
       if (last < 0) return 0;
       const i = Math.max(0, Math.min(last, index));
-      if (i === 0) return 0;
-      if (i === last) return geo.metrics.width - (geo.positions[i] + geo.widths[i]);
-      return geo.metrics.col2 - geo.positions[i];
+      const trackEnd = geo.positions[last] + geo.widths[last];
+      const minX = geo.metrics.width - trackEnd;
+      const maxX = 0;
+      let x = 0;
+      if (i === last) x = minX;
+      else if (i > 0) x = geo.metrics.col2 - geo.positions[i];
+      if (minX >= maxX) return 0;
+      return Math.max(minX, Math.min(maxX, x));
     }
 
     function applyTranslate(x, withTransition) {
@@ -704,6 +730,11 @@ function getKinescopeEmbedUrl(raw: string): string {
       const caption = card.getAttribute('data-media-caption') || '';
       const date = card.getAttribute('data-media-date') || '';
       const text = card.getAttribute('data-media-text') || '';
+      let links = [];
+      try {
+        const parsed = JSON.parse(card.getAttribute('data-media-links') || '[]');
+        if (Array.isArray(parsed)) links = parsed;
+      } catch (_) {}
       const sideSrcs = (card.getAttribute('data-side-srcs') || '').split('\n').map(function (item) {
         return item.trim();
       }).filter(Boolean);
@@ -752,6 +783,18 @@ function getKinescopeEmbedUrl(raw: string): string {
       nameEl.textContent = caption;
       dateEl.textContent = date;
       textEl.textContent = text;
+      linksEl.innerHTML = '';
+      links.forEach(function (item) {
+        const textValue = item && typeof item.text === 'string' ? item.text.trim() : '';
+        const urlValue = item && typeof item.url === 'string' ? item.url.trim() : '';
+        if (!textValue && !urlValue) return;
+        const a = document.createElement('a');
+        a.href = urlValue || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = textValue || urlValue;
+        linksEl.appendChild(a);
+      });
       requestAnimationFrame(layoutTrack);
     }
 

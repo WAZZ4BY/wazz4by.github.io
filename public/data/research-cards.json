@@ -7,6 +7,12 @@
     "caption": "ItakFilm",
     "date": "01.2025",
     "text": "Based in Turkey, Itak Film is an independent film distributor dedicated to bringing premier international cinema to both the big screen and digital platforms.",
+    "links": [
+      {
+        "text": "Site",
+        "url": "https://itak.film/"
+      }
+    ],
     "sideSrcs": [
       "/images/research/itakfilm2.webp",
       "/images/research/itakfilm3.webp"
@@ -21,6 +27,7 @@
     "caption": "Morph opject",
     "date": "12.2025",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -32,6 +39,7 @@
     "caption": "Infusa",
     "date": "12.2025",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -40,10 +48,17 @@
     "src": "/images/research/sufganiet.webp",
     "alt": "",
     "as": "image",
-    "caption": "Sufganiet",
+    "caption": "Poster Lab",
     "date": "",
     "text": "",
-    "sideSrcs": [],
+    "links": [],
+    "sideSrcs": [
+      "/images/research/poster2.webp",
+      "/images/research/poster3.webp",
+      "/images/research/poster4.webp",
+      "/images/research/poster5.webp",
+      "/images/research/poster6.webp"
+    ],
     "spanW": 4
   },
   {
@@ -54,6 +69,7 @@
     "caption": "Robobobik",
     "date": "",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -65,6 +81,7 @@
     "caption": "Positioning, MM",
     "date": "01.2026",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -76,6 +93,7 @@
     "caption": "Pseudo Data Graph",
     "date": "",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -87,6 +105,7 @@
     "caption": "Worms",
     "date": "",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -98,6 +117,7 @@
     "caption": "Shell666",
     "date": "",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -109,6 +129,7 @@
     "caption": "WZB, CC25",
     "date": "",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   },
@@ -120,6 +141,7 @@
     "caption": "Wristband, MM",
     "date": "05.2026",
     "text": "",
+    "links": [],
     "sideSrcs": [],
     "spanW": 4
   }

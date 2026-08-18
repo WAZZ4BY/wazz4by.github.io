@@ -51,6 +51,8 @@
   --grid-cols: 12;
   --grid-margin: 30px;
   --grid-gutter: 20px;
+  --research-min-cols: 2;
+  --research-max-cols: 0;
   
   /* Typography */
   --font-base: 'SuisseIntl', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -191,12 +193,12 @@ body.page-info {
 .page-header__nav { grid-column: 7 / 12; padding-top: 5px; display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; }
 .page-header__nav-item { display: inline-block; }
 .page-header__schk { grid-column: 12; justify-self: end; padding-top: 5px; text-align: right; }
-.page-header a { color: inherit; text-decoration: none; transition: opacity 0.2s ease; }
-.page-header__nav-item > a { opacity: 0.3; }
-.page-header__nav-item > b a { opacity: 1; }
-.page-header__nav-item > a:hover { opacity: 1; }
-.page-header__schk a { opacity: 1; }
-.page-header__schk a:hover { opacity: 0.9; }
+.page-header a { color: inherit; text-decoration: none; transition: color 0.2s ease; opacity: 1; }
+.page-header__nav-item > a { color: rgba(255, 255, 255, 0.3); }
+.page-header__nav-item > b a { color: #ffffff; }
+.page-header__nav-item > a:hover { color: #ffffff; }
+.page-header__schk a { color: #ffffff; }
+.page-header__schk a:hover { color: rgba(255, 255, 255, 0.9); }
 .page-header__logo {
   display: block;
   height: 12px;
@@ -823,9 +825,16 @@ body.is-inner .works-page {
     margin-top: min(100px, 18vh);
   }
 
+  :root {
+    --grid-cols: 6;
+    --grid-gutter: 20px;
+    --research-min-cols: 2;
+    --research-max-cols: 0;
+  }
+
   .research-card__name,
   .research-card__date {
-    font-size: 12px;
+    display: none;
   }
 
   .me-page__intro {

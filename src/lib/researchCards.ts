@@ -4,6 +4,11 @@ import path from 'path';
 export type ResearchSpan = 2 | 4 | 6;
 export type ResearchMaxWidth = 4 | 6;
 
+export type ResearchTextLink = {
+  text: string;
+  url: string;
+};
+
 export type ResearchCard = {
   number: number;
   src: string;
@@ -12,6 +17,7 @@ export type ResearchCard = {
   caption?: string;
   date?: string;
   text?: string;
+  links: ResearchTextLink[];
   sideSrcs: string[];
   spanW: ResearchMaxWidth;
   spanH: ResearchSpan;
@@ -101,6 +107,20 @@ function parseSideSrcs(value: unknown, legacy?: unknown): string[] {
   return out;
 }
 
+function parseLinks(value: unknown): ResearchTextLink[] {
+  if (!Array.isArray(value)) return [];
+  const out: ResearchTextLink[] = [];
+  value.forEach((item) => {
+    if (!item || typeof item !== 'object') return;
+    const rec = item as Record<string, unknown>;
+    const text = typeof rec.text === 'string' ? rec.text.trim() : '';
+    const url = typeof rec.url === 'string' ? rec.url.trim() : '';
+    if (!text && !url) return;
+    out.push({ text, url });
+  });
+  return out;
+}
+
 function parseMaxWidth(value: unknown): ResearchMaxWidth {
   return Number(value) === 6 ? 6 : 4;
 }
@@ -128,6 +148,7 @@ function normalizeCard(card: unknown, fallbackNumber: number): ResearchCard {
     caption: typeof c.caption === 'string' ? c.caption : '',
     date: typeof c.date === 'string' ? c.date : '',
     text: typeof c.text === 'string' ? c.text : '',
+    links: parseLinks(c.links),
     sideSrcs: parseSideSrcs(c.sideSrcs, c.sideSrc),
     spanW: parseMaxWidth(c.spanW),
     spanH: parseSpan(c.spanH) ?? auto.spanH,

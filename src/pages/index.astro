@@ -39,13 +39,15 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
           <a href={`${base}research/`} class="home-hero__link">Research</a>
         </div>
         <a href={base === '/' ? '/' : base} class="home-hero__logo-link" aria-label="Vasilii Aleev">
-          <img
-            class="home-hero__logo"
-            src={logoSrc}
-            width="155"
-            height="22"
-            alt=""
-          />
+          <span class="home-hero__logo-mark" aria-hidden="true">
+            <img
+              class="home-hero__logo"
+              src={logoSrc}
+              width="155"
+              height="22"
+              alt=""
+            />
+          </span>
         </a>
         <div class="home-hero__side home-hero__side--right">
           <a href={`${base}info/`} class="home-hero__link">Info</a>
@@ -53,7 +55,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
             href="https://t.me/schtab_kvartira"
             target="_blank"
             rel="noopener noreferrer"
-            class="home-hero__link"
+            class="home-hero__link home-hero__link--schk"
           >schk</a>
         </div>
       </div>
@@ -111,7 +113,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     --home-intro-height: 100vh;
   }
 
-  /* Как .page-header: difference на контейнере + белый цвет */
+  /* difference на контейнере + белый #fff; полупрозрачность — через opacity у ссылок */
   .home-hero {
     position: fixed;
     inset: 0;
@@ -122,7 +124,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     padding: 0 var(--grid-margin);
     pointer-events: none;
     mix-blend-mode: difference;
-    color: #fff;
+    color: #ffffff;
     background: transparent;
   }
 
@@ -160,6 +162,12 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     line-height: 0;
     text-decoration: none;
     color: inherit;
+    transform: translateY(-2px);
+  }
+
+  .home-hero__logo-mark {
+    display: block;
+    line-height: 0;
   }
 
   .home-hero__logo {
@@ -180,14 +188,14 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     font-weight: 500;
     font-size: 14px;
     line-height: 1;
-    opacity: 0.3;
+    color: rgba(255, 255, 255, 0.3);
+    opacity: 1;
     white-space: nowrap;
-    transition: opacity 0.2s, font-weight 0.2s;
+    transition: color 0.2s;
   }
 
   .home-hero__link:hover {
-    opacity: 1;
-    font-weight: 700;
+    color: #ffffff;
   }
 
   @media (max-width: 900px) {
@@ -196,35 +204,62 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     }
   }
 
+  @media (max-width: 768px) {
+    .home-hero {
+      padding: 0;
+    }
+
+    .home-hero__row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(72px, 11vh, 110px);
+      width: 100%;
+    }
+
+    .home-hero__side {
+      display: contents;
+    }
+
+    .home-hero__logo-link {
+      transform: none;
+    }
+
+    .home-hero__logo-mark {
+      width: 222px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-hero__logo {
+      width: 222px;
+      height: auto;
+      max-height: 32px;
+      filter: brightness(0) invert(1);
+    }
+
+    .home-hero__link {
+      font-size: 24px;
+      line-height: 24px;
+      white-space: normal;
+    }
+
+    .home-hero__link--schk {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .home-hero__link:hover {
+      color: #ffffff;
+    }
+  }
+
   @media (max-width: 680px) {
     .home-page {
       --home-nav-gap: 20px;
     }
-
-    .home-hero {
-      padding: 0 16px;
-    }
-
-    .home-hero__row {
-      grid-template-columns: 1fr;
-      row-gap: 0;
-      justify-items: center;
-    }
-
-    .home-hero__side--left,
-    .home-hero__side--right {
-      display: none;
-    }
-
-    .home-hero__logo-link {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    .home-hero__link {
-      font-size: 12px;
-    }
-
   }
 
   .sr-only {

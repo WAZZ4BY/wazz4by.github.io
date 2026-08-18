@@ -144,10 +144,12 @@ const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
     font-weight: 500;
     font-size: 16px;
     color: black;
+    opacity: 0.3;
+    transition: opacity 0.2s;
   }
 
   .site-header__center .nav-link--home:hover {
-    font-weight: 700;
+    opacity: 1;
   }
 
   .site-header__center .nav-link.active {

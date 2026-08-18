@@ -71,27 +71,12 @@ const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
       max-width: none;
     }
 
-    :global(body.is-home) .mobile-global-nav__logo {
+    :global(body.is-home) .mobile-global-nav {
       display: none;
     }
 
     :global(body.is-home .home-hero) {
       display: flex !important;
-    }
-
-    :global(body.is-home .home-hero__side) {
-      display: none !important;
-    }
-
-    :global(body.is-home .home-hero__row) {
-      grid-template-columns: 1fr !important;
-      row-gap: 0 !important;
-      justify-items: center;
-    }
-
-    :global(body.is-home .home-hero__logo-link) {
-      grid-column: 1;
-      grid-row: 1;
     }
 
     .mobile-global-nav__toggle {
