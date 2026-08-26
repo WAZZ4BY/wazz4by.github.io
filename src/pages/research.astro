@@ -259,6 +259,45 @@ function getKinescopeEmbedUrl(raw: string): string {
     text-decoration: underline;
   }
 
+  @media (max-width: 1024px) {
+    :global(.research-lightbox__layout) {
+      row-gap: 20px;
+    }
+
+    :global(.research-lightbox__info) {
+      row-gap: 8px;
+    }
+
+    :global(.research-lightbox__copy) {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      margin-top: 12px;
+    }
+
+    :global(.research-lightbox__value--name),
+    :global(.research-lightbox__value--date) {
+      grid-column: 4 / 8;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :global(.research-lightbox) {
+      padding-top: calc(var(--page-header-height) + 12px);
+      padding-bottom: 24px;
+    }
+
+    :global(.research-lightbox__label),
+    :global(.research-lightbox__value),
+    :global(.research-lightbox__text) {
+      font-size: 14px;
+    }
+
+    :global(.research-lightbox__copy) {
+      margin-top: 16px;
+      gap: 8px;
+    }
+  }
+
   :global(.research-lightbox__bar) {
     display: none;
     position: fixed;
