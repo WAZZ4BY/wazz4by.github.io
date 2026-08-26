@@ -138,7 +138,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     object-fit: contain;
   }
 
-  /* Футер как на странице проекта: кол. 1 — SCHK, 7–11 — текст, 11 — имя, 12 — ссылки */
+  /* Футер: кол. 1 — SCHK, 7–11 — текст (4–11 на узком), 11 — имя, 12 — ссылки */
   :global(body.page-index .index2__grid .index-footer__schk) {
     grid-column: 1;
     grid-row: 4;
@@ -261,7 +261,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     font-family: 'SuisseIntl', sans-serif;
     font-size: 24px;
     font-weight: 500;
-    line-height: 75%;
+    line-height: 95%;
     word-wrap: break-word;
     padding-bottom: 0;
   }
@@ -336,6 +336,42 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     :global(body.page-index .index2__grid .page-header) {
       display: none;
     }
+
+    :global(body.page-index .index2__grid .index-labels-type) {
+      display: none;
+    }
+
+    :global(body.page-index .index-list__row) {
+      grid-template-columns: 1fr auto;
+      gap: 0 1rem;
+    }
+
+    :global(body.page-index .index-list__row .index-list__type) {
+      display: none;
+    }
+
+    :global(body.page-index .index-list__row .index-list__name) {
+      grid-column: 1;
+    }
+
+    :global(body.page-index .index-list__row .index-list__year) {
+      grid-column: 2;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    :global(body.page-index .index-list__name .index-list__name-tail) {
+      display: none;
+    }
+
+    :global(body.page-index .index-hover-scatter),
+    :global(body.page-index .index-list-preview) {
+      display: none !important;
+    }
+
+    :global(body.page-index .index2__grid .index-footer__text) {
+      grid-column: 4 / 11;
+    }
   }
 </style>
 
@@ -348,6 +384,10 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     const scatterEl = document.getElementById('indexHoverScatter');
     const mediaDataEl = document.getElementById('indexProjectMediaData');
     if (!list || !yearBtn) return;
+
+    function isNarrowIndex() {
+      return window.matchMedia('(max-width: 768px)').matches;
+    }
 
     let projectMediaMap = {};
     if (mediaDataEl && mediaDataEl.textContent) {
@@ -523,6 +563,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     }
 
     function showScatter(projectId) {
+      if (isNarrowIndex()) return;
       if (!scatterEl) return;
       hideScatter();
       const items = projectMediaMap[projectId];
@@ -611,6 +652,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     }
 
     function showPreview(url, row) {
+      if (isNarrowIndex()) return;
       if (!preview || !previewImg) return;
       if (url && row) {
         const wrap = list.parentElement;
@@ -667,5 +709,12 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     });
 
     sortRows();
+
+    window.addEventListener('resize', function () {
+      if (isNarrowIndex()) {
+        showPreview('');
+        hideScatter();
+      }
+    });
   })();
 </script>

@@ -58,26 +58,6 @@
     "size": "normal"
   },
   {
-    "href": "/project/boop-pet-shampoo-packaging/",
-    "src": "/images/main/10.webp",
-    "alt": "Boop",
-    "ratio": "aspect-original",
-    "as": "image",
-    "loading": "lazy",
-    "size": "wide",
-    "edge": "right"
-  },
-  {
-    "href": "/project/chaos-construction-demoscene-fest/",
-    "src": "/images/main/11.webp",
-    "alt": "Chaos Construction",
-    "ratio": "aspect-original",
-    "as": "image",
-    "loading": "lazy",
-    "size": "normal",
-    "edge": "left"
-  },
-  {
     "href": "/project/crypto-anarchist-manifesto/",
     "src": "/images/main/14.gif",
     "alt": "The Crypto Anarchist Manifesto",
@@ -85,33 +65,5 @@
     "as": "image",
     "loading": "lazy",
     "size": "wide"
-  },
-  {
-    "href": "/project/hoja-sagrada-yerba-mate-tea/",
-    "src": "/images/main/7.webp",
-    "alt": "Hoja Sagrada",
-    "ratio": "aspect-1-1",
-    "as": "image",
-    "loading": "lazy",
-    "size": "normal"
-  },
-  {
-    "href": "/project/antre-cheese-appetizers-packaging/",
-    "src": "/images/main/13.webp",
-    "alt": "Antre",
-    "ratio": "aspect-original",
-    "as": "image",
-    "loading": "lazy",
-    "size": "normal"
-  },
-  {
-    "href": "/project/w-dotorg-dymshits-partners-rebranding/",
-    "src": "https://kinescope.io/eRTz7oSUbEAJC9AHeJwxz1",
-    "alt": "DNP",
-    "ratio": "aspect-1-1",
-    "as": "kinescope",
-    "loading": "lazy",
-    "size": "wide",
-    "edge": "right"
   }
 ]

@@ -1,6 +1,16 @@
 ---
 const base = import.meta.env.BASE_URL;
 const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
+const pathname = Astro.url.pathname;
+const pathWithoutBase = pathname.replace(new RegExp('^' + base.replace(/\/$/, '') + '\\/?'), '') || '';
+const currentPath = pathWithoutBase.replace(/^\/+|\/+$/g, '') || '/';
+
+function isNavActive(page: 'index' | 'research' | 'info'): boolean {
+  if (page === 'index') return currentPath === 'index' || currentPath.startsWith('index/');
+  if (page === 'research') return currentPath === 'research' || currentPath.startsWith('research/');
+  if (page === 'info') return currentPath === 'info';
+  return false;
+}
 ---
 
 <div class="mobile-global-nav" data-mobile-global-nav>
@@ -19,12 +29,32 @@ const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
     <span class="mobile-global-nav__line" aria-hidden="true"></span>
   </button>
   <div class="mobile-global-nav__overlay" id="mobileGlobalNavOverlay" aria-hidden="true">
-    <nav class="mobile-global-nav__links" aria-label="Mobile navigation">
-      <a href={`${base}index/`}>Index</a>
-      <a href={`${base}research/`}>Research</a>
-      <a href={`${base}info/`}>Info</a>
+    <nav class="mobile-global-nav__menu" aria-label="Mobile navigation">
+      <div class="mobile-global-nav__menu-row">
+        <div class="mobile-global-nav__menu-side mobile-global-nav__menu-side--left">
+          <a href={`${base}index/`} class:list={['mobile-global-nav__menu-link', isNavActive('index') && 'is-active']}>Index</a>
+          <a href={`${base}research/`} class:list={['mobile-global-nav__menu-link', isNavActive('research') && 'is-active']}>Research</a>
+        </div>
+        <a href={base === '/' ? '/' : base} class="mobile-global-nav__menu-logo" aria-label="Vasilii Aleev">
+          <img
+            class="mobile-global-nav__menu-logo-img"
+            src={logoSrc}
+            width="155"
+            height="22"
+            alt=""
+          />
+        </a>
+        <div class="mobile-global-nav__menu-side mobile-global-nav__menu-side--right">
+          <a href={`${base}info/`} class:list={['mobile-global-nav__menu-link', isNavActive('info') && 'is-active']}>Info</a>
+          <a
+            href="https://t.me/schtab_kvartira"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-global-nav__menu-link mobile-global-nav__menu-link--schk"
+          >schk</a>
+        </div>
+      </div>
     </nav>
-    <a class="mobile-global-nav__schk" href="https://t.me/schtab_kvartira" target="_blank" rel="noopener noreferrer">schk</a>
   </div>
 </div>
 
@@ -35,7 +65,13 @@ const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
 
   @media (max-width: 768px) {
     .mobile-global-nav {
-      --mobile-menu-size-open: min(calc(100vw - 32px), calc(100vh - 32px));
+      display: block;
+      --mobile-nav-inset: 30px;
+      --mobile-logo-width: 155px;
+      --mobile-logo-height: 22px;
+      --mobile-toggle-line-height: 3px;
+      --mobile-toggle-line-gap: 4px;
+      --mobile-toggle-height: calc(var(--mobile-toggle-line-height) * 2 + var(--mobile-toggle-line-gap));
     }
 
     :global(.home-mobile-toggle),
@@ -50,25 +86,33 @@ const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
       display: none !important;
     }
 
-    .mobile-global-nav {
-      display: block;
+    :global(body.global-mobile-menu-open) {
+      overflow: hidden;
     }
 
     .mobile-global-nav__logo {
       position: fixed;
-      top: 30px;
-      left: 30px;
+      top: var(--mobile-nav-inset);
+      left: var(--mobile-nav-inset);
       z-index: 2050;
       line-height: 0;
       text-decoration: none;
       color: inherit;
+      mix-blend-mode: difference;
+      transition: visibility 0.2s ease;
+    }
+
+    :global(body.global-mobile-menu-open) .mobile-global-nav__logo {
+      visibility: hidden;
+      pointer-events: none;
     }
 
     .mobile-global-nav__logo-img {
       display: block;
-      width: auto;
-      height: 22px;
+      width: var(--mobile-logo-width);
+      height: var(--mobile-logo-height);
       max-width: none;
+      filter: brightness(0) invert(1);
     }
 
     :global(body.is-home) .mobile-global-nav {
@@ -81,114 +125,115 @@ const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
 
     .mobile-global-nav__toggle {
       position: fixed;
-      top: 16px;
-      right: 16px;
-      width: 50px;
-      height: 50px;
+      top: calc(var(--mobile-nav-inset) + (var(--mobile-logo-height) - var(--mobile-toggle-height)) / 2);
+      right: var(--mobile-nav-inset);
+      width: 24px;
+      height: var(--mobile-toggle-height);
+      padding: 0;
       border: none;
       border-radius: 0;
       background: transparent;
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
       cursor: pointer;
       z-index: 2400;
       appearance: none;
       -webkit-appearance: none;
-      overflow: visible;
-      clip-path: none;
+      mix-blend-mode: difference;
+    }
+
+    .mobile-global-nav__toggle::before {
+      content: '';
+      position: absolute;
+      inset: -16px;
     }
 
     .mobile-global-nav__line {
       position: absolute;
-      left: 50%;
-      top: 50%;
+      left: 0;
       width: 24px;
-      height: 4px;
+      height: var(--mobile-toggle-line-height);
       border-radius: 0;
-      background: #000;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
+      background: #ffffff;
     }
 
     .mobile-global-nav__line:first-child {
-      transform: translate(-50%, calc(-50% - 5px));
+      top: 0;
     }
 
     .mobile-global-nav__line:last-child {
-      transform: translate(-50%, calc(-50% + 5px));
+      top: calc(var(--mobile-toggle-line-height) + var(--mobile-toggle-line-gap));
     }
 
     .mobile-global-nav__overlay {
       position: fixed;
-      top: 16px;
-      right: 16px;
-      width: 50px;
-      height: 50px;
-      z-index: 2300;
-      background: rgba(0, 0, 0, 0.2);
-      -webkit-backdrop-filter: blur(34px);
-      backdrop-filter: blur(34px);
-      padding: 20px;
-      opacity: 1;
+      inset: 0;
+      z-index: 2350;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FBFBFB;
+      opacity: 0;
+      visibility: hidden;
       pointer-events: none;
-      overflow: hidden;
-      box-sizing: border-box;
-      border-radius: 10px;
-      transition:
-        width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-        height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-        background-color 0.28s ease,
-        -webkit-backdrop-filter 0.28s ease,
-        backdrop-filter 0.28s ease;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
     }
 
     :global(body.global-mobile-menu-open) .mobile-global-nav__overlay {
-      width: var(--mobile-menu-size-open);
-      height: var(--mobile-menu-size-open);
+      opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
-    .mobile-global-nav__links {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0;
-      margin: 0;
-      opacity: 0;
-      transition: opacity 0.16s ease;
+    .mobile-global-nav__menu {
+      width: 100%;
+      padding: 0 var(--mobile-nav-inset);
+      box-sizing: border-box;
+      mix-blend-mode: difference;
+      color: #ffffff;
     }
 
-    .mobile-global-nav__links a,
-    .mobile-global-nav__schk {
+    .mobile-global-nav__menu-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(72px, 11vh, 110px);
+      width: 100%;
+    }
+
+    .mobile-global-nav__menu-side {
+      display: contents;
+    }
+
+    .mobile-global-nav__menu-link {
       font-family: 'SuisseIntl', sans-serif;
-      font-size: clamp(2rem, 10vw, 72px);
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      color: #000;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 24px;
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .mobile-global-nav__menu-link:hover,
+    .mobile-global-nav__menu-link.is-active {
+      color: #ffffff;
+    }
+
+    .mobile-global-nav__menu-link--schk {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .mobile-global-nav__menu-logo {
+      display: block;
+      line-height: 0;
       text-decoration: none;
     }
 
-    .mobile-global-nav__links a:hover {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .mobile-global-nav__schk {
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      text-transform: lowercase;
-      opacity: 0;
-      transition: opacity 0.16s ease;
-    }
-
-    :global(body.global-mobile-menu-open) .mobile-global-nav__links,
-    :global(body.global-mobile-menu-open) .mobile-global-nav__schk {
-      opacity: 1;
-      transition-delay: 0.08s;
+    .mobile-global-nav__menu-logo-img {
+      display: block;
+      width: var(--mobile-logo-width);
+      height: var(--mobile-logo-height);
+      filter: brightness(0) invert(1);
     }
   }
 </style>

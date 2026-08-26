@@ -226,22 +226,19 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     }
 
     .home-hero__logo-mark {
-      width: 222px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
+      line-height: 0;
     }
 
     .home-hero__logo {
-      width: 222px;
-      height: auto;
-      max-height: 32px;
+      width: 155px;
+      height: 22px;
+      max-width: none;
       filter: brightness(0) invert(1);
     }
 
     .home-hero__link {
-      font-size: 24px;
+      font-size: 18px;
       line-height: 24px;
       white-space: normal;
     }
@@ -331,7 +328,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     }
   }
 
-  /* Футер как на странице проекта: кол. 1 — SCHK, 7–11 — текст, 11 — имя, 12 — ссылки */
+  /* Футер: кол. 1 — SCHK, 7–11 — текст (4–11 на узком), 11 — имя, 12 — ссылки */
   :global(body.is-home .home-footer) {
     margin-top: 50px;
     width: 100%;
@@ -415,31 +412,9 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     color: inherit;
   }
 
-  @media (max-width: 900px) {
-    :global(body.is-home .home-footer__grid) {
-      grid-template-columns: 1fr;
-      gap: 1.25rem 0;
-      padding: 0 var(--grid-margin);
-    }
-
-    :global(body.is-home .home-footer__grid .index-footer__schk),
-    :global(body.is-home .home-footer__grid .index-footer__text),
-    :global(body.is-home .home-footer__grid .index-footer__name),
-    :global(body.is-home .home-footer__grid .index-footer__links) {
-      grid-column: 1;
-      grid-row: auto;
-      margin: 0;
-      justify-self: center;
-      text-align: center;
-      max-width: min(100%, 22rem);
-    }
-
-    :global(body.is-home .home-footer__grid .index-footer__schk) {
-      margin-top: 50px;
-    }
-
-    :global(body.is-home .home-footer__grid .index-footer__links) {
-      margin-bottom: 30px;
+  @media (max-width: 768px) {
+    :global(body.is-home .home-footer__grid .index-footer__text) {
+      grid-column: 4 / 11;
     }
   }
 </style>
