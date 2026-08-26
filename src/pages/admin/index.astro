@@ -33,8 +33,15 @@ const base = import.meta.env.BASE_URL;
         <h2>Фото на главной (Media Cards)</h2>
         <p class="admin-hint">Управление карточками на главной странице. Можно загружать фото в репозиторий (папка <code>public/images/main</code>) и сразу подставлять путь в карточку. Для режима <code>vimeo</code> вставляйте iframe/embed или ссылку Vimeo, для <code>kinescope</code> — iframe/embed или ссылку Kinescope.</p>
         <p id="homeMediaCardsLoadStatus" class="status">Загрузка…</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
+          <button type="button" id="homeViewEditorBtn" class="primary">Редактор</button>
+          <button type="button" id="homeViewLayoutBtn" class="secondary">Раскладка</button>
+          <button type="button" id="homeViewPreviewBtn" class="secondary">Превью главной</button>
+        </div>
+        <div id="homeMediaCardsLayout" style="display:none;"></div>
+        <div id="homeMediaCardsPreview" style="display:none;"></div>
         <div id="homeMediaCardsEditor"></div>
-        <div style="margin-top:1rem;">
+        <div id="homeMediaCardsActions" style="margin-top:1rem;">
           <button type="button" id="addHomeMediaCardBtn" class="secondary">+ Добавить карточку</button>
           <button type="button" id="saveHomeMediaCardsToGitHubBtn" class="primary" style="margin-left:0.5rem;">Сохранить карточки в GitHub</button>
           <button type="button" id="downloadHomeMediaCardsBtn" class="secondary" style="margin-left:0.5rem;">Скачать home-media-cards.json</button>
@@ -150,6 +157,8 @@ const base = import.meta.env.BASE_URL;
 
       let projects = [];
       let homeMediaCards = [];
+      let homeMediaCardsView = 'editor';
+      let draggedHomeIndex = null;
       let researchCards = [];
       let researchCardsView = 'grid';
       let researchCardsScale = 100;
@@ -514,6 +523,375 @@ const base = import.meta.env.BASE_URL;
         }
       }
 
+      function gridColumnForHomeCard(card) {
+        const isWide = card && card.size === 'wide';
+        if (card && card.edge === 'left') return isWide ? '1 / span 6' : '1 / span 4';
+        if (card && card.edge === 'right') return isWide ? '7 / span 6' : '9 / span 4';
+        return isWide ? 'span 6' : 'span 4';
+      }
+
+      function projectTitleFromHref(href) {
+        const value = typeof href === 'string' ? href.trim() : '';
+        if (!value) return '';
+        const match = value.match(/\/project\/([^/]+)\/?$/);
+        if (!match) return '';
+        const id = decodeURIComponent(match[1]);
+        const p = projects.find(function (x) { return x.id === id; });
+        return (p && (p.title || p.shortTitle)) || '';
+      }
+
+      function getHomePreviewCardMediaHtml(card) {
+        const item = normalizeHomeMediaCard(card);
+        const src = item.src || '';
+        const ratio = HOME_MEDIA_RATIOS.includes(item.ratio) ? item.ratio : 'aspect-16-9';
+        const thumbClass = 'home-admin-preview__thumb ' + ratio;
+        if (!src) {
+          return '<div class="' + thumbClass + '" style="display:flex;align-items:center;justify-content:center;min-height:120px;"><span style="font-size:12px;color:#999;">Нет src</span></div>';
+        }
+        if (item.as === 'vimeo') {
+          return '<div class="' + thumbClass + '"><iframe class="home-admin-preview__media home-admin-preview__embed" src="' + esc(getVimeoEmbedUrl(src)) + '" title="Vimeo" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+        }
+        if (item.as === 'kinescope') {
+          return '<div class="' + thumbClass + '"><iframe class="home-admin-preview__media home-admin-preview__embed" data-src="' + esc(getKinescopeEmbedUrl(src, true)) + '" title="Kinescope" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+        }
+        if (item.as === 'video') {
+          return '<div class="' + thumbClass + '"><video class="home-admin-preview__media" src="' + esc(src) + '" muted playsinline loop autoplay preload="metadata"></video></div>';
+        }
+        return '<div class="' + thumbClass + '"><img class="home-admin-preview__media" src="' + esc(src) + '" alt="' + esc(item.alt || '') + '" loading="lazy" decoding="async" /></div>';
+      }
+
+      function refreshHomeMediaCardsVisualViews() {
+        if (homeMediaCardsView === 'preview') renderHomeMediaCardsPreview();
+        if (homeMediaCardsView === 'layout') renderHomeMediaCardsLayout();
+      }
+
+      function moveHomeCard(fromIndex, toIndex) {
+        if (!Number.isFinite(fromIndex) || !Number.isFinite(toIndex)) return;
+        if (fromIndex < 0 || toIndex < 0) return;
+        if (fromIndex >= homeMediaCards.length || toIndex >= homeMediaCards.length) return;
+        if (fromIndex === toIndex) return;
+        const moved = homeMediaCards.splice(fromIndex, 1)[0];
+        homeMediaCards.splice(toIndex, 0, moved);
+        if (homeMediaCardsView === 'editor') renderHomeMediaCardsEditor();
+        else refreshHomeMediaCardsVisualViews();
+        const status = document.getElementById('homeMediaCardsLoadStatus');
+        if (status) status.textContent = 'Карточек: ' + homeMediaCards.length + ' (порядок обновлён)';
+      }
+
+      function setHomeCardEdge(index, edge) {
+        if (!homeMediaCards[index]) return;
+        homeMediaCards[index].edge = edge === 'left' || edge === 'right' ? edge : 'auto';
+        refreshHomeMediaCardsVisualViews();
+      }
+
+      function setHomeCardSize(index, size) {
+        if (!homeMediaCards[index]) return;
+        homeMediaCards[index].size = size === 'wide' ? 'wide' : 'normal';
+        refreshHomeMediaCardsVisualViews();
+      }
+
+      function syncHomeMediaCardsView() {
+        const editorEl = document.getElementById('homeMediaCardsEditor');
+        const previewEl = document.getElementById('homeMediaCardsPreview');
+        const layoutEl = document.getElementById('homeMediaCardsLayout');
+        const pane = document.getElementById('homeCardsPane');
+        const editorBtn = document.getElementById('homeViewEditorBtn');
+        const layoutBtn = document.getElementById('homeViewLayoutBtn');
+        const previewBtn = document.getElementById('homeViewPreviewBtn');
+        const view = homeMediaCardsView;
+        if (editorEl) editorEl.style.display = view === 'editor' ? 'block' : 'none';
+        if (previewEl) previewEl.style.display = view === 'preview' ? 'block' : 'none';
+        if (layoutEl) layoutEl.style.display = view === 'layout' ? 'block' : 'none';
+        if (pane) pane.classList.toggle('admin-section--wide', view === 'preview' || view === 'layout');
+        if (editorBtn) editorBtn.className = view === 'editor' ? 'primary' : 'secondary';
+        if (layoutBtn) layoutBtn.className = view === 'layout' ? 'primary' : 'secondary';
+        if (previewBtn) previewBtn.className = view === 'preview' ? 'primary' : 'secondary';
+        refreshHomeMediaCardsVisualViews();
+      }
+
+      function renderHomeMediaCardsPreview() {
+        const container = document.getElementById('homeMediaCardsPreview');
+        if (!container) return;
+        if (!homeMediaCards.length) {
+          container.innerHTML = '<div class="home-admin-preview"><div class="home-admin-preview__empty">Добавьте карточки в редакторе</div></div>';
+          return;
+        }
+        const items = homeMediaCards.map(function (card, i) {
+          const item = normalizeHomeMediaCard(card);
+          const col = gridColumnForHomeCard(item);
+          const label = projectTitleFromHref(item.href);
+          const meta = label ? '<div style="padding:0.35rem 0.5rem;font-size:11px;color:#666;background:#fff;border-top:1px solid #eee;">' + esc(label) + '</div>' : '';
+          return (
+            '<div class="home-admin-preview__item" style="--home-card-col:' + col + ';" title="Карточка ' + (i + 1) + '">' +
+              '<div class="home-admin-preview__card">' +
+                getHomePreviewCardMediaHtml(item) +
+                meta +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+        container.innerHTML =
+          '<div class="home-admin-preview">' +
+            '<div class="home-admin-preview__label">Превью сетки главной (12 колонок, как на сайте)</div>' +
+            '<div class="home-admin-preview__stage">' +
+              '<div class="home-admin-preview__grid">' + items + '</div>' +
+            '</div>' +
+          '</div>';
+        hydrateLazyIframes(container);
+      }
+
+      function edgeToSnapPercent(edge) {
+        if (edge === 'left') return 0;
+        if (edge === 'right') return 100;
+        return 50;
+      }
+
+      function snapPercentToEdge(pct) {
+        if (pct <= 25) return 'left';
+        if (pct >= 75) return 'right';
+        return 'auto';
+      }
+
+      function bindHomeLayoutInteractions(container) {
+        container.querySelectorAll('.home-admin-layout__item').forEach(function (row) {
+          const i = parseInt(row.getAttribute('data-i'), 10);
+          row.addEventListener('mousedown', function (e) {
+            const interactive = e.target.closest('button, .home-admin-layout__resize-handle, .home-admin-layout__snap-track');
+            row.setAttribute('draggable', interactive ? 'false' : 'true');
+          });
+          row.addEventListener('mouseup', function () {
+            row.setAttribute('draggable', 'true');
+          });
+          row.addEventListener('dragstart', function (e) {
+            if (e.target.closest('button, .home-admin-layout__resize-handle, .home-admin-layout__snap-track')) {
+              e.preventDefault();
+              return;
+            }
+            draggedHomeIndex = i;
+            row.classList.add('home-admin-layout__item--dragging');
+            if (e.dataTransfer) {
+              e.dataTransfer.effectAllowed = 'move';
+              e.dataTransfer.setData('text/plain', String(i));
+            }
+          });
+          row.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            row.classList.add('home-admin-layout__item--over');
+          });
+          row.addEventListener('dragleave', function () {
+            row.classList.remove('home-admin-layout__item--over');
+          });
+          row.addEventListener('drop', function (e) {
+            e.preventDefault();
+            row.classList.remove('home-admin-layout__item--over');
+            const from = Number.isFinite(draggedHomeIndex)
+              ? draggedHomeIndex
+              : parseInt(e.dataTransfer?.getData('text/plain') || '', 10);
+            moveHomeCard(from, i);
+          });
+          row.addEventListener('dragend', function () {
+            draggedHomeIndex = null;
+            row.classList.remove('home-admin-layout__item--dragging', 'home-admin-layout__item--over');
+          });
+        });
+
+        container.querySelectorAll('.home-layout-edge-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const edge = this.getAttribute('data-edge') || 'auto';
+            setHomeCardEdge(i, edge);
+          });
+        });
+
+        container.querySelectorAll('.home-layout-size-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const size = this.getAttribute('data-size') || 'normal';
+            setHomeCardSize(i, size);
+          });
+        });
+
+        container.querySelectorAll('.home-layout-delete').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            homeMediaCards.splice(i, 1);
+            if (homeMediaCardsView === 'editor') renderHomeMediaCardsEditor();
+            else renderHomeMediaCardsLayout();
+            document.getElementById('homeMediaCardsLoadStatus').textContent = 'Карточек: ' + homeMediaCards.length;
+          });
+        });
+
+        container.querySelectorAll('.home-admin-layout__snap-track').forEach(function (track) {
+          const i = parseInt(track.getAttribute('data-i'), 10);
+          const thumb = track.querySelector('.home-admin-layout__snap-thumb');
+          const cardEl = track.closest('.home-admin-layout__item');
+
+          function applyEdgeVisual(edge) {
+            const edges = ['left', 'auto', 'right'];
+            track.querySelectorAll('.home-admin-layout__snap-zone').forEach(function (zone, zi) {
+              zone.classList.toggle('is-active', edges[zi] === edge);
+            });
+            container.querySelectorAll('.home-layout-edge-btn[data-i="' + i + '"]').forEach(function (btn) {
+              btn.classList.toggle('is-active', btn.getAttribute('data-edge') === edge);
+            });
+            const edgeLabel = edge === 'left' ? 'Слева' : edge === 'right' ? 'Справа' : 'Авто';
+            const badge = cardEl && cardEl.querySelector('.home-admin-layout__badge');
+            if (badge && homeMediaCards[i]) {
+              const sizeLabel = homeMediaCards[i].size === 'wide' ? '6 кол.' : '4 кол.';
+              badge.textContent = sizeLabel + ' · ' + edgeLabel;
+            }
+            if (cardEl && homeMediaCards[i]) {
+              cardEl.style.setProperty('--home-card-col', gridColumnForHomeCard(Object.assign({}, homeMediaCards[i], { edge: edge })));
+            }
+          }
+
+          function updateFromClientX(clientX, finalize) {
+            const rect = track.getBoundingClientRect();
+            const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+            if (thumb) thumb.style.left = pct + '%';
+            const edge = snapPercentToEdge(pct);
+            if (homeMediaCards[i]) homeMediaCards[i].edge = edge;
+            applyEdgeVisual(edge);
+            if (finalize) renderHomeMediaCardsLayout();
+          }
+
+          track.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            track.classList.add('is-dragging');
+            updateFromClientX(e.clientX, false);
+            function onMove(ev) { updateFromClientX(ev.clientX, false); }
+            function onUp(ev) {
+              track.classList.remove('is-dragging');
+              updateFromClientX(ev.clientX, true);
+              document.removeEventListener('mousemove', onMove);
+              document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+          });
+        });
+
+        container.querySelectorAll('.home-admin-layout__resize-handle').forEach(function (handle) {
+          const i = parseInt(handle.getAttribute('data-i'), 10);
+          const cardEl = handle.closest('.home-admin-layout__item');
+          handle.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const startX = e.clientX;
+            const startSize = homeMediaCards[i] && homeMediaCards[i].size === 'wide' ? 'wide' : 'normal';
+            handle.classList.add('is-active');
+
+            function applySizeVisual(size) {
+              if (!homeMediaCards[i]) return;
+              homeMediaCards[i].size = size;
+              if (cardEl) cardEl.style.setProperty('--home-card-col', gridColumnForHomeCard(homeMediaCards[i]));
+              const badge = cardEl && cardEl.querySelector('.home-admin-layout__badge');
+              const edge = homeMediaCards[i].edge === 'left' || homeMediaCards[i].edge === 'right' ? homeMediaCards[i].edge : 'auto';
+              const edgeLabel = edge === 'left' ? 'Слева' : edge === 'right' ? 'Справа' : 'Авто';
+              if (badge) badge.textContent = (size === 'wide' ? '6 кол.' : '4 кол.') + ' · ' + edgeLabel;
+              container.querySelectorAll('.home-layout-size-btn[data-i="' + i + '"]').forEach(function (btn) {
+                btn.classList.toggle('is-active', btn.getAttribute('data-size') === size);
+              });
+            }
+
+            function onMove(ev) {
+              const dx = ev.clientX - startX;
+              if (dx > 36) applySizeVisual('wide');
+              if (dx < -36) applySizeVisual('normal');
+            }
+            function onUp() {
+              handle.classList.remove('is-active');
+              renderHomeMediaCardsLayout();
+              document.removeEventListener('mousemove', onMove);
+              document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+          });
+        });
+      }
+
+      function renderHomeMediaCardsLayout() {
+        const container = document.getElementById('homeMediaCardsLayout');
+        if (!container || homeMediaCardsView !== 'layout') return;
+        if (!homeMediaCards.length) {
+          container.innerHTML = '<div class="home-admin-layout"><div class="home-admin-preview__empty">Добавьте карточки в редакторе</div></div>';
+          return;
+        }
+
+        const guides = Array.from({ length: 12 }, function (_, n) {
+          return '<span class="home-admin-layout__guide" aria-hidden="true"></span>';
+        }).join('');
+
+        const items = homeMediaCards.map(function (card, i) {
+          const item = normalizeHomeMediaCard(card);
+          const col = gridColumnForHomeCard(item);
+          const label = projectTitleFromHref(item.href) || ('Карточка ' + (i + 1));
+          const edge = item.edge === 'left' || item.edge === 'right' ? item.edge : 'auto';
+          const isWide = item.size === 'wide';
+          const snapPct = edgeToSnapPercent(edge);
+          const edgeLabel = edge === 'left' ? 'Слева' : edge === 'right' ? 'Справа' : 'Авто';
+          const sizeLabel = isWide ? '6 кол.' : '4 кол.';
+
+          return (
+            '<div class="home-admin-layout__item" data-i="' + i + '" draggable="true" style="--home-card-col:' + col + ';">' +
+              '<div class="home-admin-layout__card">' +
+                '<div class="home-admin-layout__toolbar">' +
+                  '<span class="home-admin-layout__grip" title="Перетащите для смены порядка">↕</span>' +
+                  '<span class="home-admin-layout__num">#' + (i + 1) + '</span>' +
+                  '<span class="home-admin-layout__meta">' + esc(label) + '</span>' +
+                  '<span class="home-admin-layout__badge">' + esc(sizeLabel) + ' · ' + esc(edgeLabel) + '</span>' +
+                  '<button type="button" class="danger home-layout-delete" data-i="' + i + '" title="Удалить">×</button>' +
+                '</div>' +
+                '<div class="home-admin-layout__media-wrap">' +
+                  getHomePreviewCardMediaHtml(item) +
+                  '<div class="home-admin-layout__resize-handle" data-i="' + i + '" title="Тяните вправо/влево для ширины 4 или 6 колонок"></div>' +
+                '</div>' +
+                '<div class="home-admin-layout__controls">' +
+                  '<div class="home-admin-layout__control-group">' +
+                    '<span class="home-admin-layout__control-label">Ширина</span>' +
+                    '<button type="button" class="home-layout-size-btn' + (isWide ? '' : ' is-active') + '" data-i="' + i + '" data-size="normal">4</button>' +
+                    '<button type="button" class="home-layout-size-btn' + (isWide ? ' is-active' : '') + '" data-i="' + i + '" data-size="wide">6</button>' +
+                  '</div>' +
+                  '<div class="home-admin-layout__control-group home-admin-layout__control-group--snap">' +
+                    '<span class="home-admin-layout__control-label">Край</span>' +
+                    '<div class="home-admin-layout__snap-track" data-i="' + i + '">' +
+                      '<div class="home-admin-layout__snap-zones">' +
+                        '<span class="home-admin-layout__snap-zone' + (edge === 'left' ? ' is-active' : '') + '"></span>' +
+                        '<span class="home-admin-layout__snap-zone' + (edge === 'auto' ? ' is-active' : '') + '"></span>' +
+                        '<span class="home-admin-layout__snap-zone' + (edge === 'right' ? ' is-active' : '') + '"></span>' +
+                      '</div>' +
+                      '<div class="home-admin-layout__snap-thumb" style="left:' + snapPct + '%;"></div>' +
+                    '</div>' +
+                    '<button type="button" class="home-layout-edge-btn' + (edge === 'left' ? ' is-active' : '') + '" data-i="' + i + '" data-edge="left">←</button>' +
+                    '<button type="button" class="home-layout-edge-btn' + (edge === 'auto' ? ' is-active' : '') + '" data-i="' + i + '" data-edge="auto">·</button>' +
+                    '<button type="button" class="home-layout-edge-btn' + (edge === 'right' ? ' is-active' : '') + '" data-i="' + i + '" data-edge="right">→</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        container.innerHTML =
+          '<div class="home-admin-layout">' +
+            '<div class="home-admin-layout__label">Интерактивная раскладка: перетащите карточку для порядка, тяните правый край для ширины (4/6 кол.), полоску или стрелки — для привязки к краю сетки.</div>' +
+            '<div class="home-admin-layout__stage">' +
+              '<div class="home-admin-layout__guides">' + guides + '</div>' +
+              '<div class="home-admin-layout__grid">' + items + '</div>' +
+            '</div>' +
+          '</div>';
+
+        bindHomeLayoutInteractions(container);
+        hydrateLazyIframes(container);
+      }
+
       function renderHomeMediaCardsEditor() {
         const container = document.getElementById('homeMediaCardsEditor');
         if (!container) return;
@@ -593,12 +971,14 @@ const base = import.meta.env.BASE_URL;
             }
             homeMediaCards[i].src = value;
             updateHomeCardPreview(i);
+            refreshHomeMediaCardsVisualViews();
           });
         });
         container.querySelectorAll('.home-card-href').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             homeMediaCards[i].href = this.value.trim() || '/index/';
+            refreshHomeMediaCardsVisualViews();
           });
         });
         container.querySelectorAll('.home-card-alt').forEach(function (inp) {
@@ -622,18 +1002,21 @@ const base = import.meta.env.BASE_URL;
           sel.addEventListener('change', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             homeMediaCards[i].size = this.value === 'wide' ? 'wide' : 'normal';
+            refreshHomeMediaCardsVisualViews();
           });
         });
         container.querySelectorAll('.home-card-ratio').forEach(function (sel) {
           sel.addEventListener('change', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             homeMediaCards[i].ratio = HOME_MEDIA_RATIOS.includes(this.value) ? this.value : 'aspect-16-9';
+            refreshHomeMediaCardsVisualViews();
           });
         });
         container.querySelectorAll('.home-card-edge').forEach(function (sel) {
           sel.addEventListener('change', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             homeMediaCards[i].edge = (this.value === 'left' || this.value === 'right') ? this.value : 'auto';
+            refreshHomeMediaCardsVisualViews();
           });
         });
         container.querySelectorAll('.delete-home-card').forEach(function (btn) {
@@ -700,6 +1083,7 @@ const base = import.meta.env.BASE_URL;
             }
           });
         });
+        syncHomeMediaCardsView();
       }
 
       function hydrateLazyIframes(root) {
@@ -1365,6 +1749,21 @@ const base = import.meta.env.BASE_URL;
         URL.revokeObjectURL(a.href);
       });
 
+      document.getElementById('homeViewEditorBtn').addEventListener('click', function () {
+        homeMediaCardsView = 'editor';
+        syncHomeMediaCardsView();
+      });
+
+      document.getElementById('homeViewLayoutBtn').addEventListener('click', function () {
+        homeMediaCardsView = 'layout';
+        syncHomeMediaCardsView();
+      });
+
+      document.getElementById('homeViewPreviewBtn').addEventListener('click', function () {
+        homeMediaCardsView = 'preview';
+        syncHomeMediaCardsView();
+      });
+
       document.getElementById('addHomeMediaCardBtn').addEventListener('click', function () {
         homeMediaCards.push({
           href: '/index/',
@@ -1375,7 +1774,8 @@ const base = import.meta.env.BASE_URL;
           size: 'normal',
           edge: 'auto'
         });
-        renderHomeMediaCardsEditor();
+        if (homeMediaCardsView === 'editor') renderHomeMediaCardsEditor();
+        else refreshHomeMediaCardsVisualViews();
         document.getElementById('homeMediaCardsLoadStatus').textContent = 'Карточек: ' + homeMediaCards.length;
       });
 

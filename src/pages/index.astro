@@ -136,7 +136,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     max-width: 100%;
     min-width: 0;
     column-gap: var(--home-nav-gap);
-    pointer-events: auto;
+    pointer-events: none;
     box-sizing: border-box;
   }
 
@@ -145,6 +145,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     align-items: center;
     gap: var(--home-nav-gap);
     min-width: 0;
+    pointer-events: none;
   }
 
   .home-hero__side--left {
@@ -163,6 +164,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     text-decoration: none;
     color: inherit;
     transform: translateY(-2px);
+    pointer-events: auto;
   }
 
   .home-hero__logo-mark {
@@ -192,6 +194,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     opacity: 1;
     white-space: nowrap;
     transition: color 0.2s;
+    pointer-events: auto;
   }
 
   .home-hero__link:hover {

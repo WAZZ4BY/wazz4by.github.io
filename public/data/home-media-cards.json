@@ -1,12 +1,22 @@
 [
   {
+    "href": "/project/museum-of-garbage/",
+    "src": "/images/main/2.webp",
+    "alt": "",
+    "ratio": "aspect-16-9",
+    "as": "image",
+    "loading": "lazy",
+    "size": "wide",
+    "edge": "left"
+  },
+  {
     "href": "/project/snve-pereodical/",
     "src": "/images/main/1.webp",
     "alt": "SNVE",
     "ratio": "aspect-original",
     "as": "image",
     "loading": "lazy",
-    "size": "wide",
+    "size": "normal",
     "edge": "left"
   },
   {
@@ -16,21 +26,20 @@
     "ratio": "aspect-original",
     "as": "image",
     "loading": "lazy",
-    "size": "wide",
-    "edge": "right"
+    "size": "wide"
   },
   {
     "href": "/project/de-stul-furniture-brand/",
-    "src": "https://kinescope.io/c8GTVVc8Frm43sRsFK3jCX",
+    "src": "/images/main/18.webp",
     "alt": "De Stul",
-    "ratio": "aspect-1-1",
-    "as": "kinescope",
+    "ratio": "aspect-3-4",
+    "as": "image",
     "loading": "lazy",
-    "size": "wide",
+    "size": "normal",
     "edge": "right"
   },
   {
-    "href": "/project/phenomenon-interior-psychologism/",
+    "href": "/index/",
     "src": "/images/main/8.gif",
     "alt": "The Phenomenon Interior Psychologism",
     "ratio": "aspect-original",
@@ -64,6 +73,7 @@
     "ratio": "aspect-free",
     "as": "image",
     "loading": "lazy",
-    "size": "wide"
+    "size": "wide",
+    "edge": "left"
   }
 ]

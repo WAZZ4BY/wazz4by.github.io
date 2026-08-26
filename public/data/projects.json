@@ -1626,10 +1626,10 @@
     "id": "museum-of-garbage",
     "title": "Museum of Garbage",
     "shortTitle": "Museum of Garbage",
-    "description": "",
     "type": "Identity",
     "year": "2026",
     "sortDate": "2026-08-15",
+    "description": "",
     "images": [],
     "contentBlocks": [
       {
@@ -1775,6 +1775,7 @@
       }
     ],
     "backgroundColor": "#fbfbfb",
+    "cover": "/images/mumu/cover.webp",
     "creditsList": [
       {
         "role": "Designer",
