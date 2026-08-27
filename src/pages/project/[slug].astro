@@ -115,9 +115,9 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
               <span class="project-meta__label">Reward</span>
               {project.awards.map((a, i) => (
                 <div class="project-awards__row">
-                  <span class="project-awards__place" style={`grid-column: 2; grid-row: ${i + 1};`}>{a.place}</span>
-                  <span class="project-awards__festival" style={`grid-column: 3 / 5; grid-row: ${i + 1};`}>{a.festival}</span>
-                  <span class="project-awards__nomination" style={`grid-column: 5 / 7; grid-row: ${i + 1};`}>{a.nomination || '—'}</span>
+                  <span class="project-awards__place" style={`grid-row: ${i + 1};`}>{a.place}</span>
+                  <span class="project-awards__festival" style={`grid-row: ${i + 1};`}>{a.festival}</span>
+                  <span class="project-awards__nomination" style={`grid-row: ${i + 1};`}>{a.nomination || '—'}</span>
                 </div>
               ))}
             </div>
@@ -251,11 +251,11 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     margin-top: 10px;
   }
 
-  /* Reward: на той же 12-колоночной сетке, что и страница */
+  /* Reward: фиксированная внутренняя сетка 24 колонки (не меняется от формата) */
   .content-block--awards {
     grid-column: 1 / 7;
     display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-columns: repeat(24, minmax(0, 1fr));
     gap: 10px var(--grid-gutter);
     align-items: start;
     margin-top: 50px;
@@ -263,27 +263,30 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
 
   .content-block--awards .project-meta__label {
-    grid-column: 1 / 2;
+    grid-column: 1 / 7;
     grid-row: 1;
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 14pt;
+    font-size: 16pt;
     font-weight: 500;
     line-height: 1.2;
     color: black;
   }
 
   .project-awards__place {
+    grid-column: 7 / 13;
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 14pt;
+    font-size: 16pt;
     font-weight: 500;
     line-height: 1.2;
     color: black;
-    white-space: nowrap;
+    min-width: 0;
+    word-wrap: break-word;
   }
 
   .project-awards__festival {
+    grid-column: 13 / 19;
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 14pt;
+    font-size: 16pt;
     font-weight: 500;
     line-height: 1.2;
     color: black;
@@ -292,8 +295,9 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
 
   .project-awards__nomination {
+    grid-column: 19 / 25;
     font-family: 'SuisseIntl', sans-serif;
-    font-size: 14pt;
+    font-size: 16pt;
     font-weight: 500;
     line-height: 1.2;
     color: #B29893;
@@ -644,26 +648,14 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     .content-block--split {
       grid-template-columns: 1fr;
     }
-    .content-block--awards {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      row-gap: 8px;
-    }
-    .project-awards__place {
-      grid-column: 2 / 4 !important;
-      font-size: 14px;
-      white-space: normal;
-    }
-    .project-awards__festival {
-      grid-column: 4 / 10 !important;
+    .project-awards__place,
+    .project-awards__festival,
+    .project-awards__nomination,
+    .content-block--awards .project-meta__label {
       font-size: 14px;
     }
     .project-awards__nomination {
-      grid-column: 10 / 13 !important;
-      font-size: 14px;
       opacity: 1;
-    }
-    .content-block--awards .project-meta__label {
-      font-size: 14px;
     }
     .content-block--credits {
       grid-template-columns: repeat(12, minmax(0, 1fr));

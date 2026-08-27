@@ -1,0 +1,21 @@
+---
+description: Info page — 10-колоночная сетка + фиксированный label
+globs: src/pages/info.astro
+alwaysApply: false
+---
+
+# Info: 10-колоночная сетка
+
+`.info-grid`: `var(--info-label-col) repeat(9, minmax(0, 1fr))`  
+`--info-label-col: 6.75rem` — первая колонка не сжимается при ресайзе.
+
+| Кол. | Содержимое |
+|------|------------|
+| 1 | labels: Name / Education / Reward (fixed) |
+| 2–3 | values / WBDS years |
+| 4–6 | reward pairs |
+| 6–8 | цитата |
+| 9–10 | контакты (row 2 desktop; row 4 на 769–1024) |
+
+Labels: `white-space: nowrap`, `min-width: var(--info-label-col)`.  
+Mobile ≤768px — 8-кол. сетка, те же фиксированные label в pair-блоках.
