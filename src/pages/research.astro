@@ -259,6 +259,16 @@ function getKinescopeEmbedUrl(raw: string): string {
     text-decoration: underline;
   }
 
+  @media (max-width: 1280px) {
+    :global(.research-lightbox__text) {
+      font-size: 14pt;
+    }
+
+    :global(.research-lightbox__links a) {
+      font-size: 14pt;
+    }
+  }
+
   @media (max-width: 1024px) {
     :global(.research-lightbox__layout) {
       row-gap: 20px;
@@ -287,9 +297,12 @@ function getKinescopeEmbedUrl(raw: string): string {
     }
 
     :global(.research-lightbox__label),
-    :global(.research-lightbox__value),
-    :global(.research-lightbox__text) {
+    :global(.research-lightbox__value) {
       font-size: 14px;
+    }
+
+    :global(.research-lightbox__text) {
+      font-size: 14pt;
     }
 
     :global(.research-lightbox__copy) {
@@ -300,38 +313,86 @@ function getKinescopeEmbedUrl(raw: string): string {
 
   :global(.research-lightbox__bar) {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1301;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 0 var(--grid-gutter);
-    padding: 30px var(--grid-margin) 12px;
-    box-sizing: border-box;
     pointer-events: none;
-    color: #fff;
-    mix-blend-mode: difference;
   }
 
   :global(body.research-lightbox-open .research-lightbox__bar) {
-    display: grid;
+    display: block;
   }
 
   :global(.research-lightbox__close) {
-    grid-column: 12;
-    justify-self: end;
-    padding-top: 5px;
+    position: fixed;
+    top: var(--corner-control-top);
+    right: var(--corner-control-inset);
+    z-index: 1301;
+    width: 24px;
+    height: var(--corner-control-height);
+    padding: 0;
     border: 0;
     background: transparent;
-    text-align: right;
-    font-family: 'SuisseIntl', sans-serif;
-    font-size: 14px;
-    font-weight: normal;
-    line-height: 1.2;
-    color: #fff;
     cursor: pointer;
     pointer-events: auto;
+    mix-blend-mode: difference;
+  }
+
+  :global(.research-lightbox__close-label) {
+    display: none;
+  }
+
+  :global(.research-lightbox__close-icon) {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: var(--corner-control-height);
+  }
+
+  :global(.research-lightbox__close::before) {
+    content: '';
+    position: absolute;
+    inset: -16px;
+  }
+
+  :global(.research-lightbox__close-line) {
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: var(--corner-control-line-height);
+    background: #ffffff;
+    border-radius: 0;
+    top: calc((var(--corner-control-height) - var(--corner-control-line-height)) / 2);
+  }
+
+  :global(.research-lightbox__close-line:first-child) {
+    transform: rotate(45deg);
+  }
+
+  :global(.research-lightbox__close-line:last-child) {
+    transform: rotate(-45deg);
+  }
+
+  @media (min-width: 769px) {
+    :global(.research-lightbox__close) {
+      width: auto;
+      height: auto;
+    }
+
+    :global(.research-lightbox__close::before) {
+      display: none;
+    }
+
+    :global(.research-lightbox__close-label) {
+      display: inline;
+      font-family: 'SuisseIntl', sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1.2;
+      color: #ffffff;
+      text-align: right;
+    }
+
+    :global(.research-lightbox__close-icon) {
+      display: none;
+    }
   }
 
 </style>
@@ -622,7 +683,7 @@ function getKinescopeEmbedUrl(raw: string): string {
 
     const closeBar = document.createElement('div');
     closeBar.className = 'research-lightbox__bar';
-    closeBar.innerHTML = '<button class="research-lightbox__close" type="button" aria-label="Close">Close</button>';
+    closeBar.innerHTML = '<button class="research-lightbox__close" type="button" aria-label="Close"><span class="research-lightbox__close-label">Close</span><span class="research-lightbox__close-icon" aria-hidden="true"><span class="research-lightbox__close-line"></span><span class="research-lightbox__close-line"></span></span></button>';
     document.body.appendChild(closeBar);
 
     const closeBtn = closeBar.querySelector('.research-lightbox__close');

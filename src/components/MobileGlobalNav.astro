@@ -66,12 +66,12 @@ function isNavActive(page: 'index' | 'research' | 'info'): boolean {
   @media (max-width: 768px) {
     .mobile-global-nav {
       display: block;
-      --mobile-nav-inset: 30px;
+      --mobile-nav-inset: var(--corner-control-inset);
       --mobile-logo-width: 155px;
-      --mobile-logo-height: 22px;
-      --mobile-toggle-line-height: 3px;
-      --mobile-toggle-line-gap: 4px;
-      --mobile-toggle-height: calc(var(--mobile-toggle-line-height) * 2 + var(--mobile-toggle-line-gap));
+      --mobile-logo-height: var(--corner-control-logo-height);
+      --mobile-toggle-line-height: var(--corner-control-line-height);
+      --mobile-toggle-line-gap: var(--corner-control-line-gap);
+      --mobile-toggle-height: var(--corner-control-height);
     }
 
     :global(.home-mobile-toggle),
@@ -125,8 +125,8 @@ function isNavActive(page: 'index' | 'research' | 'info'): boolean {
 
     .mobile-global-nav__toggle {
       position: fixed;
-      top: calc(var(--mobile-nav-inset) + (var(--mobile-logo-height) - var(--mobile-toggle-height)) / 2);
-      right: var(--mobile-nav-inset);
+      top: var(--corner-control-top);
+      right: var(--corner-control-inset);
       width: 24px;
       height: var(--mobile-toggle-height);
       padding: 0;
@@ -153,6 +153,7 @@ function isNavActive(page: 'index' | 'research' | 'info'): boolean {
       height: var(--mobile-toggle-line-height);
       border-radius: 0;
       background: #ffffff;
+      transition: top 0.28s ease, transform 0.28s ease;
     }
 
     .mobile-global-nav__line:first-child {
@@ -161,6 +162,19 @@ function isNavActive(page: 'index' | 'research' | 'info'): boolean {
 
     .mobile-global-nav__line:last-child {
       top: calc(var(--mobile-toggle-line-height) + var(--mobile-toggle-line-gap));
+    }
+
+    :global(body.global-mobile-menu-open) .mobile-global-nav__line:first-child,
+    :global(body.global-mobile-menu-open) .mobile-global-nav__line:last-child {
+      top: calc((var(--mobile-toggle-height) - var(--mobile-toggle-line-height)) / 2);
+    }
+
+    :global(body.global-mobile-menu-open) .mobile-global-nav__line:first-child {
+      transform: rotate(45deg);
+    }
+
+    :global(body.global-mobile-menu-open) .mobile-global-nav__line:last-child {
+      transform: rotate(-45deg);
     }
 
     .mobile-global-nav__overlay {

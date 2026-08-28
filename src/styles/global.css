@@ -53,6 +53,14 @@
   --grid-gutter: 20px;
   --research-min-cols: 2;
   --research-max-cols: 0;
+
+  /* Burger / corner close — shared positioning */
+  --corner-control-inset: var(--grid-margin);
+  --corner-control-logo-height: 22px;
+  --corner-control-line-height: 3px;
+  --corner-control-line-gap: 4px;
+  --corner-control-height: calc(var(--corner-control-line-height) * 2 + var(--corner-control-line-gap));
+  --corner-control-top: calc(var(--corner-control-inset) + 5px);
   
   /* Typography */
   --font-base: 'SuisseIntl', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -64,21 +72,64 @@
   /* Colors */
   --color-text: #000;
   --color-bg: #fff;
+  --page-bg: #FBFBFB;
 }
 
 html {
   font-size: var(--font-size-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #FBFBFB;
+  background-color: var(--page-bg);
+  background-attachment: fixed;
+  min-height: 100%;
+}
+
+html::before {
+  content: '';
+  position: fixed;
+  top: calc(-100vh - env(safe-area-inset-top, 0px));
+  left: 0;
+  right: 0;
+  height: calc(300vh + env(safe-area-inset-top, 0px));
+  background-color: var(--page-bg);
+  background-attachment: fixed;
+  z-index: -9999;
+  pointer-events: none;
+}
+
+.page-backdrop {
+  position: fixed;
+  top: calc(-100vh - env(safe-area-inset-top, 0px));
+  left: 0;
+  right: 0;
+  height: calc(300vh + env(safe-area-inset-top, 0px));
+  background-color: var(--page-bg);
+  background-attachment: fixed;
+  z-index: 0;
+  pointer-events: none;
 }
 
 body {
+  isolation: isolate;
   font-family: var(--font-base);
   font-size: 1rem;
   line-height: var(--line-height-base);
   color: var(--color-text);
-  background: var(--color-bg);
+  background-color: var(--page-bg);
+  background-attachment: fixed;
+  min-height: 100%;
+}
+
+body > .inner-page,
+body > .home-page,
+body > .site-header {
+  position: relative;
+  z-index: 1;
+}
+
+html:has(body.page-info),
+body.page-info {
+  --page-bg: #F8FAF2;
 }
 
 /* Stable thumbnail system: predictable container height and no layout jump */
@@ -110,17 +161,8 @@ body {
 
 /* Home page background */
 body.is-home {
-  background: #FBFBFB;
-}
-
-/* Inner pages (Index, Research, Info): фон и при overscroll — один цвет, без белой полосы */
-body.is-inner {
-  background: #FBFBFB;
-}
-
-/* Info page background (match Figma / artboard) */
-body.page-info {
-  background: #F8FAF2;
+  --page-bg: #FBFBFB;
+  background-color: var(--page-bg);
 }
 
 /* Container: 12-col grid, margin 30, gutter 20 */
@@ -216,7 +258,7 @@ body.page-info {
 .inner-page {
   width: 100%;
   min-height: 100vh;
-  background: #FBFBFB;
+  background-color: var(--page-bg);
   padding: var(--page-header-height) var(--grid-margin) 0;
   box-sizing: border-box;
 }
@@ -738,6 +780,10 @@ body.is-inner .works-page {
     --grid-margin: 16px;
   }
 
+  body.is-inner .inner-page {
+    padding-top: calc(var(--corner-control-inset) + var(--corner-control-logo-height) + 20px);
+  }
+
   body.is-home .site-header__container {
     justify-content: center;
     transform: translateY(-50%) !important;
@@ -830,6 +876,7 @@ body.is-inner .works-page {
     --grid-gutter: 20px;
     --research-min-cols: 2;
     --research-max-cols: 0;
+    --corner-control-top: calc(var(--corner-control-inset) + (var(--corner-control-logo-height) - var(--corner-control-height)) / 2);
   }
 
   .research-card__name,

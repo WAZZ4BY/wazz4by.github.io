@@ -8,9 +8,10 @@ interface Props {
   variant?: 'home' | 'inner';
   bodyClass?: string;
   hideHeader?: boolean;
+  themeColor?: string;
 }
 
-const { title, variant = 'inner', bodyClass, hideHeader } = Astro.props;
+const { title, variant = 'inner', bodyClass, hideHeader, themeColor = '#FBFBFB' } = Astro.props;
 const bodyClasses = [variant === 'home' ? 'is-home' : 'is-inner', bodyClass].filter(Boolean).join(' ');
 const documentTitle = variant === 'home' || !title || title === 'Vasilii Aleev'
   ? 'Vasilii Aleev'
@@ -18,17 +19,19 @@ const documentTitle = variant === 'home' || !title || title === 'Vasilii Aleev'
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" style={`--page-bg: ${themeColor}; background-color: ${themeColor};`}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Vasilii Aleev - Portfolio" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content={themeColor} />
     <link rel="icon" type="image/webp" href={import.meta.env.BASE_URL + 'images/icon/icon.webp'} />
     <link rel="icon" type="image/png" href={import.meta.env.BASE_URL + 'images/icon/icon.png'} />
     <meta name="generator" content={Astro.generator} />
     <title>{documentTitle}</title>
   </head>
-  <body class={bodyClasses}>
+  <body class={bodyClasses} style={`--page-bg: ${themeColor}; background-color: ${themeColor};`}>
+    <div class="page-backdrop" aria-hidden="true" style={`background-color: ${themeColor};`}></div>
     {!hideHeader && <SiteHeader variant={variant} />}
     <MobileGlobalNav />
     <slot />
