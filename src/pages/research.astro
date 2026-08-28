@@ -90,8 +90,6 @@ function getKinescopeEmbedUrl(raw: string): string {
   }
 
   :global(.research-lightbox-open .research-stage) {
-    filter: blur(15px);
-    opacity: 0.5;
     pointer-events: none;
     user-select: none;
   }
@@ -130,6 +128,9 @@ function getKinescopeEmbedUrl(raw: string): string {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    background-color: rgba(251, 251, 251, 0.55);
   }
 
   :global(.research-lightbox__layout) {
@@ -293,7 +294,15 @@ function getKinescopeEmbedUrl(raw: string): string {
   @media (max-width: 768px) {
     :global(.research-lightbox) {
       padding-top: calc(var(--page-header-height) + 12px);
-      padding-bottom: 24px;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    :global(body.research-lightbox-open .research-lightbox__close) {
+      mix-blend-mode: normal;
+    }
+
+    :global(body.research-lightbox-open .research-lightbox__close-line) {
+      background: #000;
     }
 
     :global(.research-lightbox__label),
