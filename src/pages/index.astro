@@ -210,12 +210,18 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
   @media (max-width: 768px) {
     .home-page {
       --home-intro-height: 100vh;
-      --home-intro-height: 100svh;
+      --home-intro-height: calc(var(--home-vh, 1svh) * 100);
       min-height: 100vh;
-      min-height: 100svh;
+      min-height: calc(var(--home-vh, 1svh) * 100);
     }
 
     .home-hero {
+      inset: auto;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(var(--home-vh, 1svh) * 100);
+      max-height: calc(var(--home-vh, 1svh) * 100);
       padding: 0;
     }
 
@@ -223,7 +229,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(72px, 11vh, 110px);
+      gap: clamp(72px, calc(var(--home-vh, 1svh) * 11), 110px);
       width: 100%;
     }
 
@@ -432,6 +438,17 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
 </style>
 
 <script>
+  function lockHomeMobileViewport() {
+    if (!document.body.classList.contains('is-home')) return;
+    if (!window.matchMedia('(max-width: 768px)').matches) {
+      document.documentElement.style.removeProperty('--home-vh');
+      return;
+    }
+
+    const height = window.visualViewport?.height ?? window.innerHeight;
+    document.documentElement.style.setProperty('--home-vh', `${height * 0.01}px`);
+  }
+
   function initHomeMobileNavFade() {
     if (!document.body.classList.contains('is-home')) return;
     if (document.documentElement.dataset.homeNavFadeInit === '1') return;
@@ -469,6 +486,13 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
     mq.addEventListener('change', update);
   }
 
+  lockHomeMobileViewport();
+  window.addEventListener('orientationchange', () => {
+    window.setTimeout(lockHomeMobileViewport, 150);
+  });
   initHomeMobileNavFade();
-  document.addEventListener('astro:page-load', initHomeMobileNavFade);
+  document.addEventListener('astro:page-load', () => {
+    lockHomeMobileViewport();
+    initHomeMobileNavFade();
+  });
 </script>
