@@ -21,6 +21,38 @@
   },
   {
     "number": 2,
+    "src": "/images/research/1gvozd.webp",
+    "alt": "",
+    "as": "image",
+    "caption": "Screw",
+    "date": "06.2026",
+    "text": "\"Within this diversity of aesthetic culture lies the realm of contemporary design—so vast and varied that it remains resistant to historical analysis.\"",
+    "links": [],
+    "sideSrcs": [
+      "/images/research/2gvozd.webp",
+      "/images/research/3gvozd.webp",
+      "/images/research/4gvozd.webp"
+    ],
+    "spanW": 4
+  },
+  {
+    "number": 3,
+    "src": "/images/research/1infusa.webp",
+    "alt": "",
+    "as": "image",
+    "caption": "Infusa",
+    "date": "12.2025",
+    "text": "Infusa is a conceptual object that combines images of worms consuming forbidden fruit. It symbolizes the transition between stages of existence, the moment when life is captured by the process of consumption and transformation. These forms, frozen in space, reflect the survival measures hidden within nature. In your home, Infusa transforms everyday space into a place where organic life and evolutionary problems are frozen in an irreversible moment of development.",
+    "links": [],
+    "sideSrcs": [
+      "/images/research/2infusa.webp",
+      "/images/research/3infusa.webp",
+      "/images/research/4infusa.webp"
+    ],
+    "spanW": 6
+  },
+  {
+    "number": 4,
     "src": "<div style=\"position: relative; padding-top: 100%; width: 100%\"><iframe src=\"https://kinescope.io/embed/mahpEwu7K9HLPTXm68GE3G\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>",
     "alt": "",
     "as": "kinescope",
@@ -32,19 +64,7 @@
     "spanW": 4
   },
   {
-    "number": 3,
-    "src": "/images/research/bio.webp",
-    "alt": "",
-    "as": "image",
-    "caption": "Infusa",
-    "date": "12.2025",
-    "text": "",
-    "links": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
-    "number": 4,
+    "number": 5,
     "src": "/images/research/sufganiet.webp",
     "alt": "",
     "as": "image",
@@ -62,27 +82,19 @@
     "spanW": 4
   },
   {
-    "number": 5,
-    "src": "/images/research/robot.webp",
-    "alt": "",
-    "as": "image",
-    "caption": "Robobobik",
-    "date": "",
-    "text": "",
-    "links": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
     "number": 6,
-    "src": "/images/research/type2.webp",
+    "src": "/images/research/kinect3.webp",
     "alt": "",
     "as": "image",
-    "caption": "Positioning, MM",
-    "date": "01.2026",
+    "caption": "Kinect",
+    "date": "09.2025",
     "text": "",
     "links": [],
-    "sideSrcs": [],
+    "sideSrcs": [
+      "/images/research/kinect2.webp",
+      "/images/research/kinect1.webp",
+      "/images/research/kinect4.webp"
+    ],
     "spanW": 4
   },
   {
@@ -91,7 +103,7 @@
     "alt": "",
     "as": "kinescope",
     "caption": "Pseudo Data Graph",
-    "date": "",
+    "date": "09.2025",
     "text": "",
     "links": [],
     "sideSrcs": [],
@@ -99,42 +111,6 @@
   },
   {
     "number": 8,
-    "src": "<div style=\"position: relative; padding-top: 177.61%; width: 100%\"><iframe src=\"https://kinescope.io/embed/vChj9RaAfYbaacVGYGPhP5\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>",
-    "alt": "",
-    "as": "kinescope",
-    "caption": "Worms",
-    "date": "",
-    "text": "",
-    "links": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
-    "number": 10,
-    "src": "<div style=\"position: relative; padding-top: 125%; width: 100%\"><iframe src=\"https://kinescope.io/embed/kZPBM2z4DB9rHdchwJSAX9\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>",
-    "alt": "",
-    "as": "kinescope",
-    "caption": "Shell666",
-    "date": "",
-    "text": "",
-    "links": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
-    "number": 11,
-    "src": "<div style=\"position: relative; padding-top: 177.78%; width: 100%\"><iframe src=\"https://kinescope.io/embed/hEr3PVbwZeW9VXgfuFf7CV\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>",
-    "alt": "",
-    "as": "kinescope",
-    "caption": "WZB, CC25",
-    "date": "",
-    "text": "",
-    "links": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
-    "number": 12,
     "src": "/images/research/brelok.webp",
     "alt": "",
     "as": "image",
