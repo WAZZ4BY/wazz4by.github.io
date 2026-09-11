@@ -1776,6 +1776,13 @@
     ],
     "backgroundColor": "#fbfbfb",
     "cover": "/images/mumu/cover.webp",
+    "awards": [
+      {
+        "place": "Bronze",
+        "festival": "G8 2026",
+        "nomination": "Identity concept"
+      }
+    ],
     "creditsList": [
       {
         "role": "Designer",
