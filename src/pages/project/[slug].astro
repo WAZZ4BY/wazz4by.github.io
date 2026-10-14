@@ -74,8 +74,21 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
                       <img src={block.right} alt={project.title} loading="lazy" />
                     </div>
                   ) : block.type === 'video' ? (
-                    <div class="content-block content-block--video">
-                      <div class="video-wrap" set:html={block.embed} />
+                    <div class={`content-block content-block--video${block.src ? ' content-block--video-file' : ''}`}>
+                      {block.src ? (
+                        <video
+                          class="project-video-file"
+                          src={block.src}
+                          muted
+                          playsinline
+                          loop
+                          autoplay
+                          controls
+                          preload="metadata"
+                        />
+                      ) : (
+                        <div class="video-wrap" set:html={block.embed} />
+                      )}
                     </div>
                   ) : null}
                 </>
@@ -103,8 +116,21 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
             }
             if (block.type === 'video') {
               return (
-                <div class="content-block content-block--video">
-                  <div class="video-wrap" set:html={block.embed} />
+                <div class={`content-block content-block--video${block.src ? ' content-block--video-file' : ''}`}>
+                  {block.src ? (
+                    <video
+                      class="project-video-file"
+                      src={block.src}
+                      muted
+                      playsinline
+                      loop
+                      autoplay
+                      controls
+                      preload="metadata"
+                    />
+                  ) : (
+                    <div class="video-wrap" set:html={block.embed} />
+                  )}
                 </div>
               );
             }
@@ -448,6 +474,17 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     width: 100%;
     height: 100%;
     border: none;
+  }
+
+  .content-block--video-file {
+    line-height: 0;
+  }
+
+  .project-video-file {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
   }
 
   .project-description {

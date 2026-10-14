@@ -317,11 +317,14 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     aspect-ratio: 16 / 9;
     height: auto;
   }
-  :global(body.page-index .index-hover-scatter__item--video iframe) {
+  :global(body.page-index .index-hover-scatter__item--video iframe),
+  :global(body.page-index .index-hover-scatter__item--video video) {
     width: 100%;
     height: 100%;
     display: block;
     border: 0;
+    object-fit: contain;
+    background: #000;
   }
   @keyframes index-hover-float-in {
     from {
@@ -422,7 +425,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
     }
 
     function pickScatterMedia(items, count) {
-      const videos = items.filter(function (item) { return item.type === 'video'; });
+      const videos = items.filter(function (item) { return item.type === 'video' || item.type === 'video-file'; });
       const images = items.filter(function (item) { return item.type === 'image'; });
       const picked = [];
       if (videos.length) {
@@ -591,7 +594,7 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
       const rangeY = Math.max(0, vh - maxH - 2 * pad);
       picked.forEach(function (item, index) {
         const wrap = document.createElement('div');
-        wrap.className = 'index-hover-scatter__item' + (item.type === 'video' ? ' index-hover-scatter__item--video' : '');
+        wrap.className = 'index-hover-scatter__item' + ((item.type === 'video' || item.type === 'video-file') ? ' index-hover-scatter__item--video' : '');
         wrap.style.left = pad + Math.random() * rangeX + 'px';
         wrap.style.top = pad + Math.random() * rangeY + 'px';
         session.wraps[index] = wrap;
@@ -621,6 +624,36 @@ function splitProjectTitle(project: { title?: string; shortTitle?: string }) {
             if (index === session.nextRevealIndex && !session.revealTimer) revealScatterLoop(session);
           });
           wrap.appendChild(iframe);
+          return;
+        }
+
+        if (item.type === 'video-file') {
+          const fileSrc = resolveImageUrl(item.src);
+          if (!fileSrc) {
+            hideScatterItem(wrap);
+            session.wraps[index] = null;
+            session.loaded[index] = true;
+            if (index === session.nextRevealIndex && !session.revealTimer) revealScatterLoop(session);
+            return;
+          }
+          const video = document.createElement('video');
+          video.src = fileSrc;
+          video.muted = true;
+          video.loop = true;
+          video.autoplay = true;
+          video.playsInline = true;
+          video.setAttribute('playsinline', '');
+          video.preload = 'metadata';
+          video.addEventListener('loadeddata', function () {
+            onScatterItemLoaded(session, index);
+          });
+          video.addEventListener('error', function () {
+            hideScatterItem(wrap);
+            session.wraps[index] = null;
+            session.loaded[index] = true;
+            if (index === session.nextRevealIndex && !session.revealTimer) revealScatterLoop(session);
+          });
+          wrap.appendChild(video);
           return;
         }
 

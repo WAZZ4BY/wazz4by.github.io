@@ -1,10 +1,10 @@
 [
   {
     "number": 1,
-    "src": "<iframe src=\"https://player.vimeo.com/video/1218908150?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>",
+    "src": "/images/research/itakfilm.mp4",
     "alt": "",
-    "as": "kinescope",
-    "caption": "ItakFilm",
+    "as": "video",
+    "caption": "Itak Film",
     "date": "01.2025",
     "text": "Based in Turkey, Itak Film is an independent film distributor dedicated to bringing premier international cinema to both the big screen and digital platforms.",
     "links": [
@@ -13,11 +13,44 @@
         "url": "https://itak.film/"
       }
     ],
+    "screens": [
+      {
+        "items": [
+          {
+            "src": "/images/research/itakfilm2.webp",
+            "as": "image"
+          },
+          {
+            "src": "/images/research/itakfilm3.webp",
+            "as": "image"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/itakv2.mp4",
+            "as": "video"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/itakv3.mp4",
+            "as": "video"
+          }
+        ]
+      }
+    ],
     "sideSrcs": [
       "/images/research/itakfilm2.webp",
-      "/images/research/itakfilm3.webp"
+      "/images/research/itakfilm3.webp",
+      "/images/research/itakv2.mp4",
+      "/images/research/itakv3.mp4"
     ],
-    "spanW": 6
+    "spanW": 6,
+    "coverFit": "height"
   },
   {
     "number": 2,
@@ -28,12 +61,35 @@
     "date": "06.2026",
     "text": "\"Within this diversity of aesthetic culture lies the realm of contemporary design—so vast and varied that it remains resistant to historical analysis.\"",
     "links": [],
+    "screens": [
+      {
+        "items": [
+          {
+            "src": "/images/research/2gvozd.webp",
+            "as": "image"
+          },
+          {
+            "src": "/images/research/3gvozd.webp",
+            "as": "image"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/4gvozd.webp",
+            "as": "image"
+          }
+        ]
+      }
+    ],
     "sideSrcs": [
       "/images/research/2gvozd.webp",
       "/images/research/3gvozd.webp",
       "/images/research/4gvozd.webp"
     ],
-    "spanW": 4
+    "spanW": 4,
+    "coverFit": "height"
   },
   {
     "number": 3,
@@ -44,10 +100,27 @@
     "date": "12.2025",
     "text": "Infusa is a conceptual object that combines images of worms consuming forbidden fruit. It symbolizes the transition between stages of existence, the moment when life is captured by the process of consumption and transformation. These forms, frozen in space, reflect the survival measures hidden within nature. In your home, Infusa transforms everyday space into a place where organic life and evolutionary problems are frozen in an irreversible moment of development.",
     "links": [],
+    "screens": [
+      {
+        "items": [
+          {
+            "src": "/images/research/2infusa.webp",
+            "as": "image"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/3infusa.webp",
+            "as": "image"
+          }
+        ]
+      }
+    ],
     "sideSrcs": [
       "/images/research/2infusa.webp",
-      "/images/research/3infusa.webp",
-      "/images/research/4infusa.webp"
+      "/images/research/3infusa.webp"
     ],
     "spanW": 6
   },
@@ -60,26 +133,71 @@
     "date": "12.2025",
     "text": "",
     "links": [],
+    "screens": [],
     "sideSrcs": [],
     "spanW": 4
   },
   {
     "number": 5,
-    "src": "/images/research/sufganiet.webp",
+    "src": "/images/research/poster2.webp",
     "alt": "",
     "as": "image",
     "caption": "Poster Lab",
     "date": "",
     "text": "",
     "links": [],
+    "screens": [
+      {
+        "items": [
+          {
+            "src": "/images/research/sufganiet.webp",
+            "as": "image"
+          },
+          {
+            "src": "/images/research/poster2.webp",
+            "as": "image"
+          },
+          {
+            "src": "/images/research/poster3.webp",
+            "as": "image"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/poster4.webp",
+            "as": "image"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/poster5.webp",
+            "as": "image"
+          }
+        ]
+      },
+      {
+        "items": [
+          {
+            "src": "/images/research/poster6.webp",
+            "as": "image"
+          }
+        ]
+      }
+    ],
     "sideSrcs": [
+      "/images/research/sufganiet.webp",
       "/images/research/poster2.webp",
       "/images/research/poster3.webp",
       "/images/research/poster4.webp",
       "/images/research/poster5.webp",
       "/images/research/poster6.webp"
     ],
-    "spanW": 4
+    "spanW": 4,
+    "coverFit": "height"
   },
   {
     "number": 6,
@@ -90,6 +208,24 @@
     "date": "09.2025",
     "text": "",
     "links": [],
+    "screens": [
+      {
+        "items": [
+          {
+            "src": "/images/research/kinect2.webp",
+            "as": "image"
+          },
+          {
+            "src": "/images/research/kinect1.webp",
+            "as": "image"
+          },
+          {
+            "src": "/images/research/kinect4.webp",
+            "as": "image"
+          }
+        ]
+      }
+    ],
     "sideSrcs": [
       "/images/research/kinect2.webp",
       "/images/research/kinect1.webp",
@@ -106,18 +242,7 @@
     "date": "09.2025",
     "text": "",
     "links": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
-    "number": 8,
-    "src": "/images/research/brelok.webp",
-    "alt": "",
-    "as": "image",
-    "caption": "Wristband, MM",
-    "date": "05.2026",
-    "text": "",
-    "links": [],
+    "screens": [],
     "sideSrcs": [],
     "spanW": 4
   }

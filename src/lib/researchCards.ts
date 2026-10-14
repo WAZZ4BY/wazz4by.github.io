@@ -2,24 +2,42 @@ import fs from 'fs';
 import path from 'path';
 
 export type ResearchSpan = 2 | 4 | 6;
-export type ResearchMaxWidth = 4 | 6;
+export type ResearchMaxWidth = 2 | 4 | 6 | 8;
+export type ResearchCoverFit = 'height' | 'cols';
+export type ResearchColSpan = 2 | 4 | 6 | 8;
+export type ResearchMediaKind = 'image' | 'kinescope' | 'video' | 'audio';
 
 export type ResearchTextLink = {
   text: string;
   url: string;
 };
 
+export type ResearchScreenItem = {
+  src: string;
+  as: ResearchMediaKind;
+  span: ResearchColSpan;
+  fit: 'height' | 'cols';
+  aspectRatio: number;
+  alt?: string;
+};
+
+export type ResearchScreen = {
+  items: ResearchScreenItem[];
+};
+
 export type ResearchCard = {
   number: number;
   src: string;
   alt?: string;
-  as?: 'image' | 'kinescope';
+  as?: ResearchMediaKind;
   caption?: string;
   date?: string;
   text?: string;
   links: ResearchTextLink[];
   sideSrcs: string[];
+  screens: ResearchScreen[];
   spanW: ResearchMaxWidth;
+  coverFit: ResearchCoverFit;
   spanH: ResearchSpan;
   aspectRatio: number;
 };
@@ -87,8 +105,10 @@ function aspectFromKinescope(src: string): number | null {
 }
 
 function aspectForCard(as: ResearchCard['as'], src: string): number {
-  if (as === 'kinescope') {
-    return aspectFromKinescope(src) || 1;
+  if (as === 'audio') return 16 / 5;
+  if (as === 'kinescope' || as === 'video') {
+    if (as === 'kinescope') return aspectFromKinescope(src) || 16 / 9;
+    return 16 / 9;
   }
   const filePath = publicFilePath(src);
   if (!filePath) return 1;
@@ -122,7 +142,15 @@ function parseLinks(value: unknown): ResearchTextLink[] {
 }
 
 function parseMaxWidth(value: unknown): ResearchMaxWidth {
-  return Number(value) === 6 ? 6 : 4;
+  const n = Number(value);
+  if (n === 2 || n === 4 || n === 6 || n === 8) return n;
+  return 4;
+}
+
+function parseCoverFit(value: unknown, aspectRatio: number): ResearchCoverFit {
+  if (value === 'height' || value === 'cols') return value;
+  // legacy: tall covers used to snap to viewport height
+  return aspectRatio > 0 && aspectRatio < 0.95 ? 'height' : 'cols';
 }
 
 function parseSpan(value: unknown): ResearchSpan | null {
@@ -131,15 +159,104 @@ function parseSpan(value: unknown): ResearchSpan | null {
   return null;
 }
 
+function parseColSpan(value: unknown): ResearchColSpan | null {
+  const n = Number(value);
+  if (n === 2 || n === 4 || n === 6 || n === 8) return n;
+  return null;
+}
+
+function parseMediaKind(value: unknown): ResearchMediaKind {
+  if (value === 'kinescope' || value === 'video' || value === 'audio') return value;
+  return 'image';
+}
+
+function fitForAspect(aspectRatio: number): 'height' | 'cols' {
+  return aspectRatio > 0 && aspectRatio < 0.95 ? 'height' : 'cols';
+}
+
+function makeScreenItem(
+  src: string,
+  span: ResearchColSpan,
+  as: ResearchMediaKind = 'image',
+  alt = '',
+  forceFit?: 'height' | 'cols',
+): ResearchScreenItem {
+  const aspectRatio = aspectForCard(as, src);
+  return {
+    src,
+    as,
+    span,
+    fit: forceFit || fitForAspect(aspectRatio),
+    aspectRatio,
+    alt,
+  };
+}
+
+function defaultSpanForAspect(aspectRatio: number): ResearchColSpan {
+  if (aspectRatio >= 1.4) return 6;
+  if (aspectRatio >= 1.05) return 4;
+  return 4;
+}
+
+function mediaKindFromSrc(src: string, fallback: ResearchMediaKind = 'image'): ResearchMediaKind {
+  if (fallback === 'kinescope' || fallback === 'audio') return fallback;
+  if (/\.(mp4|webm|mov)(\?|#|$)/i.test(src)) return 'video';
+  if (/kinescope\.(io|ru)|player\.vimeo\.com|<iframe/i.test(src)) return 'kinescope';
+  return fallback === 'video' ? 'video' : 'image';
+}
+
+function screensFromSideSrcs(srcs: string[]): ResearchScreen[] {
+  return srcs.map((src) => {
+    const as = mediaKindFromSrc(src);
+    const aspectRatio = aspectForCard(as, src);
+    return {
+      items: [makeScreenItem(src, defaultSpanForAspect(aspectRatio), as)],
+    };
+  });
+}
+
+function parseScreenItem(entry: unknown): ResearchScreenItem | null {
+  if (typeof entry === 'string' && entry.trim()) {
+    const src = entry.trim();
+    const as = mediaKindFromSrc(src);
+    return makeScreenItem(src, defaultSpanForAspect(aspectForCard(as, src)), as);
+  }
+  if (!entry || typeof entry !== 'object') return null;
+  const item = entry as Record<string, unknown>;
+  const src = typeof item.src === 'string' ? item.src.trim() : '';
+  if (!src) return null;
+  const as = mediaKindFromSrc(src, parseMediaKind(item.as));
+  const aspectRatio = aspectForCard(as, src);
+  const span = parseColSpan(item.span) ?? defaultSpanForAspect(aspectRatio);
+  const fit = item.fit === 'height' || item.fit === 'cols' ? item.fit : undefined;
+  return makeScreenItem(src, span, as, typeof item.alt === 'string' ? item.alt : '', fit);
+}
+
+function parseScreens(value: unknown, fallbackSrcs: string[]): ResearchScreen[] {
+  if (!Array.isArray(value)) return screensFromSideSrcs(fallbackSrcs);
+  const screens: ResearchScreen[] = [];
+  value.forEach((raw) => {
+    const rec = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {};
+    const list = Array.isArray(rec.items) ? rec.items : Array.isArray(raw) ? raw : [];
+    const items = list
+      .map(parseScreenItem)
+      .filter((item): item is ResearchScreenItem => Boolean(item))
+      .slice(0, 3);
+    if (items.length) screens.push({ items });
+  });
+  return screens.length ? screens : screensFromSideSrcs(fallbackSrcs);
+}
+
 function normalizeCard(card: unknown, fallbackNumber: number): ResearchCard {
   const c = (card && typeof card === 'object') ? (card as Record<string, unknown>) : {};
   const parsedNumber = Number(c.number);
   const number = Number.isFinite(parsedNumber) ? Math.max(0, Math.round(parsedNumber)) : fallbackNumber;
   const src = typeof c.src === 'string' ? c.src.trim() : '';
   const alt = typeof c.alt === 'string' ? c.alt : '';
-  const as: ResearchCard['as'] = c.as === 'kinescope' ? 'kinescope' : 'image';
+  const as = parseMediaKind(c.as);
   const aspectRatio = aspectForCard(as, src);
   const auto = spansFromAspect(aspectRatio);
+  const sideSrcs = parseSideSrcs(c.sideSrcs, c.sideSrc);
   return {
     number,
     src,
@@ -149,8 +266,10 @@ function normalizeCard(card: unknown, fallbackNumber: number): ResearchCard {
     date: typeof c.date === 'string' ? c.date : '',
     text: typeof c.text === 'string' ? c.text : '',
     links: parseLinks(c.links),
-    sideSrcs: parseSideSrcs(c.sideSrcs, c.sideSrc),
+    sideSrcs,
+    screens: parseScreens(c.screens, sideSrcs),
     spanW: parseMaxWidth(c.spanW),
+    coverFit: parseCoverFit(c.coverFit, aspectRatio),
     spanH: parseSpan(c.spanH) ?? auto.spanH,
     aspectRatio,
   };

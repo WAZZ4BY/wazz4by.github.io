@@ -55,13 +55,18 @@ const base = import.meta.env.BASE_URL;
           <div id="editLinksList" class="links-list"></div>
           <button type="button" class="secondary" id="addLinkBtn" style="margin-top:0.5rem;">+ Добавить ссылку</button>
           <label>Контент (блоки)</label>
-          <p class="admin-hint">Текст — колонки 5–12, стиль как в футере. Изображение — на всю ширину. Сплит — два изображения по 6 колонок. Видео — вставьте embed-код (iframe) с Vimeo. Между блоками отступ 50px.</p>
+          <p class="admin-hint">Текст — колонки 5–12. Изображение — на всю ширину. Сплит — два изображения. Видео — embed (Vimeo/Kinescope) или файл mp4/webm в <code>public/videos/projects</code>. Между блоками отступ 50px.</p>
+          <label>GitHub (для загрузки видео)</label>
+          <p class="admin-hint">Те же репозиторий и токен, что в списке проектов. Нужны только чтобы залить mp4/webm в GitHub.</p>
+          <input type="text" id="editGhRepo" placeholder="owner/repo" />
+          <input type="password" id="editGhToken" placeholder="ghp_xxxx…" autocomplete="off" />
+          <p id="editUploadStatus" class="status"></p>
           <div id="contentBlocksList" class="content-blocks-list"></div>
           <div class="content-blocks-actions">
             <button type="button" class="secondary" id="addBlockText">+ Текст</button>
             <button type="button" class="secondary" id="addBlockImage">+ Изображение</button>
             <button type="button" class="secondary" id="addBlockSplit">+ Сплит</button>
-            <button type="button" class="secondary" id="addBlockVideo">+ Видео (Vimeo)</button>
+            <button type="button" class="secondary" id="addBlockVideo">+ Видео</button>
           </div>
           <div style="margin-top:1rem;">
             <button type="submit" class="primary">Сохранить изменения</button>
@@ -76,6 +81,7 @@ const base = import.meta.env.BASE_URL;
       const STORAGE_KEY = 'admin_authed';
       const PASSWORD = 'admin12345';
       const EDITED_PROJECTS_KEY = 'admin_edited_projects';
+      const REPO_KEY = 'admin_gh_repo';
 
       const gate = document.getElementById('gate');
       const app = document.getElementById('app');
@@ -150,12 +156,123 @@ const base = import.meta.env.BASE_URL;
       function rewriteBlocks(blocks) {
         return (blocks || []).map(function (block) {
           if (!block || typeof block !== 'object') return block;
+          if (block.type === 'video') {
+            const src = typeof block.src === 'string' ? block.src.trim() : '';
+            const embed = typeof block.embed === 'string' ? block.embed.trim() : '';
+            if (src) return { type: 'video', src: src };
+            return { type: 'video', embed: embed };
+          }
           const b = Object.assign({}, block);
           if (typeof b.src === 'string') b.src = toWebpPath(b.src);
           if (typeof b.left === 'string') b.left = toWebpPath(b.left);
           if (typeof b.right === 'string') b.right = toWebpPath(b.right);
           return b;
         });
+      }
+
+      function resolveMediaUrl(url) {
+        const u = (url || '').trim();
+        if (!u) return '';
+        if (u.startsWith('http')) return u;
+        const b = getBase();
+        return (b.endsWith('/') ? b : b + '/') + u.replace(/^\//, '');
+      }
+
+      function isVideoUpload(file) {
+        const name = String(file && file.name || '').toLowerCase();
+        const type = String(file && file.type || '').toLowerCase();
+        return type.startsWith('video/') || /\.(mp4|webm)$/.test(name);
+      }
+
+      function sanitizeFileName(name) {
+        const safe = String(name || 'video')
+          .toLowerCase()
+          .replace(/[^a-z0-9._-]+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        return safe || 'video';
+      }
+
+      async function fileToBase64(file) {
+        const buffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        const chunk = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunk) {
+          const part = bytes.subarray(i, i + chunk);
+          binary += String.fromCharCode.apply(null, part);
+        }
+        return btoa(binary);
+      }
+
+      function parseEditGh() {
+        const statusEl = document.getElementById('editUploadStatus');
+        const repoInput = document.getElementById('editGhRepo');
+        const tokenInput = document.getElementById('editGhToken');
+        const repo = (repoInput?.value || '').trim() || (sessionStorage.getItem(REPO_KEY) || '').trim();
+        const token = (tokenInput?.value || '').trim();
+        if (repoInput && !repoInput.value.trim() && repo) repoInput.value = repo;
+        if (!repo || !token) {
+          if (statusEl) {
+            statusEl.textContent = 'Укажите репозиторий и токен выше для загрузки.';
+            statusEl.className = 'status err';
+          }
+          return null;
+        }
+        const parts = repo.split('/').filter(Boolean);
+        if (parts.length !== 2) {
+          if (statusEl) {
+            statusEl.textContent = 'Репозиторий в формате owner/repo';
+            statusEl.className = 'status err';
+          }
+          return null;
+        }
+        return { owner: parts[0], repoName: parts[1], token: token, repo: repo };
+      }
+
+      async function uploadVideoToGitHub(file) {
+        const statusEl = document.getElementById('editUploadStatus');
+        const gh = parseEditGh();
+        if (!gh) throw new Error('Нет данных GitHub');
+        sessionStorage.setItem(REPO_KEY, gh.repo);
+        const fileName = Date.now() + '-' + sanitizeFileName(file.name);
+        const contentPath = 'public/videos/projects/' + fileName;
+        const apiUrl = 'https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + contentPath;
+        const getRes = await fetch(apiUrl, {
+          headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + gh.token }
+        });
+        let sha = null;
+        if (getRes.ok) {
+          const data = await getRes.json();
+          sha = data.sha;
+        } else if (getRes.status !== 404) {
+          const err = await getRes.json().catch(function () { return {}; });
+          throw new Error(err.message || getRes.statusText);
+        }
+        const body = {
+          message: 'Upload project video from admin',
+          content: await fileToBase64(file),
+          branch: 'main'
+        };
+        if (sha) body.sha = sha;
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': 'token ' + gh.token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(function () { return {}; });
+          throw new Error(err.message || putRes.statusText);
+        }
+        if (statusEl) {
+          statusEl.textContent = 'Видео загружено: /videos/projects/' + fileName;
+          statusEl.className = 'status ok';
+        }
+        return '/videos/projects/' + fileName;
       }
 
       function collectAwards() {
@@ -315,7 +432,22 @@ const base = import.meta.env.BASE_URL;
             const rightSrc = resolveImgUrl(block.right || '');
             inner = '<div class="content-block-card__row"><span class="content-block-card__type">Сплит</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><div class="content-block-card__split-fields"><input type="text" class="content-block-card__url" value="' + esc(block.left || '') + '" placeholder="/images/left.webp" data-side="left" /><input type="text" class="content-block-card__url" value="' + esc(block.right || '') + '" placeholder="/images/right.webp" data-side="right" /></div><div class="content-block-card__preview content-block-card__preview--split"><div class="content-block-card__preview-item">' + (leftSrc ? '<img src="' + esc(leftSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div><div class="content-block-card__preview-item">' + (rightSrc ? '<img src="' + esc(rightSrc) + '" alt="" onerror="this.classList.add(\'content-block-card__preview-img--error\')" onload="this.classList.remove(\'content-block-card__preview-img--error\')" />' : '') + '</div></div>';
           } else if (block.type === 'video') {
-            inner = '<div class="content-block-card__row"><span class="content-block-card__type">Видео (Vimeo)</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div><textarea class="content-block-card__textarea content-block-card__textarea--embed" rows="4" placeholder="Вставьте embed-код (iframe) с Vimeo">' + esc(block.embed || '') + '</textarea>';
+            const fileSrc = resolveMediaUrl(block.src || '');
+            const hasFile = !!(block.src || '').trim();
+            inner =
+              '<div class="content-block-card__row"><span class="content-block-card__type">Видео</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div>' +
+              '<label style="display:block;margin:0.35rem 0 0.2rem;font-size:0.85rem;">Файл (mp4/webm)</label>' +
+              '<input type="text" class="content-block-card__url content-block-card__video-src" value="' + esc(block.src || '') + '" placeholder="/videos/projects/clip.mp4" />' +
+              '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin:0.4rem 0;">' +
+                '<button type="button" class="secondary upload-block-video">Загрузить видео</button>' +
+                '<input type="file" class="content-block-card__video-file" accept="video/mp4,video/webm,.mp4,.webm" style="display:none;" />' +
+                (hasFile ? '<button type="button" class="danger clear-block-video-src" style="padding:0.25rem 0.5rem;font-size:0.85rem;">Очистить файл</button>' : '') +
+              '</div>' +
+              '<div class="content-block-card__preview content-block-card__preview--video">' +
+                (fileSrc ? '<video src="' + esc(fileSrc) + '" muted playsinline controls preload="metadata" style="width:100%;max-height:220px;display:block;background:#111;"></video>' : '') +
+              '</div>' +
+              '<label style="display:block;margin:0.6rem 0 0.2rem;font-size:0.85rem;">Или embed (Vimeo/Kinescope)</label>' +
+              '<textarea class="content-block-card__textarea content-block-card__textarea--embed" rows="3" placeholder="Вставьте iframe или ссылку">' + esc(block.embed || '') + '</textarea>';
           }
           card.innerHTML = inner;
 
@@ -390,9 +522,92 @@ const base = import.meta.env.BASE_URL;
             rightInput.addEventListener('input', updateSplitPreviews);
             rightInput.addEventListener('change', updateSplitPreviews);
           } else if (block.type === 'video') {
-            card.querySelector('.content-block-card__textarea--embed').addEventListener('input', function () {
-              contentBlocks[index].embed = this.value;
-            });
+            const srcInput = card.querySelector('.content-block-card__video-src');
+            const embedInput = card.querySelector('.content-block-card__textarea--embed');
+            const previewWrap = card.querySelector('.content-block-card__preview--video');
+            const fileInput = card.querySelector('.content-block-card__video-file');
+            const uploadBtn = card.querySelector('.upload-block-video');
+            const clearBtn = card.querySelector('.clear-block-video-src');
+
+            function updateVideoFilePreview() {
+              const value = (srcInput.value || '').trim();
+              contentBlocks[index].src = value;
+              if (value) contentBlocks[index].embed = '';
+              if (embedInput && value) embedInput.value = '';
+              if (!previewWrap) return;
+              const resolved = resolveMediaUrl(value);
+              if (resolved) {
+                previewWrap.innerHTML = '<video src="' + esc(resolved) + '" muted playsinline controls preload="metadata" style="width:100%;max-height:220px;display:block;background:#111;"></video>';
+              } else {
+                previewWrap.innerHTML = '';
+              }
+            }
+
+            if (srcInput) {
+              srcInput.addEventListener('input', updateVideoFilePreview);
+              srcInput.addEventListener('change', updateVideoFilePreview);
+            }
+            if (embedInput) {
+              embedInput.addEventListener('input', function () {
+                contentBlocks[index].embed = this.value;
+                if (this.value.trim()) {
+                  contentBlocks[index].src = '';
+                  if (srcInput) srcInput.value = '';
+                  if (previewWrap) previewWrap.innerHTML = '';
+                }
+              });
+            }
+            if (clearBtn) {
+              clearBtn.addEventListener('click', function () {
+                contentBlocks[index].src = '';
+                if (srcInput) srcInput.value = '';
+                if (previewWrap) previewWrap.innerHTML = '';
+                renderBlocks();
+              });
+            }
+            if (uploadBtn && fileInput) {
+              uploadBtn.addEventListener('click', function () {
+                fileInput.click();
+              });
+              fileInput.addEventListener('change', async function () {
+                const file = this.files && this.files[0];
+                this.value = '';
+                if (!file) return;
+                if (!isVideoUpload(file)) {
+                  const statusEl = document.getElementById('editUploadStatus');
+                  if (statusEl) {
+                    statusEl.textContent = 'Нужен файл mp4 или webm.';
+                    statusEl.className = 'status err';
+                  }
+                  return;
+                }
+                if (file.size > 40 * 1024 * 1024) {
+                  const statusEl = document.getElementById('editUploadStatus');
+                  if (statusEl) {
+                    statusEl.textContent = 'Видео больше 40 МБ. Сожмите файл и загрузите снова.';
+                    statusEl.className = 'status err';
+                  }
+                  return;
+                }
+                try {
+                  uploadBtn.disabled = true;
+                  uploadBtn.textContent = 'Загрузка…';
+                  const uploadedPath = await uploadVideoToGitHub(file);
+                  contentBlocks[index].src = uploadedPath;
+                  contentBlocks[index].embed = '';
+                  renderBlocks();
+                } catch (err) {
+                  const statusEl = document.getElementById('editUploadStatus');
+                  if (statusEl) {
+                    statusEl.textContent = 'Ошибка загрузки: ' + (err && err.message ? err.message : err);
+                    statusEl.className = 'status err';
+                  }
+                } finally {
+                  uploadBtn.disabled = false;
+                  uploadBtn.textContent = 'Загрузить видео';
+                }
+              });
+            }
           }
 
           list.appendChild(card);

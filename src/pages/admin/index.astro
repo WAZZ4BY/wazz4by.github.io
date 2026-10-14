@@ -31,7 +31,7 @@ const base = import.meta.env.BASE_URL;
 
       <section class="admin-section admin-pane" id="homeCardsPane">
         <h2>Фото на главной (Media Cards)</h2>
-        <p class="admin-hint">Управление карточками на главной странице. Можно загружать фото в репозиторий (папка <code>public/images/main</code>) и сразу подставлять путь в карточку. Для режима <code>vimeo</code> вставляйте iframe/embed или ссылку Vimeo, для <code>kinescope</code> — iframe/embed или ссылку Kinescope.</p>
+        <p class="admin-hint">Управление карточками на главной странице. Фото — в <code>public/images/main</code>, короткие mp4/webm — в <code>public/videos/main</code>. Для <code>vimeo</code>/<code>kinescope</code> по-прежнему вставляйте iframe или ссылку.</p>
         <p id="homeMediaCardsLoadStatus" class="status">Загрузка…</p>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
           <button type="button" id="homeViewEditorBtn" class="primary">Редактор</button>
@@ -51,13 +51,13 @@ const base = import.meta.env.BASE_URL;
 
       <section class="admin-section admin-section--wide admin-pane" id="researchCardsPane">
         <h2>Карточки Research</h2>
-        <p class="admin-hint">Сетка 5 — основной просмотр и редактирование. Лента — вертикальный предпросмотр как на сайте (название слева, медиа по центру, дата справа). Список — компактное редактирование. Для <code>image</code> указывайте путь к <code>webp</code> или <code>gif</code>. Для видео вставляйте ссылку или iframe. Доп. фото показываются справа на странице карточки. Макс. ширина — 4 или 6 колонок в центре ленты. Карточки сортируются по номеру: от меньшего к большему.</p>
+        <p class="admin-hint">На сайте: полноэкранные обложки (колёсико — следующий проект), клик по обложке открывает внутренние экраны (до 3 фото/видео на экран), «+» показывает плашки название / дата / описание. Обложка: 2 / 4 / 6 / 8 колонок или в упор по высоте экрана. <code>image</code> — webp/gif; <code>video-file</code> — mp4/webm в <code>public/videos/research</code>; <code>audio</code> — mp3/wav/ogg/m4a в <code>public/audio/research</code>; <code>embed</code> — Vimeo/Kinescope.</p>
         <p id="researchCardsLoadStatus" class="status">Загрузка…</p>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
           <button type="button" id="addResearchCardBtn" class="secondary">+ Добавить карточку</button>
           <button type="button" id="researchViewGridBtn" class="primary">Сетка 5</button>
           <button type="button" id="researchViewListBtn" class="secondary">Список</button>
-          <button type="button" id="researchViewPreviewBtn" class="secondary">Лента</button>
+          <button type="button" id="researchViewPreviewBtn" class="secondary">Как на сайте</button>
           <span id="researchCardScaleWrap" style="display:flex;gap:0.5rem;align-items:center;margin-left:0.5rem;">
             <label for="researchCardScaleRange" style="margin:0;font-weight:500;">Масштаб карточек</label>
             <input type="range" id="researchCardScaleRange" min="70" max="140" step="5" value="100" style="width:170px;margin:0;" />
@@ -313,30 +313,72 @@ const base = import.meta.env.BASE_URL;
         };
       }
 
-      function parseResearchSideSrcs(c, keepEmpty) {
-        const out = [];
-        function push(item) {
-          if (typeof item !== 'string') return;
-          const trimmed = item.trim();
-          if (!keepEmpty && !trimmed) return;
-          out.push(trimmed ? toWebpPath(trimmed) : '');
+      function researchMediaAsFromSrc(src, fallback) {
+        const value = String(src || '');
+        if (/\.(mp4|webm|mov)(\?|#|$)/i.test(value)) return 'video';
+        if (/kinescope\.(io|ru)|player\.vimeo\.com|<iframe/i.test(value)) return 'kinescope';
+        return fallback === 'video' ? 'video' : 'image';
+      }
+
+      function parseResearchScreenItem(entry, keepEmpty) {
+        if (typeof entry === 'string') {
+          const src = entry.trim();
+          if (!src && !keepEmpty) return null;
+          const normalized = src && researchMediaAsFromSrc(src) === 'image' ? toWebpPath(src) : src;
+          return { src: normalized || '', as: researchMediaAsFromSrc(normalized || src, 'image') };
         }
-        if (c && Array.isArray(c.sideSrcs)) c.sideSrcs.forEach(push);
-        else if (c && typeof c.sideSrc === 'string') push(c.sideSrc);
+        if (!entry || typeof entry !== 'object') return null;
+        const srcRaw = typeof entry.src === 'string' ? entry.src.trim() : '';
+        if (!srcRaw && !keepEmpty) return null;
+        const asHint = entry.as === 'video' || entry.as === 'kinescope' ? entry.as : 'image';
+        const as = researchMediaAsFromSrc(srcRaw, asHint);
+        const src = srcRaw && as === 'image' ? toWebpPath(srcRaw) : srcRaw;
+        return { src: src, as: as };
+      }
+
+      function parseResearchScreens(c, keepEmpty) {
+        const out = [];
+        if (c && Array.isArray(c.screens) && c.screens.length) {
+          c.screens.forEach(function (screen) {
+            const list = screen && Array.isArray(screen.items) ? screen.items : (Array.isArray(screen) ? screen : []);
+            const items = [];
+            list.forEach(function (entry) {
+              const item = parseResearchScreenItem(entry, keepEmpty);
+              if (item) items.push(item);
+            });
+            if (items.length || keepEmpty) out.push({ items: items.slice(0, 3) });
+          });
+          if (out.length) return out;
+        }
+        const sideList = c && Array.isArray(c.sideSrcs) ? c.sideSrcs : (c && typeof c.sideSrc === 'string' ? [c.sideSrc] : []);
+        sideList.forEach(function (entry) {
+          const item = parseResearchScreenItem(entry, keepEmpty);
+          if (item) out.push({ items: [item] });
+        });
         return out;
       }
 
-      function parseResearchLinks(c, keepEmpty) {
+      function flattenResearchScreenSrcs(screens) {
         const out = [];
-        function push(item) {
+        (Array.isArray(screens) ? screens : []).forEach(function (screen) {
+          const items = screen && Array.isArray(screen.items) ? screen.items : [];
+          items.forEach(function (item) {
+            if (item && typeof item.src === 'string' && item.src.trim()) out.push(item.src.trim());
+          });
+        });
+        return out;
+      }
+
+      function parseResearchLinks(c) {
+        const out = [];
+        if (!c || !Array.isArray(c.links)) return out;
+        c.links.forEach(function (item) {
           const rec = item && typeof item === 'object' ? item : {};
           const text = typeof rec.text === 'string' ? rec.text : '';
           const url = typeof rec.url === 'string' ? rec.url : '';
-          if (!keepEmpty && !text.trim() && !url.trim()) return;
+          if (!text.trim() && !url.trim()) return;
           out.push({ text: text, url: url });
-        }
-        if (c && Array.isArray(c.links)) c.links.forEach(push);
-        if (keepEmpty && out.length === 0) out.push({ text: '', url: '' });
+        });
         return out;
       }
 
@@ -346,8 +388,15 @@ const base = import.meta.env.BASE_URL;
         const rawDate = typeof c.date === 'string' ? c.date : '';
         const m = rawDate.trim().match(/^(\d{1,2})[.\-/](\d{4})$/);
         const normalizedDate = m ? String(m[1]).padStart(2, '0') + '.' + m[2] : '';
-        const as = c.as === 'kinescope' ? 'kinescope' : 'image';
+        const as = c.as === 'kinescope' ? 'kinescope'
+          : c.as === 'video' ? 'video'
+          : c.as === 'audio' ? 'audio'
+          : 'image';
         const src = typeof c.src === 'string' ? c.src : '';
+        const screens = parseResearchScreens(c, keepEmptyExtras);
+        const spanN = Number(c.spanW);
+        const spanW = (spanN === 2 || spanN === 4 || spanN === 6 || spanN === 8) ? spanN : 4;
+        const coverFit = c.coverFit === 'height' || c.coverFit === 'cols' ? c.coverFit : null;
         return {
           number: Number.isFinite(parsedNumber) ? Math.max(0, Math.round(parsedNumber)) : fallbackNumber,
           src: as === 'image' ? toWebpPath(src) : src,
@@ -356,10 +405,93 @@ const base = import.meta.env.BASE_URL;
           caption: typeof c.caption === 'string' ? c.caption : '',
           date: normalizedDate,
           text: typeof c.text === 'string' ? c.text : '',
-          links: parseResearchLinks(c, keepEmptyExtras),
-          sideSrcs: parseResearchSideSrcs(c, keepEmptyExtras),
-          spanW: Number(c.spanW) === 6 ? 6 : 4
+          links: parseResearchLinks(c),
+          screens: screens,
+          sideSrcs: flattenResearchScreenSrcs(screens),
+          spanW: spanW,
+          coverFit: coverFit
         };
+      }
+
+      function serializeResearchCard(card, fallbackNumber) {
+        const item = normalizeResearchCard(card, fallbackNumber);
+        const screens = (Array.isArray(item.screens) ? item.screens : [])
+          .map(function (screen) {
+            const items = (screen && Array.isArray(screen.items) ? screen.items : [])
+              .map(function (entry) {
+                const src = entry && typeof entry.src === 'string' ? entry.src.trim() : '';
+                if (!src) return null;
+                return { src: src, as: researchMediaAsFromSrc(src, entry.as) };
+              })
+              .filter(Boolean)
+              .slice(0, 3);
+            return items.length ? { items: items } : null;
+          })
+          .filter(Boolean);
+        const out = {
+          number: item.number,
+          src: item.src,
+          alt: item.alt,
+          as: item.as,
+          caption: item.caption,
+          date: item.date,
+          text: item.text,
+          links: item.links,
+          screens: screens,
+          sideSrcs: flattenResearchScreenSrcs(screens),
+          spanW: item.spanW
+        };
+        if (item.coverFit === 'height' || item.coverFit === 'cols') out.coverFit = item.coverFit;
+        return out;
+      }
+
+      function researchLinkUrl(item) {
+        const links = item && Array.isArray(item.links) ? item.links : [];
+        for (let i = 0; i < links.length; i++) {
+          const url = links[i] && typeof links[i].url === 'string' ? links[i].url.trim() : '';
+          if (url) return url;
+        }
+        return '';
+      }
+
+      function setResearchLinkUrl(card, url) {
+        if (!card) return;
+        const trimmed = String(url || '').trim();
+        if (!trimmed) {
+          card.links = [];
+          return;
+        }
+        const text = String(card.caption || 'Site').trim() || 'Site';
+        card.links = [{ text: text, url: trimmed }];
+      }
+
+      function researchCoverSizeValue(item) {
+        return item && item.coverFit === 'height' ? 'height' : String((item && item.spanW) || 4);
+      }
+
+      function researchCoverSizeOptionsHtml(item) {
+        const cur = researchCoverSizeValue(item);
+        const opts = [
+          { v: 'height', t: 'По высоте' },
+          { v: '2', t: '2 кол.' },
+          { v: '4', t: '4 кол.' },
+          { v: '6', t: '6 кол.' },
+          { v: '8', t: '8 кол.' }
+        ];
+        return opts.map(function (o) {
+          return '<option value="' + o.v + '"' + (cur === o.v ? ' selected' : '') + '>' + o.t + '</option>';
+        }).join('');
+      }
+
+      function applyResearchCoverSize(card, value) {
+        if (!card) return;
+        if (value === 'height') {
+          card.coverFit = 'height';
+          return;
+        }
+        const n = Number(value);
+        card.coverFit = 'cols';
+        card.spanW = (n === 2 || n === 4 || n === 6 || n === 8) ? n : 4;
       }
 
       function sortResearchCards() {
@@ -472,6 +604,12 @@ const base = import.meta.env.BASE_URL;
         if (Array.isArray(next.contentBlocks)) {
           next.contentBlocks = next.contentBlocks.map(function (block) {
             if (!block || typeof block !== 'object') return block;
+            if (block.type === 'video') {
+              const src = typeof block.src === 'string' ? block.src.trim() : '';
+              const embed = typeof block.embed === 'string' ? block.embed.trim() : '';
+              if (src) return { type: 'video', src: src };
+              return { type: 'video', embed: embed };
+            }
             const b = Object.assign({}, block);
             if (typeof b.src === 'string') b.src = toWebpPath(b.src);
             if (typeof b.left === 'string') b.left = toWebpPath(b.left);
@@ -936,8 +1074,10 @@ const base = import.meta.env.BASE_URL;
               '<label>Источник (src)</label>' +
               '<input type="text" class="home-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/main/photo.webp" />' +
               '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">' +
-                '<button type="button" class="secondary upload-home-card-image" data-i="' + i + '">Загрузить фото в GitHub</button>' +
+                '<button type="button" class="secondary upload-home-card-image" data-i="' + i + '">Загрузить фото</button>' +
+                '<button type="button" class="secondary upload-home-card-video" data-i="' + i + '">Загрузить видео</button>' +
                 '<input type="file" class="home-card-file" data-i="' + i + '" accept="image/*" style="display:none;" />' +
+                '<input type="file" class="home-card-video-file" data-i="' + i + '" accept="video/mp4,video/webm,.mp4,.webm" style="display:none;" />' +
               '</div>' +
               '<label>Ссылка (href)</label>' +
               '<input type="text" class="home-card-href" data-i="' + i + '" value="' + esc(item.href) + '" placeholder="/index/" />' +
@@ -1069,10 +1209,46 @@ const base = import.meta.env.BASE_URL;
             try {
               statusEl.textContent = 'Загрузка фото в GitHub…';
               statusEl.className = 'status';
-              const uploadedPath = await uploadFileToGitHub(file, 'public/images/main', 'Upload home media image from admin');
+              const uploadedPath = await uploadFileToGitHub(file, 'public/images/main', 'Upload home media image from admin', statusEl);
               homeMediaCards[i].src = uploadedPath;
               homeMediaCards[i].as = 'image';
               statusEl.textContent = 'Фото загружено: ' + uploadedPath;
+              statusEl.className = 'status ok';
+              renderHomeMediaCardsEditor();
+            } catch (e) {
+              statusEl.textContent = 'Ошибка загрузки: ' + e.message;
+              statusEl.className = 'status err';
+            } finally {
+              this.value = '';
+            }
+          });
+        });
+        container.querySelectorAll('.upload-home-card-video').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const i = this.getAttribute('data-i');
+            const input = container.querySelector('.home-card-video-file[data-i="' + i + '"]');
+            if (input) input.click();
+          });
+        });
+        container.querySelectorAll('.home-card-video-file').forEach(function (inp) {
+          inp.addEventListener('change', async function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('homeMediaCardsGhStatus');
+            if (!isVideoFile(file)) {
+              statusEl.textContent = 'Можно загружать только mp4 или webm.';
+              statusEl.className = 'status err';
+              this.value = '';
+              return;
+            }
+            try {
+              statusEl.textContent = 'Загрузка видео в GitHub…';
+              statusEl.className = 'status';
+              const uploadedPath = await uploadFileToGitHub(file, 'public/videos/main', 'Upload home media video from admin', statusEl);
+              homeMediaCards[i].src = uploadedPath;
+              homeMediaCards[i].as = 'video';
+              statusEl.textContent = 'Видео загружено: ' + uploadedPath;
               statusEl.className = 'status ok';
               renderHomeMediaCardsEditor();
             } catch (e) {
@@ -1129,7 +1305,7 @@ const base = import.meta.env.BASE_URL;
         const previewMode = researchCardsView === 'preview';
         const wrapper = document.createElement('div');
         if (listMode) wrapper.className = 'research-admin-list';
-        else if (previewMode) wrapper.className = 'research-admin-feed';
+        else if (previewMode) wrapper.className = 'research-admin-site-list';
         else wrapper.style.cssText = 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0.75rem;align-items:start;';
         container.appendChild(wrapper);
 
@@ -1144,54 +1320,91 @@ const base = import.meta.env.BASE_URL;
             const height = mode === 'list' ? '220px' : '100%';
             return '<iframe data-src="' + embed + '" title="Видео" frameborder="0" allow="fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:' + height + ';display:block;border:0;background:#111;"></iframe>';
           }
+          if (item.as === 'video') {
+            if (mode === 'feed') {
+              return '<video src="' + esc(item.src) + '" muted playsinline loop autoplay preload="metadata" style="width:100%;height:auto;display:block;background:#111;"></video>';
+            }
+            const height = mode === 'list' ? '220px' : '100%';
+            return '<video src="' + esc(item.src) + '" muted playsinline loop autoplay preload="metadata" style="width:100%;height:' + height + ';object-fit:contain;display:block;background:#111;"></video>';
+          }
+          if (item.as === 'audio') {
+            const label = esc(item.caption || item.alt || 'Audio');
+            return '<div style="width:100%;height:' + (mode === 'list' ? '220px' : '100%') + ';min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#111;color:#fff;box-sizing:border-box;padding:12px;"><span style="font-size:24px;line-height:1;">♪</span><span style="font-size:12px;text-align:center;">' + label + '</span><audio src="' + esc(item.src) + '" controls preload="metadata" style="width:min(100%,320px);"></audio></div>';
+          }
           if (mode === 'feed') {
             return '<img src="' + esc(item.src) + '" alt="" style="width:100%;height:auto;display:block;" />';
           }
           return '<img src="' + esc(item.src) + '" alt="" style="width:100%;height:100%;object-fit:contain;display:block;" />';
         }
 
+        function researchScreenThumbHtml(entry) {
+          const src = entry && entry.src ? entry.src : '';
+          const as = entry && entry.as ? entry.as : researchMediaAsFromSrc(src);
+          if (!src) return '<span style="font-size:11px;color:#888;">Пусто</span>';
+          if (as === 'video') {
+            return '<video src="' + esc(src) + '" muted playsinline preload="metadata"></video>';
+          }
+          return '<img src="' + esc(src) + '" alt="" />';
+        }
+
         function getResearchExtrasHtml(item, i) {
-          const extras = Array.isArray(item.sideSrcs) ? item.sideSrcs : [];
-          const tiles = extras.map(function (src, j) {
-            const thumb = src
-              ? '<img src="' + esc(src) + '" alt="" />'
-              : '<span style="font-size:11px;color:#888;">Нет файла</span>';
+          const screens = Array.isArray(item.screens) ? item.screens : [];
+          const tiles = screens.map(function (screen, j) {
+            const items = screen && Array.isArray(screen.items) ? screen.items : [];
+            const media = items.map(function (entry, k) {
+              return (
+                '<div class="research-admin-media" data-i="' + i + '" data-j="' + j + '" data-k="' + k + '">' +
+                  '<div class="research-admin-extra__thumb">' + researchScreenThumbHtml(entry) + '</div>' +
+                  '<select class="research-card-screen-as" data-i="' + i + '" data-j="' + j + '" data-k="' + k + '">' +
+                    '<option value="image"' + ((entry.as || 'image') === 'image' ? ' selected' : '') + '>image</option>' +
+                    '<option value="video"' + (entry.as === 'video' ? ' selected' : '') + '>video</option>' +
+                  '</select>' +
+                  '<input type="text" class="research-card-screen-src" data-i="' + i + '" data-j="' + j + '" data-k="' + k + '" value="' + esc(entry.src || '') + '" placeholder="/images/… или /videos/…" />' +
+                  '<div class="research-admin-extra__btns">' +
+                    '<button type="button" class="secondary upload-research-card-screen" data-i="' + i + '" data-j="' + j + '" data-k="' + k + '">Файл</button>' +
+                    '<button type="button" class="danger remove-research-card-screen-item" data-i="' + i + '" data-j="' + j + '" data-k="' + k + '">×</button>' +
+                  '</div>' +
+                  '<input type="file" class="research-card-screen-file" data-i="' + i + '" data-j="' + j + '" data-k="' + k + '" accept=".webp,.gif,.jpg,.jpeg,.png,.mp4,.webm,image/webp,image/gif,image/jpeg,image/png,video/mp4,video/webm" style="display:none;" />' +
+                '</div>'
+              );
+            }).join('');
             return (
-              '<div class="research-admin-extra" data-i="' + i + '" data-j="' + j + '">' +
-                '<div class="research-admin-extra__thumb">' + thumb + '</div>' +
-                '<input type="text" class="research-card-extra-src" data-i="' + i + '" data-j="' + j + '" value="' + esc(src || '') + '" placeholder="/images/research/photo.webp" />' +
-                '<div class="research-admin-extra__btns">' +
-                  '<button type="button" class="secondary upload-research-card-extra" data-i="' + i + '" data-j="' + j + '">Файл</button>' +
-                  '<button type="button" class="danger remove-research-card-extra" data-i="' + i + '" data-j="' + j + '">×</button>' +
+              '<div class="research-admin-screen" data-i="' + i + '" data-j="' + j + '">' +
+                '<div class="research-admin-screen__head">' +
+                  '<span>Экран ' + (j + 1) + '</span>' +
+                  '<button type="button" class="danger remove-research-card-screen" data-i="' + i + '" data-j="' + j + '" title="Удалить экран">×</button>' +
                 '</div>' +
-                '<input type="file" class="research-card-extra-file" data-i="' + i + '" data-j="' + j + '" accept=".webp,.gif,.jpg,.jpeg,.png,image/webp,image/gif,image/jpeg,image/png" style="display:none;" />' +
+                '<div class="research-admin-screen__items">' + media + '</div>' +
+                (items.length < 3
+                  ? '<button type="button" class="secondary add-research-card-screen-item" data-i="' + i + '" data-j="' + j + '">+ Медиа</button>'
+                  : '') +
               '</div>'
             );
           }).join('');
           return (
             '<div class="research-admin-extras" data-i="' + i + '">' +
               tiles +
-              '<button type="button" class="secondary research-admin-extras__add add-research-card-extra" data-i="' + i + '">+ Фото</button>' +
+              '<button type="button" class="secondary research-admin-extras__add add-research-card-screen" data-i="' + i + '">+ Экран</button>' +
             '</div>'
           );
         }
 
-        function getResearchLinksHtml(item, i) {
-          const links = Array.isArray(item.links) && item.links.length ? item.links : [{ text: '', url: '' }];
-          const rows = links.map(function (link, j) {
-            return (
-              '<div class="link-row" data-i="' + i + '" data-j="' + j + '">' +
-                '<input type="text" class="research-card-link-text project-link-text" data-i="' + i + '" data-j="' + j + '" placeholder="Текст ссылки" value="' + esc(link.text || '') + '" />' +
-                '<input type="url" class="research-card-link-url project-link-url" data-i="' + i + '" data-j="' + j + '" placeholder="https://example.com" value="' + esc(link.url || '') + '" />' +
-                '<button type="button" class="danger remove-link remove-research-card-link" data-i="' + i + '" data-j="' + j + '" title="Удалить">×</button>' +
-              '</div>'
-            );
-          }).join('');
+        function getResearchSitePreviewHtml(item) {
+          const chips = [];
+          if (item.caption) chips.push('<div class="research-admin-site__chip">' + esc(item.caption) + '</div>');
+          if (item.date) chips.push('<div class="research-admin-site__chip">' + esc(item.date) + '</div>');
+          if (item.text) chips.push('<div class="research-admin-site__chip research-admin-site__chip--text">' + esc(item.text) + '</div>');
+          const screensN = Array.isArray(item.screens) ? item.screens.length : 0;
           return (
-            '<div class="research-admin-links" data-i="' + i + '">' +
-              '<label>Ссылки</label>' +
-              '<div class="links-list">' + rows + '</div>' +
-              '<button type="button" class="secondary add-research-card-link" data-i="' + i + '" style="margin-top:0.35rem;">+ Добавить ссылку</button>' +
+            '<div class="research-admin-site__stage">' +
+              '<div class="research-admin-site__cover research-admin-site__cover--' + (item.coverFit === 'height' ? 'height' : ('w' + (item.spanW || 4))) + '">' +
+                getResearchCardPreviewHtml(item, 'feed') +
+              '</div>' +
+              '<div class="research-admin-site__info">' +
+                (chips.length ? '<div class="research-admin-site__chips">' + chips.join('') + '</div>' : '') +
+                '<div class="research-admin-site__plus" aria-hidden="true">+</div>' +
+              '</div>' +
+              (screensN ? '<div class="research-admin-site__meta">' + screensN + ' экр.</div>' : '') +
             '</div>'
           );
         }
@@ -1199,8 +1412,12 @@ const base = import.meta.env.BASE_URL;
         function updateResearchCardPreview(i) {
           const preview = container.querySelector('.research-card-preview[data-i="' + i + '"]');
           if (!preview) return;
-          const mode = listMode ? 'list' : (previewMode ? 'feed' : 'grid');
-          preview.innerHTML = getResearchCardPreviewHtml(researchCards[i] || {}, mode);
+          const item = normalizeResearchCard(researchCards[i] || {}, i + 1, true);
+          if (previewMode) {
+            preview.innerHTML = getResearchSitePreviewHtml(item);
+          } else {
+            preview.innerHTML = getResearchCardPreviewHtml(item, listMode ? 'list' : 'grid');
+          }
           hydrateLazyIframes(preview);
         }
 
@@ -1210,13 +1427,16 @@ const base = import.meta.env.BASE_URL;
           row.setAttribute('draggable', 'true');
           row.setAttribute('data-i', String(i));
           if (previewMode) {
-            row.className = 'research-admin-feed__row' + (item.spanW === 6 ? ' research-admin-feed__row--w6' : '');
+            row.className = 'research-admin-site__row';
             row.innerHTML =
-              '<span class="research-admin-feed__name">' + esc(item.caption || '') + '</span>' +
-              '<div class="research-card-preview research-admin-feed__media" data-i="' + i + '">' +
-                getResearchCardPreviewHtml(item, 'feed') +
+              '<div class="research-admin-site__head">' +
+                '<strong>#' + esc(item.number) + '</strong>' +
+                '<span>' + esc(item.caption || item.alt || 'Без названия') + '</span>' +
+                '<span title="Перетащите для смены порядка" style="margin-left:auto;cursor:grab;color:#888;">↕</span>' +
               '</div>' +
-              '<span class="research-admin-feed__date">' + esc(item.date || '') + '</span>';
+              '<div class="research-card-preview research-admin-site" data-i="' + i + '">' +
+                getResearchSitePreviewHtml(item) +
+              '</div>';
           } else if (listMode) {
             row.className = 'research-admin-list__card';
             row.innerHTML =
@@ -1227,21 +1447,22 @@ const base = import.meta.env.BASE_URL;
                 '<div class="research-admin-list__fields">' +
                   '<div class="research-admin-list__row">' +
                     '<label class="research-admin-list__num">№<input type="number" class="research-card-number" data-i="' + i + '" min="0" step="1" value="' + esc(item.number) + '" /></label>' +
-                    '<label class="research-admin-list__as">Режим<select class="research-card-as" data-i="' + i + '"><option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option><option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>видео</option></select></label>' +
-                    '<label class="research-admin-list__span">Ширина<select class="research-card-spanw" data-i="' + i + '"><option value="4"' + (item.spanW === 6 ? '' : ' selected') + '>4</option><option value="6"' + (item.spanW === 6 ? ' selected' : '') + '>6</option></select></label>' +
-                    '<label class="research-admin-list__grow">Src<textarea class="research-card-src" data-i="' + i + '" rows="3" placeholder="/images/research/photo.webp или Kinescope">' + esc(item.src) + '</textarea></label>' +
+                    '<label class="research-admin-list__as">Режим<select class="research-card-as" data-i="' + i + '"><option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option><option value="video"' + (item.as === 'video' ? ' selected' : '') + '>video-file</option><option value="audio"' + (item.as === 'audio' ? ' selected' : '') + '>audio</option><option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>embed</option></select></label>' +
+                    '<label class="research-admin-list__span">Обложка<select class="research-card-cover" data-i="' + i + '">' + researchCoverSizeOptionsHtml(item) + '</select></label>' +
+                    '<label class="research-admin-list__grow">Src<textarea class="research-card-src" data-i="' + i + '" rows="3" placeholder="/images/research/photo.webp, /videos/research/clip.mp4, /audio/research/track.mp3 или iframe">' + esc(item.src) + '</textarea></label>' +
                     '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '" style="padding:0.28rem 0.5rem;font-size:0.78rem;">Загрузить</button>' +
-                    '<input type="file" class="research-card-file" data-i="' + i + '" accept=".webp,.gif,.jpg,.jpeg,.png,image/webp,image/gif,image/jpeg,image/png" style="display:none;" />' +
+                    '<input type="file" class="research-card-file" data-i="' + i + '" accept=".webp,.gif,.jpg,.jpeg,.png,.mp4,.webm,.mp3,.wav,.ogg,.m4a,.aac,image/webp,image/gif,image/jpeg,image/png,video/mp4,video/webm,audio/*" style="display:none;" />' +
                   '</div>' +
                   '<div class="research-admin-list__row">' +
-                    '<label class="research-admin-list__grow">Подпись<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="Название" /></label>' +
-                    '<label class="research-admin-list__grow">Alt<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание" /></label>' +
+                    '<label class="research-admin-list__grow">Название<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="Плашка «+»" /></label>' +
+                    '<label class="research-admin-list__grow">Ссылка<input type="url" class="research-card-link" data-i="' + i + '" value="' + esc(researchLinkUrl(item)) + '" placeholder="https://…" /></label>' +
+                    '<label class="research-admin-list__grow">Alt<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Fallback" /></label>' +
                     '<label class="research-admin-list__date">Дата<input type="text" class="research-card-date" data-i="' + i + '" value="' + esc(item.date || '') + '" placeholder="06.2026" /></label>' +
                   '</div>' +
                   '<div class="research-admin-list__row">' +
-                    '<label class="research-admin-list__grow">Текст<textarea class="research-card-text" data-i="' + i + '" rows="2" placeholder="Текст справа в просмотре">' + esc(item.text || '') + '</textarea></label>' +
+                    '<label class="research-admin-list__grow">Описание<textarea class="research-card-text" data-i="' + i + '" rows="2" placeholder="Плашка описания (по центру, 12px)">' + esc(item.text || '') + '</textarea></label>' +
                   '</div>' +
-                  getResearchLinksHtml(item, i) +
+                  '<div class="research-admin-list__screens-label">Внутренние экраны (1–3 фото/видео на экран)</div>' +
                   getResearchExtrasHtml(item, i) +
                 '</div>' +
                 '<div class="research-admin-list__actions">' +
@@ -1265,30 +1486,32 @@ const base = import.meta.env.BASE_URL;
               '<label>Режим</label>' +
               '<select class="research-card-as" data-i="' + i + '">' +
                 '<option value="image"' + (item.as === 'image' ? ' selected' : '') + '>image</option>' +
-                '<option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>видео</option>' +
+                '<option value="video"' + (item.as === 'video' ? ' selected' : '') + '>video-file</option>' +
+                '<option value="audio"' + (item.as === 'audio' ? ' selected' : '') + '>audio</option>' +
+                '<option value="kinescope"' + (item.as === 'kinescope' ? ' selected' : '') + '>embed</option>' +
               '</select>' +
-              '<label>Макс. ширина (колонки)</label>' +
-              '<select class="research-card-spanw" data-i="' + i + '">' +
-                '<option value="4"' + (item.spanW === 6 ? '' : ' selected') + '>4</option>' +
-                '<option value="6"' + (item.spanW === 6 ? ' selected' : '') + '>6</option>' +
+              '<label>Обложка</label>' +
+              '<select class="research-card-cover" data-i="' + i + '">' +
+                researchCoverSizeOptionsHtml(item) +
               '</select>' +
-              '<label>Источник (src)</label>' +
-              '<input type="text" class="research-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/research/photo.webp или ссылка/iframe Kinescope" />' +
+              '<label>Обложка (src)</label>' +
+              '<input type="text" class="research-card-src" data-i="' + i + '" value="' + esc(item.src) + '" placeholder="/images/research/photo.webp, /videos/research/clip.mp4, /audio/research/track.mp3 или iframe" />' +
               '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">' +
-                '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '">Загрузить WebP/GIF в GitHub</button>' +
-                '<input type="file" class="research-card-file" data-i="' + i + '" accept=".webp,.gif,.jpg,.jpeg,.png,image/webp,image/gif,image/jpeg,image/png" style="display:none;" />' +
+                '<button type="button" class="secondary upload-research-card-image" data-i="' + i + '">Загрузить файл в GitHub</button>' +
+                '<input type="file" class="research-card-file" data-i="' + i + '" accept=".webp,.gif,.jpg,.jpeg,.png,.mp4,.webm,.mp3,.wav,.ogg,.m4a,.aac,image/webp,image/gif,image/jpeg,image/png,video/mp4,video/webm,audio/*" style="display:none;" />' +
               '</div>' +
               '<label>Alt</label>' +
-              '<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание изображения" />' +
-              '<label>Подпись (caption)</label>' +
-              '<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="Подпись в полноэкранном просмотре" />' +
+              '<input type="text" class="research-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Fallback / a11y" />' +
+              '<label>Название (плашка «+»)</label>' +
+              '<input type="text" class="research-card-caption" data-i="' + i + '" value="' + esc(item.caption || '') + '" placeholder="ItakFilm" />' +
+              '<label>Ссылка (в названии)</label>' +
+              '<input type="url" class="research-card-link" data-i="' + i + '" value="' + esc(researchLinkUrl(item)) + '" placeholder="https://…" />' +
               '<label>Дата (MM.YYYY)</label>' +
               '<input type="text" class="research-card-date" data-i="' + i + '" value="' + esc(item.date || '') + '" placeholder="06.2026" />' +
-              '<label>Доп. фото</label>' +
+              '<label>Описание (плашка «+»)</label>' +
+              '<textarea class="research-card-text" data-i="' + i + '" rows="3" placeholder="Текст описания">' + esc(item.text || '') + '</textarea>' +
+              '<label>Внутренние экраны (1–3 фото/видео на экран)</label>' +
               getResearchExtrasHtml(item, i) +
-              '<label>Текст</label>' +
-              '<textarea class="research-card-text" data-i="' + i + '" rows="3" placeholder="Текст в колонках 5–12">' + esc(item.text || '') + '</textarea>' +
-              getResearchLinksHtml(item, i) +
               '<div class="research-card-preview" data-i="' + i + '" style="margin-top:0.25rem;border:1px solid #eee;background:#f8f8f8;aspect-ratio:1/1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
                 getResearchCardPreviewHtml(item, 'grid') +
               '</div>' +
@@ -1297,14 +1520,14 @@ const base = import.meta.env.BASE_URL;
           wrapper.appendChild(row);
 
           row.addEventListener('mousedown', function (e) {
-            const interactive = e.target.closest('button, input, textarea, select, label, .research-admin-extras, .research-admin-extra, .research-admin-links, .link-row');
+            const interactive = e.target.closest('button, input, textarea, select, label, .research-admin-extras, .research-admin-screen, .research-admin-media, .research-admin-links, .link-row');
             row.setAttribute('draggable', interactive ? 'false' : 'true');
           });
           row.addEventListener('mouseup', function () {
             row.setAttribute('draggable', 'true');
           });
           row.addEventListener('dragstart', function (e) {
-            if (e.target.closest('button, input, textarea, select, label, .research-admin-extras, .research-admin-extra, .research-admin-links, .link-row')) {
+            if (e.target.closest('button, input, textarea, select, label, .research-admin-extras, .research-admin-screen, .research-admin-media, .research-admin-links, .link-row')) {
               e.preventDefault();
               return;
             }
@@ -1350,21 +1573,25 @@ const base = import.meta.env.BASE_URL;
         container.querySelectorAll('.research-card-as').forEach(function (sel) {
           sel.addEventListener('change', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
-            researchCards[i].as = this.value === 'kinescope' ? 'kinescope' : 'image';
+            researchCards[i].as = this.value === 'kinescope' ? 'kinescope'
+              : this.value === 'video' ? 'video'
+              : this.value === 'audio' ? 'audio'
+              : 'image';
             updateResearchCardPreview(i);
           });
         });
-        container.querySelectorAll('.research-card-spanw').forEach(function (sel) {
+        container.querySelectorAll('.research-card-cover').forEach(function (sel) {
           sel.addEventListener('change', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
-            researchCards[i].spanW = this.value === '6' ? 6 : 4;
+            applyResearchCoverSize(researchCards[i], this.value);
+            updateResearchCardPreview(i);
           });
         });
         container.querySelectorAll('.research-card-src').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             let value = this.value.trim();
-            if (researchCards[i].as !== 'kinescope') {
+            if (researchCards[i].as === 'image') {
               value = toWebpPath(value);
               if (value !== this.value.trim()) this.value = value;
             }
@@ -1382,6 +1609,15 @@ const base = import.meta.env.BASE_URL;
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             researchCards[i].caption = this.value;
+            if (researchLinkUrl(researchCards[i])) setResearchLinkUrl(researchCards[i], researchLinkUrl(researchCards[i]));
+            updateResearchCardPreview(i);
+          });
+        });
+        container.querySelectorAll('.research-card-link').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            setResearchLinkUrl(researchCards[i], this.value);
+            updateResearchCardPreview(i);
           });
         });
         container.querySelectorAll('.research-card-date').forEach(function (inp) {
@@ -1391,39 +1627,99 @@ const base = import.meta.env.BASE_URL;
             const m = v.match(/^(\d{1,2})[.\-/](\d{4})$/);
             researchCards[i].date = m ? String(m[1]).padStart(2, '0') + '.' + m[2] : '';
             this.value = researchCards[i].date || '';
+            updateResearchCardPreview(i);
           });
         });
-        container.querySelectorAll('.research-card-extra-src').forEach(function (inp) {
+        function ensureResearchScreens(i) {
+          if (!Array.isArray(researchCards[i].screens)) researchCards[i].screens = [];
+          return researchCards[i].screens;
+        }
+
+        function ensureResearchScreenItem(i, j, k) {
+          const screens = ensureResearchScreens(i);
+          if (!screens[j]) screens[j] = { items: [] };
+          if (!Array.isArray(screens[j].items)) screens[j].items = [];
+          if (!screens[j].items[k]) screens[j].items[k] = { src: '', as: 'image' };
+          return screens[j].items[k];
+        }
+
+        container.querySelectorAll('.research-card-screen-src').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             const j = parseInt(this.getAttribute('data-j'), 10);
-            if (!Array.isArray(researchCards[i].sideSrcs)) researchCards[i].sideSrcs = [];
-            const value = toWebpPath(this.value.trim());
-            if (value !== this.value.trim()) this.value = value;
-            researchCards[i].sideSrcs[j] = value;
-            const wrap = this.closest('.research-admin-extra');
+            const k = parseInt(this.getAttribute('data-k'), 10);
+            const item = ensureResearchScreenItem(i, j, k);
+            let value = this.value.trim();
+            const as = researchMediaAsFromSrc(value, item.as);
+            if (as === 'image') {
+              value = toWebpPath(value);
+              if (value !== this.value.trim()) this.value = value;
+            }
+            item.src = value;
+            item.as = as;
+            const wrap = this.closest('.research-admin-media');
             const thumb = wrap ? wrap.querySelector('.research-admin-extra__thumb') : null;
-            if (thumb) thumb.innerHTML = value ? '<img src="' + esc(value) + '" alt="" />' : '<span style="font-size:11px;color:#888;">Нет файла</span>';
+            if (thumb) thumb.innerHTML = researchScreenThumbHtml(item);
+            const asSel = wrap ? wrap.querySelector('.research-card-screen-as') : null;
+            if (asSel) asSel.value = as;
           });
         });
-        container.querySelectorAll('.add-research-card-extra').forEach(function (btn) {
+        container.querySelectorAll('.research-card-screen-as').forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const j = parseInt(this.getAttribute('data-j'), 10);
+            const k = parseInt(this.getAttribute('data-k'), 10);
+            const item = ensureResearchScreenItem(i, j, k);
+            item.as = this.value === 'video' ? 'video' : 'image';
+            const wrap = this.closest('.research-admin-media');
+            const thumb = wrap ? wrap.querySelector('.research-admin-extra__thumb') : null;
+            if (thumb) thumb.innerHTML = researchScreenThumbHtml(item);
+          });
+        });
+        container.querySelectorAll('.add-research-card-screen').forEach(function (btn) {
           btn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             const i = parseInt(this.getAttribute('data-i'), 10);
-            if (!Array.isArray(researchCards[i].sideSrcs)) researchCards[i].sideSrcs = [];
-            researchCards[i].sideSrcs.push('');
+            ensureResearchScreens(i).push({ items: [{ src: '', as: 'image' }] });
             renderResearchCardsEditor();
           });
         });
-        container.querySelectorAll('.remove-research-card-extra').forEach(function (btn) {
+        container.querySelectorAll('.remove-research-card-screen').forEach(function (btn) {
           btn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             const i = parseInt(this.getAttribute('data-i'), 10);
             const j = parseInt(this.getAttribute('data-j'), 10);
-            if (!Array.isArray(researchCards[i].sideSrcs)) return;
-            researchCards[i].sideSrcs.splice(j, 1);
+            ensureResearchScreens(i).splice(j, 1);
+            renderResearchCardsEditor();
+          });
+        });
+        container.querySelectorAll('.add-research-card-screen-item').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const j = parseInt(this.getAttribute('data-j'), 10);
+            const screens = ensureResearchScreens(i);
+            if (!screens[j]) screens[j] = { items: [] };
+            if (!Array.isArray(screens[j].items)) screens[j].items = [];
+            if (screens[j].items.length >= 3) return;
+            screens[j].items.push({ src: '', as: 'image' });
+            renderResearchCardsEditor();
+          });
+        });
+        container.querySelectorAll('.remove-research-card-screen-item').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const i = parseInt(this.getAttribute('data-i'), 10);
+            const j = parseInt(this.getAttribute('data-j'), 10);
+            const k = parseInt(this.getAttribute('data-k'), 10);
+            const screens = ensureResearchScreens(i);
+            if (!screens[j] || !Array.isArray(screens[j].items)) return;
+            screens[j].items.splice(k, 1);
+            if (!screens[j].items.length) screens.splice(j, 1);
             renderResearchCardsEditor();
           });
         });
@@ -1431,45 +1727,7 @@ const base = import.meta.env.BASE_URL;
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             researchCards[i].text = this.value;
-          });
-        });
-        container.querySelectorAll('.research-card-link-text').forEach(function (inp) {
-          inp.addEventListener('input', function () {
-            const i = parseInt(this.getAttribute('data-i'), 10);
-            const j = parseInt(this.getAttribute('data-j'), 10);
-            if (!Array.isArray(researchCards[i].links)) researchCards[i].links = [];
-            if (!researchCards[i].links[j]) researchCards[i].links[j] = { text: '', url: '' };
-            researchCards[i].links[j].text = this.value;
-          });
-        });
-        container.querySelectorAll('.research-card-link-url').forEach(function (inp) {
-          inp.addEventListener('input', function () {
-            const i = parseInt(this.getAttribute('data-i'), 10);
-            const j = parseInt(this.getAttribute('data-j'), 10);
-            if (!Array.isArray(researchCards[i].links)) researchCards[i].links = [];
-            if (!researchCards[i].links[j]) researchCards[i].links[j] = { text: '', url: '' };
-            researchCards[i].links[j].url = this.value;
-          });
-        });
-        container.querySelectorAll('.add-research-card-link').forEach(function (btn) {
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const i = parseInt(this.getAttribute('data-i'), 10);
-            if (!Array.isArray(researchCards[i].links)) researchCards[i].links = [];
-            researchCards[i].links.push({ text: '', url: '' });
-            renderResearchCardsEditor();
-          });
-        });
-        container.querySelectorAll('.remove-research-card-link').forEach(function (btn) {
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const i = parseInt(this.getAttribute('data-i'), 10);
-            const j = parseInt(this.getAttribute('data-j'), 10);
-            if (!Array.isArray(researchCards[i].links)) return;
-            researchCards[i].links.splice(j, 1);
-            renderResearchCardsEditor();
+            updateResearchCardPreview(i);
           });
         });
         container.querySelectorAll('.delete-research-card').forEach(function (btn) {
@@ -1494,28 +1752,26 @@ const base = import.meta.env.BASE_URL;
             const file = this.files && this.files[0];
             if (!file) return;
             const statusEl = document.getElementById('researchCardsGhStatus');
-            if (researchCards[i].as === 'kinescope') {
-              statusEl.textContent = 'Для видео вставьте ссылку или iframe в поле src.';
-              statusEl.className = 'status';
-              this.value = '';
-              return;
-            }
+            const video = isVideoFile(file);
+            const audio = isAudioFile(file);
             const lowerName = (file.name || '').toLowerCase();
             const allowedByMime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type);
             const allowedByExt = /\.(jpe?g|png|gif|webp)$/.test(lowerName);
-            if (!allowedByMime && !allowedByExt) {
-              statusEl.textContent = 'Можно загружать WebP, GIF, JPG или PNG.';
+            if (!video && !audio && !allowedByMime && !allowedByExt) {
+              statusEl.textContent = 'Можно загружать WebP, GIF, JPG, PNG, mp4/webm или audio (mp3/wav/ogg/m4a).';
               statusEl.className = 'status err';
               this.value = '';
               return;
             }
             try {
-              statusEl.textContent = 'Загрузка картинки в GitHub…';
+              statusEl.textContent = audio ? 'Загрузка аудио в GitHub…' : (video ? 'Загрузка видео в GitHub…' : 'Загрузка картинки в GitHub…');
               statusEl.className = 'status';
-              const uploadedPath = await uploadFileToGitHub(file, 'public/images/research', 'Upload research image from admin');
+              const targetDir = audio ? 'public/audio/research' : (video ? 'public/videos/research' : 'public/images/research');
+              const commitMessage = audio ? 'Upload research audio from admin' : (video ? 'Upload research video from admin' : 'Upload research image from admin');
+              const uploadedPath = await uploadFileToGitHub(file, targetDir, commitMessage, statusEl);
               researchCards[i].src = uploadedPath;
-              researchCards[i].as = 'image';
-              statusEl.textContent = 'Картинка загружена: ' + uploadedPath;
+              researchCards[i].as = audio ? 'audio' : (video ? 'video' : 'image');
+              statusEl.textContent = (audio ? 'Аудио загружено: ' : (video ? 'Видео загружено: ' : 'Картинка загружена: ')) + uploadedPath;
               statusEl.className = 'status ok';
               renderResearchCardsEditor();
             } catch (e) {
@@ -1526,39 +1782,49 @@ const base = import.meta.env.BASE_URL;
             }
           });
         });
-        container.querySelectorAll('.upload-research-card-extra').forEach(function (btn) {
+        container.querySelectorAll('.upload-research-card-screen').forEach(function (btn) {
           btn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             const i = this.getAttribute('data-i');
             const j = this.getAttribute('data-j');
-            const input = container.querySelector('.research-card-extra-file[data-i="' + i + '"][data-j="' + j + '"]');
+            const k = this.getAttribute('data-k');
+            const input = container.querySelector('.research-card-screen-file[data-i="' + i + '"][data-j="' + j + '"][data-k="' + k + '"]');
             if (input) input.click();
           });
         });
-        container.querySelectorAll('.research-card-extra-file').forEach(function (inp) {
+        container.querySelectorAll('.research-card-screen-file').forEach(function (inp) {
           inp.addEventListener('change', async function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
             const j = parseInt(this.getAttribute('data-j'), 10);
+            const k = parseInt(this.getAttribute('data-k'), 10);
             const file = this.files && this.files[0];
             if (!file) return;
             const statusEl = document.getElementById('researchCardsGhStatus');
+            const video = isVideoFile(file);
             const lowerName = (file.name || '').toLowerCase();
             const allowedByMime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type);
             const allowedByExt = /\.(jpe?g|png|gif|webp)$/.test(lowerName);
-            if (!allowedByMime && !allowedByExt) {
-              statusEl.textContent = 'Можно загружать WebP, GIF, JPG или PNG.';
+            if (!video && !allowedByMime && !allowedByExt) {
+              statusEl.textContent = 'Можно загружать WebP, GIF, JPG, PNG или mp4/webm.';
               statusEl.className = 'status err';
               this.value = '';
               return;
             }
             try {
-              statusEl.textContent = 'Загрузка доп. фото в GitHub…';
+              statusEl.textContent = video ? 'Загрузка видео экрана…' : 'Загрузка фото экрана…';
               statusEl.className = 'status';
-              const uploadedPath = await uploadFileToGitHub(file, 'public/images/research', 'Upload research extra image from admin');
-              if (!Array.isArray(researchCards[i].sideSrcs)) researchCards[i].sideSrcs = [];
-              researchCards[i].sideSrcs[j] = uploadedPath;
-              statusEl.textContent = 'Фото загружено: ' + uploadedPath;
+              const targetDir = video ? 'public/videos/research' : 'public/images/research';
+              const uploadedPath = await uploadFileToGitHub(
+                file,
+                targetDir,
+                video ? 'Upload research screen video from admin' : 'Upload research screen image from admin',
+                statusEl
+              );
+              const item = ensureResearchScreenItem(i, j, k);
+              item.src = uploadedPath;
+              item.as = video ? 'video' : 'image';
+              statusEl.textContent = (video ? 'Видео загружено: ' : 'Фото загружено: ') + uploadedPath;
               statusEl.className = 'status ok';
               renderResearchCardsEditor();
             } catch (e) {
@@ -1592,12 +1858,24 @@ const base = import.meta.env.BASE_URL;
       }
 
       function sanitizeFileName(name) {
-        const safe = String(name || 'image')
+        const safe = String(name || 'file')
           .toLowerCase()
           .replace(/[^a-z0-9._-]+/g, '-')
           .replace(/-+/g, '-')
           .replace(/^-|-$/g, '');
-        return safe || 'image';
+        return safe || 'file';
+      }
+
+      function isVideoFile(file) {
+        const name = String(file && file.name || '').toLowerCase();
+        const type = String(file && file.type || '').toLowerCase();
+        return type === 'video/mp4' || type === 'video/webm' || /\.(mp4|webm)$/.test(name);
+      }
+
+      function isAudioFile(file) {
+        const name = String(file && file.name || '').toLowerCase();
+        const type = String(file && file.type || '').toLowerCase();
+        return type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|aac)$/.test(name);
       }
 
       async function maybeConvertUploadToWebp(file) {
@@ -1634,14 +1912,17 @@ const base = import.meta.env.BASE_URL;
         return btoa(binary);
       }
 
-      async function uploadFileToGitHub(file, targetDir, commitMessage) {
-        const statusEl = document.getElementById('homeMediaCardsGhStatus');
-        const gh = parseRepoAndToken(statusEl);
+      async function uploadFileToGitHub(file, targetDir, commitMessage, statusEl) {
+        const gh = parseRepoAndToken(statusEl || document.getElementById('ghStatus'));
         if (!gh) throw new Error('Нет данных GitHub');
+
+        if ((isVideoFile(file) || isAudioFile(file)) && file.size > 40 * 1024 * 1024) {
+          throw new Error('Файл больше 40 МБ. Сожмите и загрузите снова.');
+        }
 
         sessionStorage.setItem(REPO_KEY, gh.repo);
 
-        const uploadFile = await maybeConvertUploadToWebp(file);
+        const uploadFile = (isVideoFile(file) || isAudioFile(file)) ? file : await maybeConvertUploadToWebp(file);
         const fileName = Date.now() + '-' + sanitizeFileName(uploadFile.name);
         const contentPath = targetDir + '/' + fileName;
         const apiUrl = 'https://api.github.com/repos/' + gh.owner + '/' + gh.repoName + '/contents/' + contentPath;
@@ -1877,8 +2158,10 @@ const base = import.meta.env.BASE_URL;
           date: '',
           text: '',
           links: [],
+          screens: [],
           sideSrcs: [],
-          spanW: 4
+          spanW: 4,
+          coverFit: 'cols'
         });
         sortResearchCards();
         renderResearchCardsEditor();
@@ -1907,7 +2190,7 @@ const base = import.meta.env.BASE_URL;
           }
           sortResearchCards();
           const payload = researchCards
-            .map(function (card, i) { return normalizeResearchCard(card, i + 1); })
+            .map(function (card, i) { return serializeResearchCard(card, i + 1); })
             .filter(function (card) { return Boolean(card.src && card.src.trim()); });
           const content = JSON.stringify(payload, null, 2);
           const body = {
@@ -1940,7 +2223,7 @@ const base = import.meta.env.BASE_URL;
       document.getElementById('downloadResearchCardsBtn').addEventListener('click', function () {
         sortResearchCards();
         const payload = researchCards
-          .map(function (card, i) { return normalizeResearchCard(card, i + 1); })
+          .map(function (card, i) { return serializeResearchCard(card, i + 1); })
           .filter(function (card) { return Boolean(card.src && card.src.trim()); });
         const json = JSON.stringify(payload, null, 2);
         const blob = new Blob([json], { type: 'application/json' });

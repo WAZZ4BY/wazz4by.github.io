@@ -1,0 +1,1108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InnerPageHeader from '../components/InnerPageHeader.astro';
+import { getResearchCards } from '../lib/researchCards';
+
+const researchItems = getResearchCards();
+const base = import.meta.env.BASE_URL;
+
+function resolveMediaSrc(src: string): string {
+  const value = String(src || '').trim();
+  if (!value || value.startsWith('http') || value.startsWith('<')) return value;
+  return `${base}${value.replace(/^\//, '')}`;
+}
+
+function extractIframeSrc(raw: string): string {
+  const s = String(raw || '').trim();
+  const m = s.match(/<iframe[\s\S]*?src=["']([^"']+)["']/i);
+  if (m && m[1]) return m[1].trim();
+  return s;
+}
+
+function getKinescopeEmbedUrl(raw: string): string {
+  const s = extractIframeSrc(raw);
+  if (!s) return '';
+  if (/kinescope\.(io|ru)\/embed\//.test(s)) return s;
+  const m = s.match(/https?:\/\/(?:kinescope\.(?:io|ru))\/([^/?#]+)/);
+  if (m && m[1]) return `https://kinescope.io/embed/${m[1]}?autoplay=1&muted=1`;
+  return s;
+}
+---
+
+<BaseLayout title="Research" variant="inner" hideHeader>
+  <div class="inner-page">
+    <div class="inner-page__grid">
+      <InnerPageHeader activePage="research" />
+      <main class="inner-page__main research-page research-stage">
+        <div class="research-grid">
+          {researchItems.map((item) => {
+            const label = item.caption || item.alt || `Research ${item.number}`;
+            const mediaSrc = resolveMediaSrc(item.src);
+            const maxW = item.spanW === 6 ? 6 : 4;
+            return (
+            <div
+              class:list={[
+                'research-card',
+                maxW === 6 && 'research-card--w6',
+              ]}
+              data-media-type={item.as || 'image'}
+              data-media-src={mediaSrc}
+              data-media-alt={item.alt || label}
+              data-media-caption={item.caption || ''}
+              data-media-date={item.date || ''}
+              data-media-text={item.text || ''}
+              data-media-links={JSON.stringify(item.links || [])}
+              data-side-srcs={item.sideSrcs.filter(Boolean).map((src) => resolveMediaSrc(src)).join('\n')}
+              data-ar={item.aspectRatio}
+              data-span-w={maxW}
+            >
+              <span class="research-card__name">{item.caption || ''}</span>
+              <div class="research-card__image" style={`--research-ar: ${item.aspectRatio}`}>
+                {item.as === 'kinescope' ? (
+                  <iframe
+                    src={getKinescopeEmbedUrl(item.src)}
+                    title={item.alt || label}
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen
+                  />
+                ) : item.as === 'video' ? (
+                  <video
+                    src={mediaSrc}
+                    muted
+                    playsinline
+                    loop
+                    autoplay
+                    preload="metadata"
+                  />
+                ) : item.as === 'audio' ? (
+                  <div class="research-card__audio" aria-hidden="true">
+                    <span class="research-card__audio-icon">♪</span>
+                    <span class="research-card__audio-label">{item.caption || item.alt || 'Audio'}</span>
+                  </div>
+                ) : (
+                  <img src={mediaSrc} alt={item.alt || label} />
+                )}
+                <button class="research-card__open" type="button" aria-label={`Open ${label}`} />
+              </div>
+              <span class="research-card__date">{item.date || ''}</span>
+            </div>
+            );
+          })}
+        </div>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  :global(.research-lightbox-open .page-header),
+  :global(.research-lightbox-open .mobile-global-nav) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  :global(.research-lightbox-open .research-stage) {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  :global(.research-card__open) {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  :global(.research-card__open:focus),
+  :global(.research-card__open:focus-visible) {
+    outline: none;
+    box-shadow: none;
+  }
+
+  :global(body.research-lightbox-open) {
+    overflow: hidden;
+  }
+
+  :global(.research-lightbox) {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: none;
+    background: transparent;
+    padding: var(--page-header-height) 0 40px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  :global(.research-lightbox.is-open) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    background-color: rgba(251, 251, 251, 0.55);
+  }
+
+  :global(.research-lightbox__layout) {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    row-gap: 28px;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 var(--grid-margin);
+    box-sizing: border-box;
+    overflow: visible;
+  }
+
+  :global(.research-lightbox__stage) {
+    grid-column: 1 / -1;
+    min-width: 0;
+    overflow: visible;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  :global(.research-lightbox__stage.is-dragging) {
+    cursor: grabbing;
+  }
+
+  :global(.research-lightbox__track) {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--grid-gutter);
+    will-change: transform;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :global(.research-lightbox__stage.is-dragging .research-lightbox__track) {
+    transition: none;
+  }
+
+  :global(.research-lightbox__slide) {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    line-height: 0;
+    overflow: hidden;
+  }
+
+  :global(.research-lightbox__hit) {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  :global(.research-lightbox__slide img),
+  :global(.research-lightbox__slide iframe),
+  :global(.research-lightbox__slide video) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border: 0;
+    background: #000;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  :global(.research-lightbox__slide video),
+  :global(.research-lightbox__slide audio) {
+    pointer-events: auto;
+  }
+
+  :global(.research-lightbox__slide--audio) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111;
+    min-height: 120px;
+  }
+
+  :global(.research-lightbox__slide audio) {
+    display: block;
+    width: min(100%, 720px);
+    margin: 0 auto;
+  }
+
+  :global(.research-card__audio) {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #111;
+    color: #fff;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  :global(.research-card__audio-icon) {
+    font-size: 28px;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  :global(.research-card__audio-label) {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.research-lightbox__close:focus),
+  :global(.research-lightbox__close:focus-visible) {
+    outline: none;
+    box-shadow: none;
+  }
+
+  :global(.research-lightbox__info) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    row-gap: 6px;
+    align-items: start;
+  }
+
+  :global(.research-lightbox__label),
+  :global(.research-lightbox__value),
+  :global(.research-lightbox__text) {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 16pt;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #000;
+  }
+
+  :global(.research-lightbox__label--name) { grid-column: 1; grid-row: 1; }
+  :global(.research-lightbox__value--name) { grid-column: 2 / 5; grid-row: 1; }
+  :global(.research-lightbox__label--date) { grid-column: 1; grid-row: 2; }
+  :global(.research-lightbox__value--date) { grid-column: 2 / 5; grid-row: 2; }
+  :global(.research-lightbox__copy) {
+    grid-column: 5 / 13;
+    grid-row: 1 / span 4;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  :global(.research-lightbox__text) {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  :global(.research-lightbox__links) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  :global(.research-lightbox__links a) {
+    font-family: 'SuisseIntl', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #B29893;
+    text-decoration: none;
+    word-break: break-word;
+  }
+  :global(.research-lightbox__links a:hover) {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 1280px) {
+    :global(.research-lightbox__text) {
+      font-size: 14pt;
+    }
+
+    :global(.research-lightbox__links a) {
+      font-size: 14pt;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    :global(.research-lightbox__layout) {
+      row-gap: 20px;
+    }
+
+    :global(.research-lightbox__info) {
+      row-gap: 8px;
+    }
+
+    :global(.research-lightbox__copy) {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      margin-top: 12px;
+    }
+
+    :global(.research-lightbox__value--name),
+    :global(.research-lightbox__value--date) {
+      grid-column: 4 / 8;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :global(.research-lightbox) {
+      padding-top: calc(var(--page-header-height) + 12px);
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    :global(body.research-lightbox-open .research-lightbox__close) {
+      mix-blend-mode: normal;
+    }
+
+    :global(body.research-lightbox-open .research-lightbox__close-line) {
+      background: #000;
+    }
+
+    :global(.research-lightbox__label),
+    :global(.research-lightbox__value) {
+      font-size: 14px;
+    }
+
+    :global(.research-lightbox__text) {
+      font-size: 14pt;
+    }
+
+    :global(.research-lightbox__copy) {
+      margin-top: 16px;
+      gap: 8px;
+    }
+  }
+
+  :global(.research-lightbox__bar) {
+    display: none;
+    pointer-events: none;
+  }
+
+  :global(body.research-lightbox-open .research-lightbox__bar) {
+    display: block;
+  }
+
+  :global(.research-lightbox__close) {
+    position: fixed;
+    top: var(--corner-control-top);
+    right: var(--corner-control-inset);
+    z-index: 1301;
+    width: 24px;
+    height: var(--corner-control-height);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    mix-blend-mode: difference;
+  }
+
+  :global(.research-lightbox__close-label) {
+    display: none;
+  }
+
+  :global(.research-lightbox__close-icon) {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: var(--corner-control-height);
+  }
+
+  :global(.research-lightbox__close::before) {
+    content: '';
+    position: absolute;
+    inset: -16px;
+  }
+
+  :global(.research-lightbox__close-line) {
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: var(--corner-control-line-height);
+    background: #ffffff;
+    border-radius: 0;
+    top: calc((var(--corner-control-height) - var(--corner-control-line-height)) / 2);
+  }
+
+  :global(.research-lightbox__close-line:first-child) {
+    transform: rotate(45deg);
+  }
+
+  :global(.research-lightbox__close-line:last-child) {
+    transform: rotate(-45deg);
+  }
+
+  @media (min-width: 769px) {
+    :global(.research-lightbox__close) {
+      width: auto;
+      height: auto;
+    }
+
+    :global(.research-lightbox__close::before) {
+      display: none;
+    }
+
+    :global(.research-lightbox__close-label) {
+      display: inline;
+      font-family: 'SuisseIntl', sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1.2;
+      color: #ffffff;
+      text-align: right;
+    }
+
+    :global(.research-lightbox__close-icon) {
+      display: none;
+    }
+  }
+
+</style>
+
+<script>
+  (function () {
+    function extractIframeSrc(raw) {
+      const s = String(raw || '').trim();
+      const m = s.match(/<iframe[\s\S]*?src=["']([^"']+)["']/i);
+      if (m && m[1]) return m[1].trim();
+      return s;
+    }
+
+    function getKinescopeEmbedUrl(raw, withSound) {
+      const s = extractIframeSrc(raw);
+      if (!s) return '';
+      function tuneUrl(url) {
+        try {
+          const u = new URL(url);
+          u.searchParams.set('autoplay', '1');
+          if (withSound) {
+            u.searchParams.delete('muted');
+            u.searchParams.delete('mute');
+            u.searchParams.set('muted', '0');
+          } else {
+            u.searchParams.set('muted', '1');
+          }
+          return u.toString();
+        } catch (_) {
+          return url;
+        }
+      }
+      if (/kinescope\.(io|ru)\/embed\//.test(s)) {
+        return tuneUrl(s);
+      }
+      const m = s.match(/https?:\/\/(?:kinescope\.(?:io|ru))\/([^/?#]+)/);
+      if (m && m[1]) return tuneUrl('https://kinescope.io/embed/' + m[1]);
+      return s;
+    }
+
+    const grid = document.querySelector('.research-grid');
+    const sourceCards = Array.from(document.querySelectorAll('.research-card'));
+    if (!grid || sourceCards.length === 0) return;
+
+    const loopCount = sourceCards.length;
+    sourceCards.forEach(function (card, i) {
+      card.setAttribute('data-loop-index', String(i));
+      card.setAttribute('data-loop-copy', '1');
+    });
+
+    const beforeFrag = document.createDocumentFragment();
+    const afterFrag = document.createDocumentFragment();
+    sourceCards.forEach(function (card, i) {
+      const before = card.cloneNode(true);
+      before.setAttribute('data-loop-copy', '0');
+      beforeFrag.appendChild(before);
+      const after = card.cloneNode(true);
+      after.setAttribute('data-loop-copy', '2');
+      afterFrag.appendChild(after);
+    });
+    grid.insertBefore(beforeFrag, sourceCards[0]);
+    grid.appendChild(afterFrag);
+
+    const cards = Array.from(grid.querySelectorAll('.research-card'));
+    let activeIndex = -1;
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pool = [];
+    for (let i = 0; i < loopCount; i++) {
+      pool[i] = [0, 1, 2].map(function (copy) {
+        return grid.querySelector('.research-card[data-loop-copy="' + copy + '"][data-loop-index="' + i + '"]');
+      });
+    }
+
+    const aspects = [];
+    const maxSpans = [];
+    for (let i = 0; i < loopCount; i++) {
+      const raw = parseFloat(pool[i][1].getAttribute('data-ar') || '');
+      aspects[i] = raw > 0.05 ? raw : 1;
+      maxSpans[i] = pool[i][1].getAttribute('data-span-w') === '6' ? 6 : 4;
+    }
+
+    const spacer = document.createElement('div');
+    spacer.className = 'research-scroll-spacer';
+    grid.insertBefore(spacer, grid.firstChild);
+
+    let ticking = false;
+    let isJumping = false;
+    let didPlaceMiddle = false;
+
+    function gridCols() {
+      const v = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--grid-cols'), 10);
+      return v > 0 ? v : 12;
+    }
+
+    function spanPx(cols, gridWidth, gutter) {
+      const total = gridCols();
+      const col = (gridWidth - (total - 1) * gutter) / total;
+      return cols * col + Math.max(0, cols - 1) * gutter;
+    }
+
+    function researchMinCols() {
+      const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--research-min-cols'));
+      return v > 0 ? v : 2;
+    }
+
+    function researchMaxCols(original) {
+      const override = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--research-max-cols'));
+      if (override > 0) return override;
+      const total = gridCols();
+      if (total === 6) return original >= 6 ? 6 : 4;
+      return original;
+    }
+
+    function metrics() {
+      const gridWidth = grid.clientWidth;
+      const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-gutter')) || 20;
+      const minW = spanPx(researchMinCols(), gridWidth, gutter);
+      const maxWs = maxSpans.map(function (cols) {
+        return spanPx(researchMaxCols(cols), gridWidth, gutter);
+      });
+      const minHeights = aspects.map(function (ar) {
+        return minW / ar;
+      });
+      const period = minHeights.reduce(function (sum, h) {
+        return sum + h;
+      }, 0);
+      return { minW: minW, maxWs: maxWs, minHeights: minHeights, period: period };
+    }
+
+    function widthFor(centerY, viewCenter, falloff, minW, maxW) {
+      if (reduceMotion) return maxW;
+      const dist = (centerY - viewCenter) / falloff;
+      const t = Math.exp(-2.2 * dist * dist);
+      return minW + (maxW - minW) * t;
+    }
+
+    function layout() {
+      const m = metrics();
+      if (m.period < 80) return;
+      spacer.style.height = m.period * 3 + 'px';
+
+      if (!didPlaceMiddle) {
+        didPlaceMiddle = true;
+        isJumping = true;
+        const gridTopDoc = window.scrollY + grid.getBoundingClientRect().top;
+        const startTape = m.period + m.minHeights[0] / 2;
+        window.scrollTo(0, Math.max(0, gridTopDoc + startTape - window.innerHeight / 2));
+        isJumping = false;
+      }
+
+      let y = window.scrollY;
+      const gridTopDoc = y + grid.getBoundingClientRect().top;
+      if (y + window.innerHeight / 2 < gridTopDoc + m.period) {
+        isJumping = true;
+        window.scrollTo(0, y + m.period);
+        isJumping = false;
+        y += m.period;
+      } else if (y + window.innerHeight / 2 >= gridTopDoc + m.period * 2) {
+        isJumping = true;
+        window.scrollTo(0, y - m.period);
+        isJumping = false;
+        y -= m.period;
+      }
+
+      const viewCenter = window.innerHeight / 2;
+      const falloff = Math.max(180, window.innerHeight * 0.45);
+      const gridRect = grid.getBoundingClientRect();
+      const posInSpacer = y + viewCenter - (y + gridRect.top);
+      const tapePos = ((posInSpacer % m.period) + m.period) % m.period;
+
+      let acc = 0;
+      let centerIdx = 0;
+      let frac = 0.5;
+      for (let i = 0; i < loopCount; i++) {
+        const next = acc + m.minHeights[i];
+        if (tapePos < next || i === loopCount - 1) {
+          centerIdx = i;
+          frac = m.minHeights[i] > 0 ? (tapePos - acc) / m.minHeights[i] : 0.5;
+          frac = Math.min(1, Math.max(0, frac));
+          break;
+        }
+        acc = next;
+      }
+
+      let hC = m.maxWs[centerIdx] / aspects[centerIdx];
+      let visualCenter = viewCenter;
+      for (let it = 0; it < 8; it++) {
+        visualCenter = viewCenter + (0.5 - frac) * hC;
+        hC = widthFor(visualCenter, viewCenter, falloff, m.minW, m.maxWs[centerIdx]) / aspects[centerIdx];
+      }
+      visualCenter = viewCenter + (0.5 - frac) * hC;
+
+      const slots = [];
+      slots.push({
+        idx: centerIdx,
+        top: visualCenter - hC / 2,
+        h: hC,
+        w: hC * aspects[centerIdx]
+      });
+
+      let cursor = visualCenter - hC / 2;
+      for (let k = 1; k < loopCount; k++) {
+        const idx = (centerIdx - k + loopCount * 8) % loopCount;
+        let h = m.minW / aspects[idx];
+        for (let it = 0; it < 6; it++) {
+          const mid = cursor - h / 2;
+          h = widthFor(mid, viewCenter, falloff, m.minW, m.maxWs[idx]) / aspects[idx];
+        }
+        cursor -= h;
+        slots.push({ idx: idx, top: cursor, h: h, w: h * aspects[idx] });
+        if (cursor < -window.innerHeight) break;
+      }
+
+      cursor = visualCenter + hC / 2;
+      for (let k = 1; k < loopCount; k++) {
+        const idx = (centerIdx + k) % loopCount;
+        let h = m.minW / aspects[idx];
+        for (let it = 0; it < 6; it++) {
+          const mid = cursor + h / 2;
+          h = widthFor(mid, viewCenter, falloff, m.minW, m.maxWs[idx]) / aspects[idx];
+        }
+        slots.push({ idx: idx, top: cursor, h: h, w: h * aspects[idx] });
+        cursor += h;
+        if (cursor > window.innerHeight * 2) break;
+      }
+
+      const used = {};
+      cards.forEach(function (card) {
+        card.style.visibility = 'hidden';
+        card.style.pointerEvents = 'none';
+      });
+
+      const viewPad = window.innerHeight;
+      slots.forEach(function (slot) {
+        if (slot.top + slot.h < -viewPad || slot.top > viewPad * 2) return;
+        const copy = used[slot.idx] || 0;
+        used[slot.idx] = copy + 1;
+        const card = pool[slot.idx][Math.min(copy, 2)];
+        if (!card) return;
+        const wrap = card.querySelector('.research-card__image');
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'auto';
+        card.style.height = slot.h + 'px';
+        card.style.transform = 'translateY(' + (slot.top - gridRect.top) + 'px)';
+        card.style.zIndex = String(1000 - Math.round(Math.abs(slot.top + slot.h / 2 - viewCenter)));
+        if (wrap) {
+          wrap.style.width = slot.w + 'px';
+          wrap.style.transform = 'none';
+        }
+      });
+    }
+
+    function requestUpdate() {
+      if (isJumping || ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        if (document.body.classList.contains('research-lightbox-open')) return;
+        layout();
+      });
+    }
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    requestUpdate();
+
+    const lightbox = document.createElement('div');
+    lightbox.className = 'research-lightbox';
+    lightbox.innerHTML =
+      '<div class="research-lightbox__layout">' +
+        '<div class="research-lightbox__stage">' +
+          '<div class="research-lightbox__track"></div>' +
+        '</div>' +
+        '<div class="research-lightbox__info">' +
+          '<span class="research-lightbox__label research-lightbox__label--name">Name</span>' +
+          '<span class="research-lightbox__value research-lightbox__value--name"></span>' +
+          '<span class="research-lightbox__label research-lightbox__label--date">Date</span>' +
+          '<span class="research-lightbox__value research-lightbox__value--date"></span>' +
+          '<div class="research-lightbox__copy">' +
+            '<p class="research-lightbox__text"></p>' +
+            '<div class="research-lightbox__links"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(lightbox);
+
+    const closeBar = document.createElement('div');
+    closeBar.className = 'research-lightbox__bar';
+    closeBar.innerHTML = '<button class="research-lightbox__close" type="button" aria-label="Close"><span class="research-lightbox__close-label">Close</span><span class="research-lightbox__close-icon" aria-hidden="true"><span class="research-lightbox__close-line"></span><span class="research-lightbox__close-line"></span></span></button>';
+    document.body.appendChild(closeBar);
+
+    const closeBtn = closeBar.querySelector('.research-lightbox__close');
+    const layoutEl = lightbox.querySelector('.research-lightbox__layout');
+    const stage = lightbox.querySelector('.research-lightbox__stage');
+    const track = lightbox.querySelector('.research-lightbox__track');
+    const nameEl = lightbox.querySelector('.research-lightbox__value--name');
+    const dateEl = lightbox.querySelector('.research-lightbox__value--date');
+    const textEl = lightbox.querySelector('.research-lightbox__text');
+    const linksEl = lightbox.querySelector('.research-lightbox__links');
+    let slideIndex = 0;
+    let slideItems = [];
+    let currentTranslate = 0;
+    let dragState = null;
+    let skipClick = false;
+
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      document.body.classList.remove('research-lightbox-open');
+      track.innerHTML = '';
+      slideItems = [];
+      slideIndex = 0;
+      currentTranslate = 0;
+      dragState = null;
+      activeIndex = -1;
+      const focused = document.activeElement;
+      if (focused && typeof focused.blur === 'function') focused.blur();
+    }
+
+    function cardByIndex(index) {
+      const safeIndex = ((index % loopCount) + loopCount) % loopCount;
+      return grid.querySelector('.research-card[data-loop-copy="1"][data-loop-index="' + safeIndex + '"]') || cards[safeIndex];
+    }
+
+    function gridMetrics() {
+      const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-gutter')) || 20;
+      const styles = getComputedStyle(layoutEl);
+      const pad = (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+      const width = Math.max(0, layoutEl.clientWidth - pad);
+      const col = (width - 11 * gutter) / 12;
+      return {
+        gutter: gutter,
+        width: width,
+        col: col,
+        col2: col + gutter,
+        nine: 9 * col + 8 * gutter
+      };
+    }
+
+    function slideAspect(slide) {
+      const ar = parseFloat(slide.getAttribute('data-ar') || '');
+      if (ar > 0.05) return ar;
+      const img = slide.querySelector('img');
+      if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        return img.naturalWidth / img.naturalHeight;
+      }
+      return 16 / 9;
+    }
+
+    function slideGeometry() {
+      const slides = Array.from(track.querySelectorAll('.research-lightbox__slide'));
+      const metrics = gridMetrics();
+      if (!slides.length) return { slides: slides, metrics: metrics, positions: [], widths: [], height: 0 };
+      const maxH = Math.max(180, window.innerHeight - 220);
+      const firstAr = slideAspect(slides[0]);
+      let height = metrics.nine / firstAr;
+      if (height > maxH) height = maxH;
+      const positions = [];
+      const widths = [];
+      let x = 0;
+      slides.forEach(function (slide, i) {
+        const ar = slideAspect(slide);
+        const width = i === 0 ? Math.min(metrics.nine, height * ar) : height * ar;
+        positions[i] = x;
+        widths[i] = width;
+        x += width + metrics.gutter;
+      });
+      return { slides: slides, metrics: metrics, positions: positions, widths: widths, height: height };
+    }
+
+    function snapTranslate(index, geo) {
+      const last = geo.slides.length - 1;
+      if (last < 0) return 0;
+      const i = Math.max(0, Math.min(last, index));
+      const trackEnd = geo.positions[last] + geo.widths[last];
+      const minX = geo.metrics.width - trackEnd;
+      const maxX = 0;
+      let x = 0;
+      if (i === last) x = minX;
+      else if (i > 0) x = geo.metrics.col2 - geo.positions[i];
+      if (minX >= maxX) return 0;
+      return Math.max(minX, Math.min(maxX, x));
+    }
+
+    function applyTranslate(x, withTransition) {
+      currentTranslate = x;
+      if (withTransition === false) track.style.transition = 'none';
+      else track.style.transition = '';
+      track.style.transform = 'translateX(' + x + 'px)';
+    }
+
+    function layoutTrack(keepTranslate) {
+      if (!lightbox.classList.contains('is-open')) return;
+      const geo = slideGeometry();
+      if (!geo.slides.length) return;
+      geo.slides.forEach(function (slide, i) {
+        slide.style.width = geo.widths[i] + 'px';
+        slide.style.height = geo.height + 'px';
+        slide.classList.toggle('is-active', i === slideIndex);
+      });
+      if (!keepTranslate) applyTranslate(snapTranslate(slideIndex, geo));
+    }
+
+    function nearestSlide(translateX) {
+      const geo = slideGeometry();
+      let best = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < geo.slides.length; i++) {
+        const dist = Math.abs(translateX - snapTranslate(i, geo));
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      }
+      return best;
+    }
+
+    function setSlideIndex(index, instant) {
+      if (!slideItems.length) return;
+      slideIndex = Math.max(0, Math.min(slideItems.length - 1, index));
+      const geo = slideGeometry();
+      geo.slides.forEach(function (slide, i) {
+        slide.classList.toggle('is-active', i === slideIndex);
+      });
+      applyTranslate(snapTranslate(slideIndex, geo), instant ? false : undefined);
+    }
+
+    function renderLightboxByIndex(index) {
+      const safeIndex = ((index % loopCount) + loopCount) % loopCount;
+      const card = cardByIndex(safeIndex);
+      const type = card.getAttribute('data-media-type') || 'image';
+      const src = card.getAttribute('data-media-src') || '';
+      const alt = card.getAttribute('data-media-alt') || '';
+      const caption = card.getAttribute('data-media-caption') || '';
+      const date = card.getAttribute('data-media-date') || '';
+      const text = card.getAttribute('data-media-text') || '';
+      let links = [];
+      try {
+        const parsed = JSON.parse(card.getAttribute('data-media-links') || '[]');
+        if (Array.isArray(parsed)) links = parsed;
+      } catch (_) {}
+      const sideSrcs = (card.getAttribute('data-side-srcs') || '').split('\n').map(function (item) {
+        return item.trim();
+      }).filter(Boolean);
+      const ar = parseFloat(card.getAttribute('data-ar') || '') || 1;
+
+      if (!src) return;
+      activeIndex = safeIndex;
+      slideIndex = 0;
+      slideItems = [{ type: type, src: src, ar: ar, alt: alt }].concat(sideSrcs.map(function (sideSrc) {
+        return { type: 'image', src: sideSrc, ar: 0, alt: '' };
+      }));
+      track.innerHTML = '';
+
+      slideItems.forEach(function (item, i) {
+        const slide = document.createElement('button');
+        slide.type = 'button';
+        slide.className = 'research-lightbox__slide' + (i === 0 ? ' is-active' : '');
+        slide.setAttribute('data-ar', String(item.ar || ''));
+        if (item.type === 'kinescope') {
+          const iframe = document.createElement('iframe');
+          iframe.src = getKinescopeEmbedUrl(item.src, true);
+          iframe.title = item.alt || 'Research video';
+          iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+          iframe.setAttribute('allowfullscreen', '');
+          iframe.setAttribute('loading', 'lazy');
+          slide.appendChild(iframe);
+          const hit = document.createElement('span');
+          hit.className = 'research-lightbox__hit';
+          slide.appendChild(hit);
+        } else if (item.type === 'video') {
+          const video = document.createElement('video');
+          video.src = item.src;
+          video.setAttribute('playsinline', '');
+          video.muted = true;
+          video.loop = true;
+          video.controls = true;
+          video.autoplay = true;
+          video.preload = 'metadata';
+          video.addEventListener('loadedmetadata', function () {
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+              slide.setAttribute('data-ar', String(video.videoWidth / video.videoHeight));
+            }
+            layoutTrack();
+          });
+          slide.appendChild(video);
+        } else if (item.type === 'audio') {
+          slide.classList.add('research-lightbox__slide--audio');
+          slide.setAttribute('data-ar', String(item.ar || 16 / 5));
+          const audio = document.createElement('audio');
+          audio.src = item.src;
+          audio.controls = true;
+          audio.preload = 'metadata';
+          audio.setAttribute('controlsList', 'nodownload');
+          slide.appendChild(audio);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.src;
+          img.alt = item.alt || '';
+          img.loading = 'eager';
+          img.addEventListener('load', function () {
+            if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+              slide.setAttribute('data-ar', String(img.naturalWidth / img.naturalHeight));
+            }
+            layoutTrack();
+          });
+          slide.appendChild(img);
+        }
+        track.appendChild(slide);
+      });
+
+      nameEl.textContent = caption;
+      dateEl.textContent = date;
+      textEl.textContent = text;
+      linksEl.innerHTML = '';
+      links.forEach(function (item) {
+        const textValue = item && typeof item.text === 'string' ? item.text.trim() : '';
+        const urlValue = item && typeof item.url === 'string' ? item.url.trim() : '';
+        if (!textValue && !urlValue) return;
+        const a = document.createElement('a');
+        a.href = urlValue || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = textValue || urlValue;
+        linksEl.appendChild(a);
+      });
+      requestAnimationFrame(layoutTrack);
+    }
+
+    function openLightbox(index) {
+      renderLightboxByIndex(index);
+      lightbox.classList.add('is-open');
+      document.body.classList.add('research-lightbox-open');
+      requestAnimationFrame(layoutTrack);
+    }
+
+    function nextSlide() {
+      if (activeIndex < 0) return;
+      if (slideIndex < slideItems.length - 1) {
+        setSlideIndex(slideIndex + 1);
+        return;
+      }
+      renderLightboxByIndex(activeIndex + 1);
+    }
+
+    function prevSlide() {
+      if (activeIndex < 0) return;
+      if (slideIndex > 0) {
+        setSlideIndex(slideIndex - 1);
+        return;
+      }
+      renderLightboxByIndex(activeIndex - 1);
+    }
+
+    cards.forEach(function (card) {
+      const trigger = card.querySelector('.research-card__open');
+      if (!trigger) return;
+      trigger.addEventListener('click', function () {
+        openLightbox(Number(card.getAttribute('data-loop-index')) || 0);
+      });
+    });
+
+    closeBtn.addEventListener('click', closeLightbox);
+    window.addEventListener('resize', function () { layoutTrack(); });
+
+    function clickSlideAt(clientX, clientY) {
+      const el = document.elementFromPoint(clientX, clientY);
+      const slide = el && el.closest ? el.closest('.research-lightbox__slide') : null;
+      if (!slide || slide.closest('.research-lightbox__track') !== track) return;
+      const i = Array.prototype.indexOf.call(track.children, slide);
+      if (i < 0) return;
+      if (i === slideIndex) nextSlide();
+      else setSlideIndex(i);
+    }
+
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.button != null && e.button !== 0) return;
+      if (!slideItems.length) return;
+      dragState = {
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        origin: currentTranslate,
+        moved: false,
+        captured: false
+      };
+    });
+
+    stage.addEventListener('pointermove', function (e) {
+      if (!dragState || dragState.pointerId !== e.pointerId) return;
+      const dx = e.clientX - dragState.startX;
+      if (Math.abs(dx) > 6) {
+        dragState.moved = true;
+        if (!dragState.captured) {
+          dragState.captured = true;
+          stage.classList.add('is-dragging');
+          try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+      }
+      if (!dragState.moved) return;
+      const geo = slideGeometry();
+      const minX = snapTranslate(geo.slides.length - 1, geo);
+      const maxX = snapTranslate(0, geo);
+      let next = dragState.origin + dx;
+      if (next > maxX) next = maxX + (next - maxX) * 0.28;
+      if (next < minX) next = minX + (next - minX) * 0.28;
+      applyTranslate(next, false);
+    });
+
+    function endDrag(e) {
+      if (!dragState || (e && dragState.pointerId !== e.pointerId)) return;
+      const moved = dragState.moved;
+      const x = currentTranslate;
+      const clickX = e ? e.clientX : dragState.startX;
+      const clickY = e ? e.clientY : dragState.startY;
+      dragState = null;
+      stage.classList.remove('is-dragging');
+      track.style.transition = '';
+      if (moved) {
+        skipClick = true;
+        setSlideIndex(nearestSlide(x));
+        return;
+      }
+      clickSlideAt(clickX, clickY);
+    }
+
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    window.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeLightbox();
+      if (!lightbox.classList.contains('is-open')) return;
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    });
+  })();
+</script>

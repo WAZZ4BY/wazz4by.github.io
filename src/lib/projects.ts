@@ -5,7 +5,7 @@ export type ContentBlock =
   | { type: 'image'; src: string }
   | { type: 'text'; content: string }
   | { type: 'split'; left: string; right: string }
-  | { type: 'video'; embed: string };
+  | { type: 'video'; embed?: string; src?: string };
 
 export interface ProjectAward {
   place: string;
@@ -73,7 +73,8 @@ export function getProjectBySlug(slug: string): Project | undefined {
 /** Медиа для hover-эффекта на Index: изображения и видео из contentBlocks. */
 export type ProjectHoverMedia =
   | { type: 'image'; src: string }
-  | { type: 'video'; embed: string };
+  | { type: 'video'; embed: string }
+  | { type: 'video-file'; src: string };
 
 /** Все уникальные URL картинок проекта (images + contentBlocks image/split). */
 export function getProjectImageUrls(p: Project): string[] {
@@ -92,11 +93,17 @@ export function getProjectHoverMedia(p: Project): ProjectHoverMedia[] {
     seen.add('img:' + s);
     out.push({ type: 'image', src: s });
   };
-  const addVideo = (embed: string) => {
+  const addVideoEmbed = (embed: string) => {
     const s = (embed || '').trim();
     if (!s || seen.has('vid:' + s)) return;
     seen.add('vid:' + s);
     out.push({ type: 'video', embed: s });
+  };
+  const addVideoFile = (src: string) => {
+    const s = (src || '').trim();
+    if (!s || seen.has('vidfile:' + s)) return;
+    seen.add('vidfile:' + s);
+    out.push({ type: 'video-file', src: s });
   };
   for (const src of p.images || []) addImage(src);
   for (const block of p.contentBlocks || []) {
@@ -105,7 +112,11 @@ export function getProjectHoverMedia(p: Project): ProjectHoverMedia[] {
       addImage(block.left);
       addImage(block.right);
     }
-    if (block.type === 'video') addVideo(block.embed);
+    if (block.type === 'video') {
+      const fileSrc = (block.src || '').trim();
+      if (fileSrc) addVideoFile(fileSrc);
+      else addVideoEmbed(block.embed || '');
+    }
   }
   return out;
 }
