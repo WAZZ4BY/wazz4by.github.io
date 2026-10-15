@@ -67,7 +67,7 @@ const payload = researchItems.map((item, index) => {
 });
 ---
 
-<BaseLayout title="Research" variant="inner" hideHeader bodyClass="page-research" themeColor="#000000">
+<BaseLayout title="Research" variant="inner" hideHeader bodyClass="page-research" themeColor="#000000" mobileThemeColor="">
   <InnerPageHeader activePage="research" />
   <div class="rf-stage" aria-live="polite">
     {researchItems.map((item, index) => {
@@ -294,24 +294,48 @@ const payload = researchItems.map((item, index) => {
   }
 
   @media (max-width: 768px) {
-    /* Cover the strips Safari leaves under the status bar and around its toolbar.
-       100dvh stops at the chrome; 100lvh + safe area matches the Index backdrop. */
+    /* Safari paints html/body and fixed layers into the status bar and toolbar.
+       Index avoids that because the document itself scrolls. Match that here:
+       no root overflow lock, no fixed full-screen plate, stage lives in the body. */
     html:has(body.page-research),
     body.page-research {
-      height: 100lvh;
+      background: transparent !important;
+      background-color: transparent !important;
+      background-attachment: scroll !important;
+      overflow: visible;
+      height: auto;
       min-height: 100lvh;
-      min-height: -webkit-fill-available;
+      overscroll-behavior: auto;
+      touch-action: pan-y;
+    }
+
+    html:has(body.page-research)::before,
+    body.page-research .page-backdrop {
+      display: none !important;
+    }
+
+    body.page-research {
+      position: relative;
     }
 
     .rf-stage,
     .rf-inner {
-      top: var(--rf-screen-top, calc(env(safe-area-inset-top, 0px) * -1));
-      right: 0;
+      position: relative;
+      inset: auto;
+      top: auto;
+      right: auto;
       bottom: auto;
-      left: 0;
+      left: auto;
       width: 100%;
-      height: var(--rf-screen, calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)));
-      min-height: var(--rf-screen, calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)));
+      height: 100lvh;
+      min-height: 100lvh;
+    }
+
+    .rf-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 4;
     }
 
     /* Feed covers: full-bleed like home — no letterbox bars */
@@ -1977,6 +2001,7 @@ const payload = researchItems.map((item, index) => {
     }, { passive: true });
 
     window.addEventListener('touchmove', function (e) {
+      if (window.matchMedia('(max-width: 768px)').matches) return;
       e.preventDefault();
     }, { passive: false });
 
@@ -1996,40 +2021,6 @@ const payload = researchItems.map((item, index) => {
         if (screenEl) layoutInnerScreen(screenEl);
       }
     });
-
-    function lockResearchChrome() {
-      if (!window.matchMedia('(max-width: 768px)').matches) {
-        document.documentElement.style.removeProperty('--rf-screen');
-        document.documentElement.style.removeProperty('--rf-screen-top');
-        return;
-      }
-      const probe = document.createElement('div');
-      probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);height:100lvh;';
-      document.body.appendChild(probe);
-      const cs = getComputedStyle(probe);
-      const safeTop = parseFloat(cs.paddingTop) || 0;
-      const safeBottom = parseFloat(cs.paddingBottom) || 0;
-      const large = probe.getBoundingClientRect().height || window.innerHeight;
-      probe.remove();
-      const vv = window.visualViewport;
-      const offsetTop = vv ? vv.offsetTop || 0 : 0;
-      const visible = vv ? offsetTop + vv.height : window.innerHeight;
-      const top = Math.max(safeTop, offsetTop);
-      const bottom = Math.max(safeBottom, Math.max(large, window.innerHeight, visible) - visible);
-      const height = Math.max(large, window.innerHeight, visible) + top + bottom;
-      document.documentElement.style.setProperty('--rf-screen-top', (-top) + 'px');
-      document.documentElement.style.setProperty('--rf-screen', height + 'px');
-    }
-
-    lockResearchChrome();
-    window.addEventListener('resize', lockResearchChrome);
-    window.addEventListener('orientationchange', function () {
-      window.setTimeout(lockResearchChrome, 150);
-    });
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', lockResearchChrome);
-      window.visualViewport.addEventListener('scroll', lockResearchChrome);
-    }
 
     syncInfo();
     layoutCovers();
