@@ -68,6 +68,10 @@ const payload = researchItems.map((item, index) => {
 ---
 
 <BaseLayout title="Research" variant="inner" hideHeader bodyClass="page-research" themeColor="#000000" mobileThemeColor="">
+  <!-- Safari 26 tints the status bar and toolbar from a fixed edge layer.
+       No background here keeps those bars transparent so the cover shows through. -->
+  <div class="rf-chrome" aria-hidden="true"></div>
+  <div class="rf-chrome rf-chrome--bottom" aria-hidden="true"></div>
   <InnerPageHeader activePage="research" />
   <div class="rf-stage" aria-live="polite">
     {researchItems.map((item, index) => {
@@ -299,8 +303,6 @@ const payload = researchItems.map((item, index) => {
        no root overflow lock, no fixed full-screen plate, stage lives in the body. */
     html:has(body.page-research),
     body.page-research {
-      background: transparent !important;
-      background-color: transparent !important;
       background-attachment: scroll !important;
       overflow: visible;
       height: auto;
@@ -312,6 +314,22 @@ const payload = researchItems.map((item, index) => {
     html:has(body.page-research)::before,
     body.page-research .page-backdrop {
       display: none !important;
+    }
+
+    .rf-chrome {
+      position: fixed;
+      z-index: 20;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 8px;
+      pointer-events: none;
+      background: none;
+    }
+
+    .rf-chrome--bottom {
+      top: auto;
+      bottom: 0;
     }
 
     body.page-research {
