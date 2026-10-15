@@ -294,7 +294,7 @@ const payload = researchItems.map((item, index) => {
   }
 
   @media (max-width: 768px) {
-    /* Feed covers: full-bleed — no side gutters / letterboxing into stage bg */
+    /* Feed covers: full-bleed like home — no letterbox bars */
     .rf-slide {
       padding: 0;
     }
@@ -309,12 +309,6 @@ const payload = researchItems.map((item, index) => {
       justify-self: stretch;
       align-self: stretch;
       overflow: hidden;
-    }
-
-    .rf-slide__frame img,
-    .rf-slide__frame video,
-    .rf-slide__frame iframe {
-      object-fit: cover;
     }
 
     .rf-slide[data-kind='audio'] {
@@ -370,6 +364,15 @@ const payload = researchItems.map((item, index) => {
     background: transparent;
     -webkit-user-drag: none;
     user-select: none;
+  }
+
+  /* Must come after the contain rule — otherwise mobile covers letterbox again */
+  @media (max-width: 768px) {
+    .rf-slide__frame img,
+    .rf-slide__frame video,
+    .rf-slide__frame iframe {
+      object-fit: cover;
+    }
   }
 
   .rf-slide__frame iframe,
