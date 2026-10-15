@@ -39,12 +39,19 @@ function coverLayout(item: ResearchCard): { fit: 'height' | 'cols'; span: CoverS
 
 const payload = researchItems.map((item, index) => {
   const link = (item.links || []).find((entry) => entry && String(entry.url || '').trim());
+  const cover = coverLayout(item);
   return {
     index,
     name: item.caption || '',
     date: item.date || '',
     text: item.text || '',
     url: link ? String(link.url).trim() : '',
+    as: item.as || 'image',
+    coverSrc: resolveMediaSrc(item.src),
+    coverSrcMobile: item.srcMobile ? resolveMediaSrc(item.srcMobile) : '',
+    audioSrc: item.audioSrc ? resolveMediaSrc(item.audioSrc) : '',
+    span: cover.span,
+    fit: cover.fit,
     screens: item.screens.map((screen) => ({
       items: screen.items.map((entry) => ({
         src: resolveMediaSrc(entry.src),
@@ -66,18 +73,21 @@ const payload = researchItems.map((item, index) => {
     {researchItems.map((item, index) => {
       const label = item.caption || item.alt || `Research ${item.number}`;
       const mediaSrc = resolveMediaSrc(item.src);
+      const mediaSrcMobile = item.srcMobile ? resolveMediaSrc(item.srcMobile) : mediaSrc;
       const cover = coverLayout(item);
-      const canOpen = item.screens.length > 0;
+      const isAudio = item.as === 'audio';
+      const canOpen = isAudio ? Boolean(item.audioSrc) : item.screens.length > 0;
       return (
         <article
           class="rf-slide"
           data-index={index}
           data-fit={cover.fit}
           data-span={cover.span}
-          style={`--ar: ${item.aspectRatio}; --rf-span: ${cover.span};`}
+          data-kind={isAudio ? 'audio' : (item.as || 'image')}
+          style={`--ar: ${item.aspectRatio}; --ar-mobile: ${item.aspectRatioMobile}; --rf-span: ${cover.span};`}
           aria-label={label}
         >
-          <div class="rf-slide__frame">
+          <div class={`rf-slide__frame${isAudio ? ' rf-slide__frame--audio' : ''}`}>
             {item.as === 'kinescope' ? (
               <iframe
                 src={getKinescopeEmbedUrl(item.src)}
@@ -95,10 +105,30 @@ const payload = researchItems.map((item, index) => {
                 autoplay
                 preload="metadata"
               />
-            ) : item.as === 'audio' ? (
+            ) : isAudio ? (
               <div class="rf-slide__audio">
-                <span class="rf-slide__audio-icon" aria-hidden="true">♪</span>
-                <span class="rf-slide__audio-label">{item.caption || item.alt || 'Audio'}</span>
+                <div class="rf-slide__audio-disc">
+                  {mediaSrc || mediaSrcMobile ? (
+                    <picture>
+                      <source media="(max-width: 768px)" srcset={mediaSrcMobile} />
+                      <img src={mediaSrc || mediaSrcMobile} alt={item.alt || label} draggable="false" />
+                    </picture>
+                  ) : (
+                    <div class="rf-slide__audio-fallback" aria-hidden="true">♪</div>
+                  )}
+                  <button type="button" class="rf-blur rf-audio-play" aria-label="Play" data-playing="0">
+                    <svg class="rf-audio-play__icon rf-audio-play__icon--play" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fill="currentColor" d="M9.15 6.35c0-1.02 1.08-1.66 1.95-1.15l8.2 4.85a1.32 1.32 0 0 1 0 2.3l-8.2 4.85c-.87.51-1.95-.13-1.95-1.15V6.35z" />
+                    </svg>
+                    <svg class="rf-audio-play__icon rf-audio-play__icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                      <rect x="7" y="6" width="3.6" height="12" rx="1.6" fill="currentColor" />
+                      <rect x="13.4" y="6" width="3.6" height="12" rx="1.6" fill="currentColor" />
+                    </svg>
+                  </button>
+                </div>
+                {item.audioSrc ? (
+                  <audio src={resolveMediaSrc(item.audioSrc)} preload="metadata" loop></audio>
+                ) : null}
               </div>
             ) : (
               <img src={mediaSrc} alt={item.alt || label} draggable="false" />
@@ -265,6 +295,10 @@ const payload = researchItems.map((item, index) => {
       max-height: 100%;
       aspect-ratio: var(--ar);
     }
+
+    .rf-slide[data-kind='audio'] {
+      --ar: var(--ar-mobile, var(--ar));
+    }
   }
 
   .rf-inner__cell[data-fit='cols'] {
@@ -272,6 +306,32 @@ const payload = researchItems.map((item, index) => {
     max-width: 100%;
     max-height: 100%;
     aspect-ratio: var(--ar);
+  }
+
+  @media (max-width: 768px) {
+    /* Inner screens: fill content width between grid margins */
+    .rf-inner__cell[data-fit='cols'],
+    .rf-inner__cell[data-fit='height'] {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: 100%;
+      aspect-ratio: var(--ar);
+    }
+
+    .rf-inner__row:has(.rf-inner__cell:nth-child(2)) .rf-inner__cell {
+      width: auto;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .rf-audio-player[data-fit='cols'],
+    .rf-audio-player[data-fit='height'] {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+    }
   }
 
   .rf-slide__frame img,
@@ -322,13 +382,254 @@ const payload = researchItems.map((item, index) => {
   .rf-slide__audio {
     position: absolute;
     inset: 0;
+  }
+
+  .rf-slide__audio-disc {
+    position: absolute;
+    inset: 0;
+    background: #151515;
+  }
+
+  .rf-slide__audio-disc picture {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .rf-slide__audio-disc img,
+  .rf-audio-player__disc > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    will-change: transform;
+  }
+
+  /* Desktop: audio cover is a filled circle */
+  @media (min-width: 769px) {
+    .rf-slide[data-kind='audio'] .rf-slide__frame {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .rf-slide__audio,
+    .rf-slide__audio-disc {
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .rf-slide__audio-disc img,
+    .rf-slide__frame--audio img {
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .rf-audio-player__disc > img {
+      object-fit: cover;
+    }
+  }
+
+  /* Mobile: audio cover like other images — full height, no circle */
+  @media (max-width: 768px) {
+    .rf-slide[data-kind='audio'] .rf-slide__frame--audio {
+      border-radius: 0;
+      overflow: visible;
+    }
+
+    .rf-slide__audio,
+    .rf-slide__audio-disc {
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    .rf-slide__audio-disc img {
+      object-fit: contain;
+      border-radius: 0;
+    }
+  }
+
+  .rf-audio-player__disc.is-spinning > img,
+  .rf-audio-player__disc.is-spinning .rf-audio-player__fallback {
+    animation: rf-audio-spin 24s linear infinite;
+  }
+
+  @keyframes rf-audio-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rf-audio-player__disc.is-spinning > img,
+    .rf-audio-player__disc.is-spinning .rf-audio-player__fallback {
+      animation: none;
+    }
+  }
+
+  .rf-slide__audio-fallback {
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    background: #111;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 28px;
+    background: #151515;
+  }
+
+  .rf-slide__audio audio {
+    display: none;
+  }
+
+  .rf-audio-ring,
+  .rf-audio-ring-hit {
+    position: absolute;
+    inset: 5px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .rf-audio-ring-hit {
+    z-index: 4;
+  }
+
+  .rf-audio-ring svg,
+  .rf-audio-ring-hit svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .rf-audio-ring__track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.22);
+    stroke-width: 2;
+  }
+
+  .rf-audio-ring__progress {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1;
+    stroke-linecap: round;
+  }
+
+  .rf-audio-ring-hit .rf-audio-ring__hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 16;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+
+  .rf-audio-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 5;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
     color: #fff;
+    cursor: pointer;
+  }
+
+  .rf-audio-play:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .rf-audio-play__icon {
+    width: 14px;
+    height: 14px;
+    display: none;
+  }
+
+  .rf-audio-play[data-playing='0'] .rf-audio-play__icon--play,
+  .rf-audio-play:not([data-playing]) .rf-audio-play__icon--play {
+    display: block;
+    margin-left: 2px;
+  }
+
+  .rf-audio-play[data-playing='1'] .rf-audio-play__icon--pause {
+    display: block;
+  }
+
+  .rf-audio-play:focus,
+  .rf-audio-play:focus-visible {
+    outline: none;
+  }
+
+  .rf-inner__screen--audio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--grid-margin);
+  }
+
+  .rf-audio-player {
+    position: relative;
+    justify-self: center;
+    align-self: center;
+    line-height: 0;
+  }
+
+  .rf-audio-player[data-fit='height'] {
+    height: min(100%, 100dvh);
+    width: auto;
+    aspect-ratio: 1;
+  }
+
+  .rf-audio-player[data-fit='cols'] {
+    width: min(
+      var(--rf-w, 280px),
+      calc(
+        var(--rf-span, 4) * (100% - (var(--grid-cols) - 1) * var(--grid-gutter)) / var(--grid-cols)
+        + (var(--rf-span, 4) - 1) * var(--grid-gutter)
+      ),
+      100dvh
+    );
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1;
+  }
+
+  .rf-audio-player__disc {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #151515;
+  }
+
+  .rf-audio-player__disc > img,
+  .rf-audio-player__fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    display: block;
+    will-change: transform;
+  }
+
+  .rf-audio-player__fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 28px;
+    background: #151515;
   }
 
   .rf-inner__stage {
@@ -790,19 +1091,25 @@ const payload = researchItems.map((item, index) => {
     const projects = Array.isArray(window.__RF_DATA__) ? window.__RF_DATA__ : [];
 
     const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fadeOutMs = reduceMotion ? 0 : 420;
-    const fadeInMs = reduceMotion ? 0 : 420;
-    const fadeGapMs = reduceMotion ? 0 : 90;
+    const fadeOutMs = reduceMotion ? 0 : 270;
+    const fadeInMs = reduceMotion ? 0 : 270;
+    const fadeGapMs = reduceMotion ? 0 : 60;
     const wheelThreshold = 70;
     const swipeThreshold = 56;
 
     let current = 0;
     let screenIndex = 0;
     let innerOpen = false;
+    let audioInner = false;
     let infoOpen = false;
     let busy = false;
     let wheelAcc = 0;
     let touchY = 0;
+    let audioRaf = 0;
+    let audioSeeking = false;
+
+    const PLAY_ICON = '<svg class="rf-audio-play__icon rf-audio-play__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.15 6.35c0-1.02 1.08-1.66 1.95-1.15l8.2 4.85a1.32 1.32 0 0 1 0 2.3l-8.2 4.85c-.87.51-1.95-.13-1.95-1.15V6.35z"/></svg>';
+    const PAUSE_ICON = '<svg class="rf-audio-play__icon rf-audio-play__icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden><rect x="7" y="6" width="3.6" height="12" rx="1.6" fill="currentColor"/><rect x="13.4" y="6" width="3.6" height="12" rx="1.6" fill="currentColor"/></svg>';
 
     function gridCols() {
       const v = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--grid-cols'), 10);
@@ -855,22 +1162,313 @@ const payload = researchItems.map((item, index) => {
       });
     }
 
-    function syncVideo(slide, on) {
+    function currentAudio() {
+      const slide = slides[current];
+      return slide ? slide.querySelector('audio') : null;
+    }
+
+    function isAudioProject() {
+      const project = projects[current];
+      return Boolean(project && project.as === 'audio' && project.audioSrc);
+    }
+
+    function setPlayButtonState(btn, playing) {
+      if (!btn) return;
+      btn.setAttribute('data-playing', playing ? '1' : '0');
+      btn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    }
+
+    const AUDIO_SPIN_SEC = 24;
+
+    function getRotateDeg(el) {
+      if (!el) return 0;
+      const t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return 0;
+      const m = new DOMMatrix(t);
+      let deg = Math.atan2(m.b, m.a) * (180 / Math.PI);
+      if (deg < 0) deg += 360;
+      return deg;
+    }
+
+    function syncSpin(playing) {
+      // Spin only inside the audio player; keep angle on pause
+      if (!innerStage) return;
+      innerStage.querySelectorAll('.rf-audio-player__disc').forEach(function (disc) {
+        const targets = disc.querySelectorAll(':scope > img, :scope > .rf-audio-player__fallback');
+        targets.forEach(function (el) {
+          if (playing) {
+            const deg = getRotateDeg(el);
+            el.style.transform = '';
+            el.style.animationDelay = (-(deg / 360) * AUDIO_SPIN_SEC) + 's';
+            disc.classList.add('is-spinning');
+          } else {
+            const deg = getRotateDeg(el);
+            disc.classList.remove('is-spinning');
+            el.style.animation = 'none';
+            el.style.animationDelay = '';
+            el.style.transform = 'rotate(' + deg + 'deg)';
+            // force reflow so next play can restart animation cleanly
+            void el.offsetWidth;
+            el.style.animation = '';
+          }
+        });
+      });
+    }
+
+    function syncPlayButtons(playing) {
+      const slide = slides[current];
+      if (slide) {
+        slide.querySelectorAll('.rf-audio-play').forEach(function (btn) {
+          setPlayButtonState(btn, playing);
+        });
+      }
+      if (innerStage) {
+        innerStage.querySelectorAll('.rf-audio-play').forEach(function (btn) {
+          setPlayButtonState(btn, playing);
+        });
+      }
+      syncSpin(playing);
+    }
+
+    function audioProgress() {
+      const audio = currentAudio();
+      if (!audio || !audio.duration || !Number.isFinite(audio.duration) || audio.duration <= 0) return 0;
+      return Math.min(1, Math.max(0, audio.currentTime / audio.duration));
+    }
+
+    function setAudioRingProgress(root, progress) {
+      if (!root) return;
+      const arc = root.querySelector('.rf-audio-ring__progress');
+      if (!arc) return;
+      const r = Number(arc.getAttribute('data-r') || 47);
+      const p = Math.min(1, Math.max(0, Number(progress) || 0));
+      const c = 2 * Math.PI * r;
+      arc.style.strokeDasharray = String(c);
+      arc.style.strokeDashoffset = String(c * (1 - p));
+    }
+
+    function updateAudioRing(progress) {
+      if (!audioInner) return;
+      setAudioRingProgress(innerStage, progress);
+    }
+
+    function stopAudioRaf() {
+      if (audioRaf) {
+        cancelAnimationFrame(audioRaf);
+        audioRaf = 0;
+      }
+    }
+
+    function tickAudioRing() {
+      if (!audioInner || audioSeeking) return;
+      updateAudioRing(audioProgress());
+      const audio = currentAudio();
+      if (audio && !audio.paused) {
+        audioRaf = requestAnimationFrame(tickAudioRing);
+      } else {
+        audioRaf = 0;
+      }
+    }
+
+    function startAudioRaf() {
+      stopAudioRaf();
+      if (!audioInner) return;
+      audioRaf = requestAnimationFrame(tickAudioRing);
+    }
+
+    function playCurrentAudio() {
+      const audio = currentAudio();
+      if (!audio) return;
+      const play = audio.play();
+      if (play && typeof play.catch === 'function') {
+        play.then(function () {
+          syncPlayButtons(true);
+          startAudioRaf();
+        }).catch(function () {
+          syncPlayButtons(false);
+        });
+      } else {
+        syncPlayButtons(true);
+        startAudioRaf();
+      }
+    }
+
+    function toggleCurrentAudio() {
+      const audio = currentAudio();
+      if (!audio) return;
+      if (audio.paused) playCurrentAudio();
+      else {
+        audio.pause();
+        syncPlayButtons(false);
+        stopAudioRaf();
+        updateAudioRing(audioProgress());
+      }
+    }
+
+    function seekAudioFromEvent(e, ringSvg) {
+      const audio = currentAudio();
+      if (!audio || !ringSvg) return;
+      const rect = ringSvg.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const clientX = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      const clientY = e.clientY != null ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      let progress = (Math.atan2(clientY - cy, clientX - cx) + Math.PI / 2) / (Math.PI * 2);
+      if (progress < 0) progress += 1;
+      if (!audio.duration || !Number.isFinite(audio.duration)) return;
+      audio.currentTime = progress * audio.duration;
+      updateAudioRing(progress);
+    }
+
+    function bindAudioRing(hitEl) {
+      if (!hitEl) return;
+      const svg = hitEl.querySelector('svg') || hitEl;
+      function onDown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!audioInner || busy) return;
+        audioSeeking = true;
+        seekAudioFromEvent(e, svg);
+        function onMove(ev) {
+          ev.preventDefault();
+          seekAudioFromEvent(ev, svg);
+        }
+        function onUp() {
+          audioSeeking = false;
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onUp);
+          if (currentAudio() && !currentAudio().paused) startAudioRaf();
+        }
+        window.addEventListener('pointermove', onMove, { passive: false });
+        window.addEventListener('pointerup', onUp);
+      }
+      hitEl.addEventListener('pointerdown', onDown);
+    }
+
+    function layoutCoverAudioPlayer() {
+      const player = innerStage.querySelector('.rf-audio-player');
+      if (!player) return;
+      if (isMobileInfo()) {
+        player.style.width = '100%';
+        player.style.removeProperty('--rf-w');
+        return;
+      }
+      if (player.getAttribute('data-fit') !== 'cols') return;
+      const span = parseInt(player.getAttribute('data-span') || '4', 10);
+      const metrics = gridMetrics();
+      const maxH = window.innerHeight;
+      let w = spanWidth(span, metrics);
+      if (w > maxH) w = maxH;
+      player.style.setProperty('--rf-w', Math.round(w) + 'px');
+      player.style.width = Math.round(w) + 'px';
+    }
+
+    function buildAudioInner() {
+      const project = projects[current] || {};
+      const screenEl = document.createElement('div');
+      screenEl.className = 'rf-inner__screen rf-inner__screen--audio';
+      const player = document.createElement('div');
+      player.className = 'rf-audio-player';
+      player.setAttribute('data-fit', project.fit === 'height' ? 'height' : 'cols');
+      player.setAttribute('data-span', String(project.span || 4));
+      player.style.setProperty('--rf-span', String(project.span || 4));
+      player.style.setProperty('--ar', '1');
+
+      const disc = document.createElement('div');
+      disc.className = 'rf-audio-player__disc';
+
+      const coverUrl = (isMobileInfo() && project.coverSrcMobile)
+        ? project.coverSrcMobile
+        : (project.coverSrc || project.coverSrcMobile || '');
+      if (coverUrl) {
+        const img = document.createElement('img');
+        img.src = coverUrl;
+        img.alt = project.name || '';
+        img.draggable = false;
+        disc.appendChild(img);
+      } else {
+        const fallback = document.createElement('div');
+        fallback.className = 'rf-audio-player__fallback';
+        fallback.textContent = '♪';
+        disc.appendChild(fallback);
+      }
+
+      const ringWrap = document.createElement('div');
+      ringWrap.className = 'rf-audio-ring';
+      ringWrap.setAttribute('aria-hidden', 'true');
+      ringWrap.innerHTML =
+        '<svg viewBox="0 0 100 100">' +
+          '<circle class="rf-audio-ring__track" cx="50" cy="50" r="47" />' +
+          '<circle class="rf-audio-ring__progress" data-r="47" cx="50" cy="50" r="47" transform="rotate(-90 50 50)" />' +
+        '</svg>';
+      disc.appendChild(ringWrap);
+
+      const hit = document.createElement('div');
+      hit.className = 'rf-audio-ring-hit';
+      hit.innerHTML =
+        '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+          '<circle class="rf-audio-ring__hit" cx="50" cy="50" r="47" />' +
+        '</svg>';
+      disc.appendChild(hit);
+      bindAudioRing(hit);
+
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'rf-blur rf-audio-play';
+      playBtn.innerHTML = PLAY_ICON + PAUSE_ICON;
+      const audio = currentAudio();
+      setPlayButtonState(playBtn, Boolean(audio && !audio.paused));
+      playBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleCurrentAudio();
+      });
+      disc.appendChild(playBtn);
+
+      player.appendChild(disc);
+      screenEl.appendChild(player);
+      setAudioRingProgress(screenEl, audioProgress());
+      return screenEl;
+    }
+
+    function syncMedia(slide, on) {
       if (!slide) return;
       const video = slide.querySelector('video');
-      if (!video) return;
-      if (on) {
-        const play = video.play();
-        if (play && typeof play.catch === 'function') play.catch(function () {});
-      } else {
-        video.pause();
+      if (video) {
+        if (on) {
+          const play = video.play();
+          if (play && typeof play.catch === 'function') play.catch(function () {});
+        } else {
+          video.pause();
+        }
+      }
+      // Pause audio only when leaving the project (not when opening audio inner)
+      if (!on && !audioInner) {
+        const audio = slide.querySelector('audio');
+        if (audio) {
+          audio.pause();
+          stopAudioRaf();
+          slide.querySelectorAll('.rf-audio-play').forEach(function (btn) {
+            setPlayButtonState(btn, false);
+          });
+          slide.querySelectorAll('.rf-slide__audio-disc').forEach(function (disc) {
+            disc.classList.remove('is-spinning');
+          });
+        }
       }
     }
 
     function layoutCover(slide) {
       if (!slide || slide.getAttribute('data-fit') !== 'cols') return;
       const span = parseInt(slide.getAttribute('data-span') || '4', 10);
-      const ar = parseFloat(slide.style.getPropertyValue('--ar')) || 1;
+      let ar = parseFloat(slide.style.getPropertyValue('--ar')) || 1;
+      if (slide.getAttribute('data-kind') === 'audio') {
+        if (isMobileInfo()) {
+          ar = parseFloat(slide.style.getPropertyValue('--ar-mobile')) || ar;
+        } else {
+          ar = 1; // Desktop audio covers are circular (square)
+        }
+      }
       const metrics = gridMetrics();
       const maxH = window.innerHeight;
       let w = spanWidth(span, metrics);
@@ -890,9 +1488,11 @@ const payload = researchItems.map((item, index) => {
     function updateNav() {
       const screens = currentScreens();
       const project = projects[current] || {};
-      const canMove = innerOpen && screens.length > 1;
+      const canMove = innerOpen && !audioInner && screens.length > 1;
       prevBtn.disabled = !canMove;
       nextBtn.disabled = !canMove;
+      prevBtn.hidden = !canMove;
+      nextBtn.hidden = !canMove;
       const title = String(project.name || '').trim();
       closeName.textContent = title;
       closeName.hidden = !title;
@@ -1069,9 +1669,9 @@ const payload = researchItems.map((item, index) => {
       layoutCover(to);
       from.style.zIndex = '2';
       to.style.zIndex = '3';
-      syncVideo(to, true);
+      syncMedia(to, true);
       await animateOpacity(from, 1, 0, fadeOutMs);
-      syncVideo(from, false);
+      syncMedia(from, false);
       await wait(fadeGapMs);
       await animateOpacity(to, 0, 1, fadeInMs);
       current = target;
@@ -1106,26 +1706,52 @@ const payload = researchItems.map((item, index) => {
       busy = false;
     }
 
-    async function openInner() {
+    async function openInner(options) {
+      if (busy || innerOpen) return;
+      const startAudio = Boolean(options && options.startAudio);
+      const audioMode = isAudioProject();
       const screens = currentScreens();
-      if (busy || innerOpen || !screens.length) return;
+      if (!audioMode && !screens.length) return;
       busy = true;
       wheelAcc = 0;
       closeInfo();
       const cover = slides[current];
       screenIndex = 0;
+      audioInner = audioMode;
       inner.hidden = false;
       inner.classList.add('is-open');
       document.body.classList.add('rf-inner-open');
-      const first = mountInnerScreen(0);
-      await animateOpacity(cover, 1, 0, fadeOutMs);
-      syncVideo(cover, false);
-      await wait(fadeGapMs);
+      let first;
+      if (audioMode) {
+        innerStage.innerHTML = '';
+        first = buildAudioInner();
+        innerStage.appendChild(first);
+        layoutCoverAudioPlayer();
+        // Audio: instant cut, no fade
+        cover.style.opacity = '0';
+        cover.style.visibility = 'hidden';
+        first.style.opacity = '1';
+        first.style.visibility = 'visible';
+      } else {
+        first = mountInnerScreen(0);
+        await animateOpacity(cover, 1, 0, fadeOutMs);
+        syncMedia(cover, false);
+        await wait(fadeGapMs);
+      }
       innerOpen = true;
       nav.hidden = false;
       nav.classList.add('is-open');
       updateNav();
-      await animateOpacity(first, 0, 1, fadeInMs);
+      if (!audioMode) await animateOpacity(first, 0, 1, fadeInMs);
+      if (audioMode) {
+        updateAudioRing(audioProgress());
+        if (startAudio) playCurrentAudio();
+        else {
+          const audio = currentAudio();
+          syncPlayButtons(Boolean(audio && !audio.paused));
+          if (audio && !audio.paused) startAudioRaf();
+        }
+      }
       busy = false;
     }
 
@@ -1133,20 +1759,45 @@ const payload = researchItems.map((item, index) => {
       if (busy || !innerOpen) return;
       busy = true;
       wheelAcc = 0;
+      stopAudioRaf();
       const screenEl = innerStage.querySelector('.rf-inner__screen');
       const cover = slides[current];
+      const wasAudio = audioInner;
       nav.classList.remove('is-open');
       nav.hidden = true;
-      await animateOpacity(screenEl, 1, 0, fadeOutMs);
-      await wait(fadeGapMs);
+      if (wasAudio) {
+        // Audio: instant cut, no fade
+        if (screenEl) {
+          screenEl.style.opacity = '0';
+          screenEl.style.visibility = 'hidden';
+        }
+      } else {
+        await animateOpacity(screenEl, 1, 0, fadeOutMs);
+        await wait(fadeGapMs);
+      }
       inner.classList.remove('is-open');
       inner.hidden = true;
       innerStage.innerHTML = '';
       document.body.classList.remove('rf-inner-open');
       layoutCover(cover);
-      syncVideo(cover, true);
-      await animateOpacity(cover, 0, 1, fadeInMs);
+      if (!wasAudio) syncMedia(cover, true);
+      else {
+        const audio = currentAudio();
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+        stopAudioRaf();
+        syncPlayButtons(false);
+      }
+      if (wasAudio) {
+        cover.style.opacity = '1';
+        cover.style.visibility = 'visible';
+      } else {
+        await animateOpacity(cover, 0, 1, fadeInMs);
+      }
       innerOpen = false;
+      audioInner = false;
       screenIndex = 0;
       busy = false;
     }
@@ -1154,6 +1805,7 @@ const payload = researchItems.map((item, index) => {
     function onIntent(dir) {
       if (busy) return;
       if (innerOpen) {
+        if (audioInner) return;
         goScreen(screenIndex + dir);
         return;
       }
@@ -1175,12 +1827,22 @@ const payload = researchItems.map((item, index) => {
 
     slides.forEach(function (slide) {
       const open = slide.querySelector('.rf-slide__open');
-      if (!open) return;
-      open.addEventListener('click', function (e) {
-        e.preventDefault();
-        const index = Number(slide.getAttribute('data-index')) || 0;
-        if (index !== current || busy || innerOpen) return;
-        openInner();
+      if (open) {
+        open.addEventListener('click', function (e) {
+          e.preventDefault();
+          const index = Number(slide.getAttribute('data-index')) || 0;
+          if (index !== current || busy || innerOpen) return;
+          openInner({ startAudio: slide.getAttribute('data-kind') === 'audio' });
+        });
+      }
+      slide.querySelectorAll('.rf-audio-play').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const index = Number(slide.getAttribute('data-index')) || 0;
+          if (index !== current || busy || innerOpen) return;
+          openInner({ startAudio: true });
+        });
       });
     });
 
@@ -1264,8 +1926,11 @@ const payload = researchItems.map((item, index) => {
     window.addEventListener('resize', function () {
       layoutCovers();
       syncInfo();
-      const screenEl = innerStage.querySelector('.rf-inner__screen');
-      if (screenEl) layoutInnerScreen(screenEl);
+      if (audioInner) layoutCoverAudioPlayer();
+      else {
+        const screenEl = innerStage.querySelector('.rf-inner__screen');
+        if (screenEl) layoutInnerScreen(screenEl);
+      }
     });
 
     syncInfo();
@@ -1273,7 +1938,7 @@ const payload = researchItems.map((item, index) => {
     slides.forEach(function (slide, i) {
       slide.style.opacity = i === 0 ? '1' : '0';
       slide.style.visibility = i === 0 ? 'visible' : 'hidden';
-      syncVideo(slide, i === 0);
+      syncMedia(slide, i === 0);
     });
   })();
 </script>

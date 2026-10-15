@@ -127,6 +127,25 @@ const base = import.meta.env.BASE_URL;
       .research-admin-site__chip--text { font-size: 12px; line-height: 1; white-space: pre-wrap; width: min(100%, 280px); mix-blend-mode: soft-light; }
       .research-admin-site__plus { width: 42px; height: 42px; border-radius: 50%; appearance: none; color: #fff; backdrop-filter: blur(1rem); -webkit-backdrop-filter: blur(1rem); background-color: rgba(255, 255, 255, 0.1); border: none; display: flex; align-items: center; justify-content: center; font-size: 22px; line-height: 1; }
       .research-admin-site__meta { position: absolute; top: 12px; right: 12px; color: rgba(255,255,255,0.55); font-size: 11px; }
+      .research-admin-site__inner-label { padding: 0.55rem 0.85rem; font-size: 0.78rem; font-weight: 600; color: #666; background: #f7f7f7; border-top: 1px solid #ececec; border-bottom: 1px solid #ececec; }
+      .research-admin-site__screens { display: flex; flex-direction: column; gap: 0.75rem; padding: 0.85rem; background: #111; }
+      .research-admin-site__screens-empty { padding: 1rem 0.85rem; color: #888; font-size: 0.85rem; background: #111; }
+      .research-admin-site__screen { display: flex; flex-direction: column; gap: 0.35rem; }
+      .research-admin-site__screen-label { color: rgba(255,255,255,0.55); font-size: 11px; }
+      .research-admin-site__screen-row { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 160px; padding: 12px; box-sizing: border-box; background: #000; border: 1px solid #222; }
+      .research-admin-site__cell { position: relative; flex: 0 0 auto; overflow: hidden; background: #151515; display: flex; align-items: center; justify-content: center; }
+      .research-admin-site__cell--cols { width: calc(var(--rf-span, 4) * 7.2%); max-width: 72%; aspect-ratio: 4 / 3; }
+      .research-admin-site__cell--w2.research-admin-site__cell--cols { width: 16%; }
+      .research-admin-site__cell--w4.research-admin-site__cell--cols { width: 32%; }
+      .research-admin-site__cell--w6.research-admin-site__cell--cols { width: 48%; }
+      .research-admin-site__cell--w8.research-admin-site__cell--cols { width: 64%; }
+      .research-admin-site__cell--height { height: 140px; width: auto; max-width: 72%; aspect-ratio: 3 / 4; }
+      .research-admin-site__cell img, .research-admin-site__cell video { width: 100%; height: 100%; object-fit: contain; display: block; }
+      .research-admin-site__cell--height img, .research-admin-site__cell--height video { width: auto; height: 100%; max-width: 100%; }
+      .research-admin-site__cell-meta { position: absolute; left: 4px; bottom: 4px; font-size: 10px; color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.45); padding: 1px 4px; border-radius: 3px; }
+      .research-admin-site__cell-empty, .research-admin-site__cell-embed { color: #777; font-size: 11px; }
+      .research-admin-site__screens-edit { padding: 0.75rem 0.85rem 1rem; background: #fff; border-top: 1px solid #ececec; }
+      .research-admin-site__screens-edit .research-admin-list__screens-label { margin-bottom: 0.5rem; }
       .research-admin-list { display: flex; flex-direction: column; gap: 0.85rem; }
       .research-admin-list__card { padding: 1rem 1.15rem; border: 1px solid #ddd; border-radius: 8px; background: #fff; min-height: calc((100vh - 17rem) / 3); }
       .research-admin-list__inner { display: grid; grid-template-columns: 220px minmax(0, 1fr) auto; gap: 0.9rem 1.1rem; align-items: stretch; min-height: 220px; }
@@ -150,8 +169,8 @@ const base = import.meta.env.BASE_URL;
       .research-admin-screen__head { display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; font-size: 0.75rem; font-weight: 600; color: #666; }
       .research-admin-screen__head button { padding: 0.1rem 0.4rem; font-size: 0.75rem; min-width: auto; }
       .research-admin-screen__items { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-      .research-admin-media { width: 112px; display: flex; flex-direction: column; gap: 0.25rem; }
-      .research-admin-extra__thumb { width: 112px; height: 112px; border: 1px solid #eee; background: #f4f4f4; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+      .research-admin-media { width: 128px; display: flex; flex-direction: column; gap: 0.25rem; }
+      .research-admin-extra__thumb { width: 128px; height: 96px; border: 1px solid #eee; background: #f4f4f4; overflow: hidden; display: flex; align-items: center; justify-content: center; }
       .research-admin-extra__thumb img, .research-admin-extra__thumb video { width: 100%; height: 100%; object-fit: contain; display: block; background: #111; }
       .research-admin-media input[type="text"], .research-admin-media select { width: 100%; margin-bottom: 0 !important; padding: 0.25rem 0.35rem !important; font-size: 0.72rem !important; }
       .research-admin-extra__btns { display: flex; gap: 0.25rem; }

@@ -28,6 +28,10 @@ export type ResearchScreen = {
 export type ResearchCard = {
   number: number;
   src: string;
+  /** Optional mobile cover; falls back to `src` when empty. */
+  srcMobile?: string;
+  /** Audio file path when `as === 'audio'`. Cover image stays in `src`. */
+  audioSrc?: string;
   alt?: string;
   as?: ResearchMediaKind;
   caption?: string;
@@ -40,6 +44,7 @@ export type ResearchCard = {
   coverFit: ResearchCoverFit;
   spanH: ResearchSpan;
   aspectRatio: number;
+  aspectRatioMobile: number;
 };
 
 const DATA_PATH = path.join(process.cwd(), 'public/data/research-cards.json');
@@ -104,12 +109,17 @@ function aspectFromKinescope(src: string): number | null {
   return null;
 }
 
+function isAudioPath(src: string): boolean {
+  return /\.(mp3|wav|ogg|m4a|aac)(\?|#|$)/i.test(String(src || '').trim());
+}
+
 function aspectForCard(as: ResearchCard['as'], src: string): number {
-  if (as === 'audio') return 16 / 5;
   if (as === 'kinescope' || as === 'video') {
     if (as === 'kinescope') return aspectFromKinescope(src) || 16 / 9;
     return 16 / 9;
   }
+  // audio uses cover image aspect (circle crop is CSS on desktop only)
+  if (as === 'audio' && (!src || isAudioPath(src))) return 1;
   const filePath = publicFilePath(src);
   if (!filePath) return 1;
   const size = readImageSize(filePath);
@@ -251,15 +261,29 @@ function normalizeCard(card: unknown, fallbackNumber: number): ResearchCard {
   const c = (card && typeof card === 'object') ? (card as Record<string, unknown>) : {};
   const parsedNumber = Number(c.number);
   const number = Number.isFinite(parsedNumber) ? Math.max(0, Math.round(parsedNumber)) : fallbackNumber;
-  const src = typeof c.src === 'string' ? c.src.trim() : '';
+  let src = typeof c.src === 'string' ? c.src.trim() : '';
+  let srcMobile = typeof c.srcMobile === 'string' ? c.srcMobile.trim() : '';
+  let audioSrc = typeof c.audioSrc === 'string' ? c.audioSrc.trim() : '';
   const alt = typeof c.alt === 'string' ? c.alt : '';
   const as = parseMediaKind(c.as);
-  const aspectRatio = aspectForCard(as, src);
+  // Legacy: audio cards stored the sound in `src`
+  if (as === 'audio' && isAudioPath(src) && !audioSrc) {
+    audioSrc = src;
+    src = typeof c.poster === 'string' ? c.poster.trim() : '';
+  } else if (as === 'audio' && !src && typeof c.poster === 'string') {
+    src = c.poster.trim();
+  }
+  const aspectRatio = aspectForCard(as === 'audio' ? 'image' : as, src);
+  const aspectRatioMobile = srcMobile
+    ? aspectForCard('image', srcMobile)
+    : aspectRatio;
   const auto = spansFromAspect(aspectRatio);
   const sideSrcs = parseSideSrcs(c.sideSrcs, c.sideSrc);
   return {
     number,
     src,
+    srcMobile: srcMobile || undefined,
+    audioSrc: as === 'audio' ? audioSrc : undefined,
     alt,
     as,
     caption: typeof c.caption === 'string' ? c.caption : '',
@@ -272,6 +296,7 @@ function normalizeCard(card: unknown, fallbackNumber: number): ResearchCard {
     coverFit: parseCoverFit(c.coverFit, aspectRatio),
     spanH: parseSpan(c.spanH) ?? auto.spanH,
     aspectRatio,
+    aspectRatioMobile,
   };
 }
 
@@ -284,7 +309,7 @@ function loadJsonCards(): ResearchCard[] {
     return arr
       .slice(0, 100)
       .map((card, index) => normalizeCard(card, index + 1))
-      .filter((card) => Boolean(card.src));
+      .filter((card) => Boolean(card.src) || (card.as === 'audio' && Boolean(card.audioSrc)));
   } catch {
     return [];
   }

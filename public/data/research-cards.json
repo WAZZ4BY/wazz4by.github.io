@@ -5,7 +5,7 @@
     "alt": "",
     "as": "video",
     "caption": "Itak Film",
-    "date": "01.2025",
+    "date": "January.2026",
     "text": "Based in Turkey, Itak Film is an independent film distributor dedicated to bringing premier international cinema to both the big screen and digital platforms.",
     "links": [
       {
@@ -18,11 +18,15 @@
         "items": [
           {
             "src": "/images/research/itakfilm2.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           },
           {
             "src": "/images/research/itakfilm3.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           }
         ]
       },
@@ -30,7 +34,9 @@
         "items": [
           {
             "src": "/images/research/itakv2.mp4",
-            "as": "video"
+            "as": "video",
+            "span": 6,
+            "fit": "cols"
           }
         ]
       },
@@ -38,7 +44,9 @@
         "items": [
           {
             "src": "/images/research/itakv3.mp4",
-            "as": "video"
+            "as": "video",
+            "span": 6,
+            "fit": "cols"
           }
         ]
       }
@@ -58,7 +66,7 @@
     "alt": "",
     "as": "image",
     "caption": "Screw",
-    "date": "06.2026",
+    "date": "June.2026",
     "text": "\"Within this diversity of aesthetic culture lies the realm of contemporary design—so vast and varied that it remains resistant to historical analysis.\"",
     "links": [],
     "screens": [
@@ -66,11 +74,15 @@
         "items": [
           {
             "src": "/images/research/2gvozd.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           },
           {
             "src": "/images/research/3gvozd.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           }
         ]
       },
@@ -78,7 +90,9 @@
         "items": [
           {
             "src": "/images/research/4gvozd.webp",
-            "as": "image"
+            "as": "image",
+            "span": 2,
+            "fit": "cols"
           }
         ]
       }
@@ -89,7 +103,7 @@
       "/images/research/4gvozd.webp"
     ],
     "spanW": 4,
-    "coverFit": "height"
+    "coverFit": "cols"
   },
   {
     "number": 3,
@@ -97,7 +111,7 @@
     "alt": "",
     "as": "image",
     "caption": "Infusa",
-    "date": "12.2025",
+    "date": "december.2025",
     "text": "Infusa is a conceptual object that combines images of worms consuming forbidden fruit. It symbolizes the transition between stages of existence, the moment when life is captured by the process of consumption and transformation. These forms, frozen in space, reflect the survival measures hidden within nature. In your home, Infusa transforms everyday space into a place where organic life and evolutionary problems are frozen in an irreversible moment of development.",
     "links": [],
     "screens": [
@@ -105,7 +119,9 @@
         "items": [
           {
             "src": "/images/research/2infusa.webp",
-            "as": "image"
+            "as": "image",
+            "span": 6,
+            "fit": "cols"
           }
         ]
       },
@@ -113,7 +129,9 @@
         "items": [
           {
             "src": "/images/research/3infusa.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           }
         ]
       }
@@ -125,25 +143,12 @@
     "spanW": 6
   },
   {
-    "number": 4,
-    "src": "<div style=\"position: relative; padding-top: 100%; width: 100%\"><iframe src=\"https://kinescope.io/embed/mahpEwu7K9HLPTXm68GE3G\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>",
-    "alt": "",
-    "as": "kinescope",
-    "caption": "Morph opject",
-    "date": "12.2025",
-    "text": "",
-    "links": [],
-    "screens": [],
-    "sideSrcs": [],
-    "spanW": 4
-  },
-  {
     "number": 5,
     "src": "/images/research/poster2.webp",
     "alt": "",
     "as": "image",
     "caption": "Poster Lab",
-    "date": "",
+    "date": "Fall.2024",
     "text": "",
     "links": [],
     "screens": [
@@ -151,15 +156,21 @@
         "items": [
           {
             "src": "/images/research/sufganiet.webp",
-            "as": "image"
+            "as": "image",
+            "span": 2,
+            "fit": "cols"
           },
           {
             "src": "/images/research/poster2.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           },
           {
             "src": "/images/research/poster3.webp",
-            "as": "image"
+            "as": "image",
+            "span": 2,
+            "fit": "cols"
           }
         ]
       },
@@ -167,7 +178,9 @@
         "items": [
           {
             "src": "/images/research/poster4.webp",
-            "as": "image"
+            "as": "image",
+            "span": 6,
+            "fit": "cols"
           }
         ]
       },
@@ -175,15 +188,15 @@
         "items": [
           {
             "src": "/images/research/poster5.webp",
-            "as": "image"
-          }
-        ]
-      },
-      {
-        "items": [
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
+          },
           {
             "src": "/images/research/poster6.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           }
         ]
       }
@@ -197,7 +210,7 @@
       "/images/research/poster6.webp"
     ],
     "spanW": 4,
-    "coverFit": "height"
+    "coverFit": "cols"
   },
   {
     "number": 6,
@@ -205,7 +218,7 @@
     "alt": "",
     "as": "image",
     "caption": "Kinect",
-    "date": "09.2025",
+    "date": "September.2025",
     "text": "",
     "links": [],
     "screens": [
@@ -213,15 +226,21 @@
         "items": [
           {
             "src": "/images/research/kinect2.webp",
-            "as": "image"
+            "as": "image",
+            "span": 2,
+            "fit": "cols"
           },
           {
             "src": "/images/research/kinect1.webp",
-            "as": "image"
+            "as": "image",
+            "span": 4,
+            "fit": "cols"
           },
           {
             "src": "/images/research/kinect4.webp",
-            "as": "image"
+            "as": "image",
+            "span": 2,
+            "fit": "cols"
           }
         ]
       }
@@ -231,19 +250,23 @@
       "/images/research/kinect1.webp",
       "/images/research/kinect4.webp"
     ],
-    "spanW": 4
+    "spanW": 4,
+    "coverFit": "cols"
   },
   {
     "number": 7,
-    "src": "<div style=\"position: relative; padding-top: 100%; width: 100%\"><iframe src=\"https://kinescope.io/embed/oxHbHWCpBrrTcMqHyyKpRU\" allow=\"autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;\" frameborder=\"0\" allowfullscreen style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0;\"></iframe></div>",
+    "src": "/images/research/firealarm.webp",
     "alt": "",
-    "as": "kinescope",
-    "caption": "Pseudo Data Graph",
-    "date": "09.2025",
+    "as": "audio",
+    "caption": "Fire Alarm",
+    "date": "May.2026",
     "text": "",
     "links": [],
     "screens": [],
     "sideSrcs": [],
-    "spanW": 4
+    "spanW": 4,
+    "audioSrc": "/images/research/firealarm.mp3",
+    "srcMobile": "/images/research/firealarm2.webp",
+    "coverFit": "cols"
   }
 ]
