@@ -68,10 +68,6 @@ const payload = researchItems.map((item, index) => {
 ---
 
 <BaseLayout title="Research" variant="inner" hideHeader bodyClass="page-research" themeColor="#000000" mobileThemeColor="">
-  <!-- Safari 26 tints the status bar and toolbar from a fixed edge layer.
-       No background here keeps those bars transparent so the cover shows through. -->
-  <div class="rf-chrome" aria-hidden="true"></div>
-  <div class="rf-chrome rf-chrome--bottom" aria-hidden="true"></div>
   <InnerPageHeader activePage="research" />
   <div class="rf-stage" aria-live="polite">
     {researchItems.map((item, index) => {
@@ -298,62 +294,25 @@ const payload = researchItems.map((item, index) => {
   }
 
   @media (max-width: 768px) {
-    /* Safari paints html/body and fixed layers into the status bar and toolbar.
-       Index avoids that because the document itself scrolls. Match that here:
-       no root overflow lock, no fixed full-screen plate, stage lives in the body. */
-    html:has(body.page-research),
-    body.page-research {
-      background-attachment: scroll !important;
-      overflow: visible;
-      height: auto;
-      min-height: 100lvh;
-      overscroll-behavior: auto;
-      touch-action: pan-y;
-    }
-
+    /* Same as home: the fixed page backdrop is what Safari paints into the
+       status bar. Drop it, and let the cover fill the large viewport with
+       no solid plate of its own. */
     html:has(body.page-research)::before,
     body.page-research .page-backdrop {
       display: none !important;
     }
 
-    .rf-chrome {
-      position: fixed;
-      z-index: 20;
-      left: 0;
+    .rf-stage {
       top: 0;
-      width: 100%;
-      height: 8px;
-      pointer-events: none;
-      background: none;
-    }
-
-    .rf-chrome--bottom {
-      top: auto;
+      right: 0;
       bottom: 0;
-    }
-
-    body.page-research {
-      position: relative;
-    }
-
-    .rf-stage,
-    .rf-inner {
-      position: relative;
-      inset: auto;
-      top: auto;
-      right: auto;
-      bottom: auto;
-      left: auto;
+      left: 0;
       width: 100%;
       height: 100lvh;
       min-height: 100lvh;
-    }
-
-    .rf-inner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 4;
+      max-height: none;
+      background: transparent;
+      background-color: transparent;
     }
 
     /* Feed covers: full-bleed like home — no letterbox bars */
@@ -2019,7 +1978,6 @@ const payload = researchItems.map((item, index) => {
     }, { passive: true });
 
     window.addEventListener('touchmove', function (e) {
-      if (window.matchMedia('(max-width: 768px)').matches) return;
       e.preventDefault();
     }, { passive: false });
 
