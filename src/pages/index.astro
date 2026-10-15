@@ -208,11 +208,17 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
   }
 
   @media (max-width: 768px) {
+    /* Index has no visible Safari plate: nothing paints a solid color into the
+       status bar. The fixed page backdrop does that, so drop it here and let
+       the cover run under the chrome at the large viewport height. */
+    :global(html:has(body.is-home)::before),
+    :global(body.is-home .page-backdrop) {
+      display: none !important;
+    }
+
     .home-page {
-      --home-intro-height: 100vh;
-      --home-intro-height: calc(var(--home-vh, 1svh) * 100);
-      min-height: 100vh;
-      min-height: calc(var(--home-vh, 1svh) * 100);
+      --home-intro-height: 100lvh;
+      min-height: 100lvh;
     }
 
     .home-hero {
@@ -220,9 +226,11 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
       top: 0;
       left: 0;
       right: 0;
-      height: calc(var(--home-vh, 1svh) * 100);
-      max-height: calc(var(--home-vh, 1svh) * 100);
+      bottom: 0;
+      height: 100lvh;
+      max-height: none;
       padding: 0;
+      background-color: transparent;
     }
 
     .home-hero__row {
@@ -350,7 +358,7 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
 
     /* Full-viewport media under the fixed nav — no bg plates above/below */
     :global(body.is-home .home-media-grid__item .media-card__thumbnail) {
-      min-height: calc(var(--home-vh, 1svh) * 100);
+      min-height: 100lvh;
       aspect-ratio: auto;
       background: transparent;
     }
