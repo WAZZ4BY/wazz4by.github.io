@@ -337,12 +337,29 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
   }
 
   @media (max-width: 640px) {
-    :global(body.is-home .home-media-showcase) {
-      padding-top: var(--home-intro-height);
-    }
     :global(body.is-home .home-media-grid--mixed) {
       grid-template-columns: 1fr;
       gap: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :global(body.is-home .home-media-showcase) {
+      padding-top: 0;
+    }
+
+    /* Full-viewport media under the fixed nav — no bg plates above/below */
+    :global(body.is-home .home-media-grid__item .media-card__thumbnail) {
+      min-height: calc(var(--home-vh, 1svh) * 100);
+      aspect-ratio: auto;
+      background: transparent;
+    }
+
+    :global(body.is-home .home-media-grid__item .media-card__thumb) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
     }
   }
 
