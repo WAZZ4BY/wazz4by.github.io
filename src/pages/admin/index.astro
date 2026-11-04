@@ -739,8 +739,9 @@ const base = import.meta.env.BASE_URL;
             if (block.type === 'video') {
               const src = typeof block.src === 'string' ? block.src.trim() : '';
               const embed = typeof block.embed === 'string' ? block.embed.trim() : '';
-              if (src) return { type: 'video', src: src };
-              return { type: 'video', embed: embed };
+              const out = src ? { type: 'video', src: src } : { type: 'video', embed: embed };
+              if (block.playButton === true) out.playButton = true;
+              return out;
             }
             const b = Object.assign({}, block);
             if (typeof b.src === 'string') b.src = toWebpPath(b.src);

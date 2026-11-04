@@ -5,7 +5,7 @@ export type ContentBlock =
   | { type: 'image'; src: string }
   | { type: 'text'; content: string }
   | { type: 'split'; left: string; right: string }
-  | { type: 'video'; embed?: string; src?: string };
+  | { type: 'video'; embed?: string; src?: string; playButton?: boolean };
 
 export interface ProjectAward {
   place: string;

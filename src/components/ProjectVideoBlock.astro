@@ -1,0 +1,202 @@
+---
+interface Props {
+  src: string;
+  /** Круглая Play + звук; иначе — muted autoplay loop без UI */
+  playButton?: boolean;
+}
+
+const { src, playButton = false } = Astro.props;
+const showPlayButton = playButton === true;
+---
+
+<div
+  class:list={[
+    'content-block',
+    'content-block--video',
+    'content-block--video-file',
+    showPlayButton ? 'content-block--video-custom' : 'content-block--video-auto',
+  ]}
+>
+  <div class="project-video">
+    <video
+      class="project-video-file"
+      src={src}
+      muted={!showPlayButton}
+      playsinline
+      loop
+      preload="metadata"
+      autoplay={!showPlayButton}
+    ></video>
+    {showPlayButton && (
+      <button
+        type="button"
+        class="project-video-play"
+        aria-label="Play"
+        data-playing="0"
+      >
+        <svg class="project-video-play__icon project-video-play__icon--play" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M9.15 6.35c0-1.02 1.08-1.66 1.95-1.15l8.2 4.85a1.32 1.32 0 0 1 0 2.3l-8.2 4.85c-.87.51-1.95-.13-1.95-1.15V6.35z" />
+        </svg>
+        <svg class="project-video-play__icon project-video-play__icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
+          <rect x="7" y="6" width="3.6" height="12" rx="1.6" fill="currentColor" />
+          <rect x="13.4" y="6" width="3.6" height="12" rx="1.6" fill="currentColor" />
+        </svg>
+      </button>
+    )}
+  </div>
+</div>
+
+<style>
+  /* Свои стили: scoped CSS страницы не дотягивается до дочернего компонента */
+  .content-block--video-file {
+    grid-column: 1 / -1;
+    width: calc(100% + 2 * var(--grid-margin));
+    max-width: none;
+    margin-left: calc(-1 * var(--grid-margin));
+    margin-top: 50px;
+    margin-bottom: 50px;
+    box-sizing: border-box;
+    line-height: 0;
+  }
+
+  .project-video {
+    position: relative;
+    width: 100%;
+  }
+
+  .project-video-file {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+  }
+
+  /* Как rf-blur + rf-audio-play в Research */
+  .project-video-play {
+    appearance: none;
+    -webkit-appearance: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 5;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    cursor: pointer;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    outline: none;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0.5px 0 0 0.5px;
+    background-color: rgba(247, 247, 247, 0.2);
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+    opacity: 1;
+    transition:
+      color 0.25s,
+      background-color 0.25s,
+      border-color 0.25s,
+      opacity 0.25s;
+  }
+
+  /* Во время проигрывания — скрыть, пока курсор не над видео */
+  @media (hover: hover) {
+    .project-video-play[data-playing='1'] {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .project-video:hover .project-video-play[data-playing='1'] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .project-video-play:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .project-video-play:focus,
+  .project-video-play:focus-visible {
+    outline: none;
+  }
+
+  .project-video-play__icon {
+    width: 14px;
+    height: 14px;
+    display: none;
+    flex-shrink: 0;
+  }
+
+  .project-video-play[data-playing='0'] .project-video-play__icon--play,
+  .project-video-play:not([data-playing]) .project-video-play__icon--play {
+    display: block;
+    transform: translateX(-0.5px);
+  }
+
+  .project-video-play[data-playing='1'] .project-video-play__icon--pause {
+    display: block;
+  }
+</style>
+
+<script>
+  (function () {
+    function setPlaying(btn, playing) {
+      btn.dataset.playing = playing ? '1' : '0';
+      btn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      const playIcon = btn.querySelector('.project-video-play__icon--play');
+      const pauseIcon = btn.querySelector('.project-video-play__icon--pause');
+      if (playIcon) playIcon.hidden = !!playing;
+      if (pauseIcon) pauseIcon.hidden = !playing;
+    }
+
+    function bind(wrap) {
+      if (wrap.dataset.bound === '1') return;
+      wrap.dataset.bound = '1';
+      const video = wrap.querySelector('video');
+      const btn = wrap.querySelector('.project-video-play');
+      if (!video || !btn) return;
+
+      function sync() {
+        setPlaying(btn, !video.paused && !video.ended);
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (video.paused) {
+          const p = video.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+        } else {
+          video.pause();
+        }
+        sync();
+      });
+
+      video.addEventListener('play', sync);
+      video.addEventListener('pause', sync);
+      video.addEventListener('ended', sync);
+      sync();
+    }
+
+    function init() {
+      document.querySelectorAll('.content-block--video-custom .project-video').forEach(bind);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

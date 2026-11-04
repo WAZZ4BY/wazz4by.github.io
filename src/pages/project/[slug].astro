@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InnerPageHeader from '../../components/InnerPageHeader.astro';
+import ProjectVideoBlock from '../../components/ProjectVideoBlock.astro';
 import { getProjects, getContentBlocks } from '../../lib/projects';
 
 export async function getStaticPaths() {
@@ -87,22 +88,13 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
                       <img src={block.right} alt={project.title} loading="lazy" />
                     </div>
                   ) : block.type === 'video' ? (
-                    <div class={`content-block content-block--video${block.src ? ' content-block--video-file' : ''}`}>
-                      {block.src ? (
-                        <video
-                          class="project-video-file"
-                          src={block.src}
-                          muted
-                          playsinline
-                          loop
-                          autoplay
-                          controls
-                          preload="metadata"
-                        />
-                      ) : (
+                    block.src ? (
+                      <ProjectVideoBlock src={block.src} playButton={block.playButton === true} />
+                    ) : (
+                      <div class="content-block content-block--video">
                         <div class="video-wrap" set:html={block.embed} />
-                      )}
-                    </div>
+                      </div>
+                    )
                   ) : null}
                 </>
               );
@@ -128,22 +120,12 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
               );
             }
             if (block.type === 'video') {
+              if (block.src) {
+                return <ProjectVideoBlock src={block.src} playButton={block.playButton === true} />;
+              }
               return (
-                <div class={`content-block content-block--video${block.src ? ' content-block--video-file' : ''}`}>
-                  {block.src ? (
-                    <video
-                      class="project-video-file"
-                      src={block.src}
-                      muted
-                      playsinline
-                      loop
-                      autoplay
-                      controls
-                      preload="metadata"
-                    />
-                  ) : (
-                    <div class="video-wrap" set:html={block.embed} />
-                  )}
+                <div class="content-block content-block--video">
+                  <div class="video-wrap" set:html={block.embed} />
                 </div>
               );
             }
@@ -503,7 +485,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     line-height: 0;
   }
 
-  .project-video-file {
+  :global(body.page-project .project-video-file) {
     display: block;
     width: 100%;
     height: auto;

@@ -165,8 +165,9 @@ const base = import.meta.env.BASE_URL;
           if (block.type === 'video') {
             const src = typeof block.src === 'string' ? block.src.trim() : '';
             const embed = typeof block.embed === 'string' ? block.embed.trim() : '';
-            if (src) return { type: 'video', src: src };
-            return { type: 'video', embed: embed };
+            const out = src ? { type: 'video', src: src } : { type: 'video', embed: embed };
+            if (block.playButton === true) out.playButton = true;
+            return out;
           }
           const b = Object.assign({}, block);
           if (typeof b.src === 'string') b.src = toWebpPath(b.src);
@@ -440,6 +441,7 @@ const base = import.meta.env.BASE_URL;
           } else if (block.type === 'video') {
             const fileSrc = resolveMediaUrl(block.src || '');
             const hasFile = !!(block.src || '').trim();
+            const playButtonOn = block.playButton === true;
             inner =
               '<div class="content-block-card__row"><span class="content-block-card__type">Видео</span><button type="button" class="secondary move-up" title="Вверх">↑</button><button type="button" class="secondary move-down" title="Вниз">↓</button><button type="button" class="danger remove-block" title="Удалить">×</button></div>' +
               '<label style="display:block;margin:0.35rem 0 0.2rem;font-size:0.85rem;">Файл (mp4/webm)</label>' +
@@ -449,6 +451,11 @@ const base = import.meta.env.BASE_URL;
                 '<input type="file" class="content-block-card__video-file" accept="video/mp4,video/webm,.mp4,.webm" style="display:none;" />' +
                 (hasFile ? '<button type="button" class="danger clear-block-video-src" style="padding:0.25rem 0.5rem;font-size:0.85rem;">Очистить файл</button>' : '') +
               '</div>' +
+              '<label class="admin-checkbox-label" style="margin:0.5rem 0;">' +
+                '<input type="checkbox" class="content-block-card__video-play-button"' + (playButtonOn ? ' checked' : '') + ' />' +
+                ' Кнопка Play' +
+              '</label>' +
+              '<p class="admin-hint">По умолчанию — без интерфейса, без звука, autoplay loop. Включите — круглая Play и звук.</p>' +
               '<div class="content-block-card__preview content-block-card__preview--video">' +
                 (fileSrc ? '<video src="' + esc(fileSrc) + '" muted playsinline controls preload="metadata" style="width:100%;max-height:220px;display:block;background:#111;"></video>' : '') +
               '</div>' +
@@ -534,6 +541,7 @@ const base = import.meta.env.BASE_URL;
             const fileInput = card.querySelector('.content-block-card__video-file');
             const uploadBtn = card.querySelector('.upload-block-video');
             const clearBtn = card.querySelector('.clear-block-video-src');
+            const playButtonInput = card.querySelector('.content-block-card__video-play-button');
 
             function updateVideoFilePreview() {
               const value = (srcInput.value || '').trim();
@@ -547,6 +555,13 @@ const base = import.meta.env.BASE_URL;
               } else {
                 previewWrap.innerHTML = '';
               }
+            }
+
+            if (playButtonInput) {
+              playButtonInput.addEventListener('change', function () {
+                if (this.checked) contentBlocks[index].playButton = true;
+                else delete contentBlocks[index].playButton;
+              });
             }
 
             if (srcInput) {

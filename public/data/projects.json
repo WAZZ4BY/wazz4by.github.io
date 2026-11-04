@@ -1809,5 +1809,149 @@
       }
     ],
     "indexGroup": "concept"
+  },
+  {
+    "id": "yota-be-different-w-ony",
+    "title": "Yota Be Different W/ ONY",
+    "shortTitle": "Yota",
+    "type": "Identity Refresh",
+    "year": "2026",
+    "sortDate": "2026-09-10",
+    "indexGroup": "participation",
+    "description": "",
+    "images": [],
+    "contentBlocks": [
+      {
+        "type": "video",
+        "src": "/images/yota/01_Head.mp4"
+      },
+      {
+        "type": "text",
+        "content": "In 2007, Yota transformed the mobile market by offering a flexible plan builder and a simpler, more transparent approach. But the market has changed since then. How should Yota's distinctiveness be demonstrated today?\n\nThe answer meant working with several layers. Update the visual system without losing recognizable brand cues. Find a new language for communicating with a younger audience. Adapt the style for the website and app. And create a character that can inhabit the interfaces and support the user in service scenarios."
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/02_reel_noFrame.mp4",
+        "playButton": true
+      },
+      {
+        "type": "text",
+        "content": "The team conducted interviews and workshops with Zoomers, not to \"rejuvenate\" the brand with a set of external techniques, but to create a system that connects with the audience.\n\nThe main discovery: young audiences quickly recognize falsehoods. Slang for the sake of slang, memes for the sake of memes, stereotypical images of youth, and overly flashy visuals don't make a brand their own; on the contrary, they show that it's trying too hard (and that's not cool).\n\nThe audience appreciates honesty, self-irony, and the feeling that the brand understands their environment without explanation. This aligned with Yota's product logic—a flexible plan builder and the ability to choose only what's needed: not pushing unnecessary features, but helping users understand their needs."
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/03.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/04.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/05.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/06.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/07.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/08.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/09.mp4"
+      },
+      {
+        "type": "image",
+        "src": "/images/yota/10.webp"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/11.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/12.mp4"
+      },
+      {
+        "type": "video",
+        "src": "/images/yota/13.mp4"
+      }
+    ],
+    "backgroundColor": "##ffffff",
+    "cover": "/images/yota/Site_cover.webp",
+    "links": [
+      {
+        "text": "Original Case",
+        "url": "https://ony.ru/work/yota"
+      }
+    ],
+    "creditsList": [
+      {
+        "role": "Art Director",
+        "name": "Emil Iskhakov"
+      },
+      {
+        "role": "Digital Art Director",
+        "name": "Bogdan Chernyshov"
+      },
+      {
+        "role": "CG Art Director",
+        "name": "Stepan Kartyshov"
+      },
+      {
+        "role": "Junior Art Director",
+        "name": "Timofey Kirin"
+      },
+      {
+        "role": "Producer",
+        "name": "Ulyana Oleynikova"
+      },
+      {
+        "role": "Designer",
+        "name": "Natalya Kabaeva"
+      },
+      {
+        "role": "Designer",
+        "name": "Vasili Aleev"
+      },
+      {
+        "role": "Designer",
+        "name": "Alena Shulga"
+      },
+      {
+        "role": "Designer",
+        "name": "Diana Kondratieva"
+      },
+      {
+        "role": "Designer",
+        "name": "Marusya Yuzhakova"
+      },
+      {
+        "role": "Designer",
+        "name": "Evgeny Nikitin"
+      },
+      {
+        "role": "CG Designer",
+        "name": "Kirill Efimov"
+      },
+      {
+        "role": "Digital Designer",
+        "name": "Anna Shestakevich"
+      },
+      {
+        "role": "Digital Designer",
+        "name": "Denis Moiseev"
+      },
+      {
+        "role": "Strategist",
+        "name": "Irina Slon"
+      }
+    ]
   }
 ]
