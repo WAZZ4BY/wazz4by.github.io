@@ -201,7 +201,6 @@ const kinescopeSrc = as === 'kinescope' ? kinescopeEmbedUrl(src) : null;
           />
         )}
       </div>
-      {effectiveCursorLabel && <span class="media-card__cursor-label">{effectiveCursorLabel}</span>}
     </div>
   )}
 
@@ -229,10 +228,16 @@ const kinescopeSrc = as === 'kinescope' ? kinescopeEmbedUrl(src) : null;
     text-decoration: none;
     min-width: 0;
     position: relative;
+    cursor: pointer;
   }
 
   .media-card__link--static {
     cursor: default;
+    pointer-events: none;
+  }
+
+  .media-card__link--static .media-card__embed {
+    pointer-events: none;
   }
 
   .media-card__thumbnail {

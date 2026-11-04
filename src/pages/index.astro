@@ -2,22 +2,50 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MediaCard from '../components/MediaCard.astro';
 import { getHomeMediaCards } from '../lib/homeMediaCards';
-import { getVisibleProjects } from '../lib/projects';
+import { getProjects } from '../lib/projects';
 
 const base = import.meta.env.BASE_URL;
 const logoSrc = `${base}images/main/Vasilii%20Aleev.svg`;
 
 const homeMediaCards = getHomeMediaCards();
-const projects = getVisibleProjects();
-const projectById = new Map(projects.map((p) => [p.id, p.title]));
+const projectById = new Map(getProjects().map((p) => [p.id, p]));
 
-function projectTitleFromHref(href?: string): string {
+function projectIdFromHref(href?: string): string {
   const value = typeof href === 'string' ? href.trim() : '';
   if (!value) return '';
   const match = value.match(/\/project\/([^/]+)\/?$/);
   if (!match) return '';
-  const id = decodeURIComponent(match[1]);
-  return projectById.get(id) || '';
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
+}
+
+function isBlankCardHref(href: string): boolean {
+  const raw = href.trim();
+  if (!raw || raw === '#') return true;
+  // Старый плейсхолдер админки «без ссылки»
+  const path = raw.replace(/\/+$/, '') || '/';
+  return path === '/index' || path === 'index';
+}
+
+/** Пустой href или старый плейсхолдер /index — без ссылки; иначе как в админке. */
+function resolveCardInteraction(card: { href?: string; cursorLabel?: string }) {
+  const raw = typeof card.href === 'string' ? card.href.trim() : '';
+  if (isBlankCardHref(raw)) {
+    return { href: undefined as string | undefined, cursorLabel: '' };
+  }
+
+  const customLabel = typeof card.cursorLabel === 'string' ? card.cursorLabel.trim() : '';
+  const projectId = projectIdFromHref(raw);
+  if (projectId) {
+    const project = projectById.get(projectId);
+    const label = customLabel || (project ? (project.shortTitle || project.title || '') : '');
+    return { href: raw, cursorLabel: label };
+  }
+
+  return { href: raw, cursorLabel: customLabel };
 }
 
 function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'left' | 'right' }): string {
@@ -66,10 +94,12 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
 
     <section class="home-media-showcase" aria-label="Media Card Showcase">
       <div class="home-media-grid home-media-grid--mixed">
-        {homeMediaCards.map((card) => (
+        {homeMediaCards.map((card) => {
+          const interaction = resolveCardInteraction(card);
+          return (
           <div class="home-media-grid__item" style={`--home-card-col: ${gridColumnForCard(card)};`}>
             <MediaCard
-              href={card.href}
+              href={interaction.href}
               src={card.src}
               alt={card.alt || ''}
               ratio={card.ratio || 'aspect-16-9'}
@@ -77,12 +107,13 @@ function gridColumnForCard(card: { size?: 'normal' | 'wide'; edge?: 'auto' | 'le
               loading={card.loading || 'lazy'}
               title={card.title}
               caption={card.caption}
-              cursorLabel={card.cursorLabel || projectTitleFromHref(card.href)}
+              cursorLabel={interaction.cursorLabel}
               className={card.className}
               videoPoster={card.videoPoster}
             />
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
 

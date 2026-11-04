@@ -1,10 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InnerPageHeader from '../../components/InnerPageHeader.astro';
-import { getVisibleProjects, getContentBlocks } from '../../lib/projects';
+import { getProjects, getContentBlocks } from '../../lib/projects';
 
 export async function getStaticPaths() {
-  const projects = getVisibleProjects();
+  // Все проекты, включая hidden — чтобы ссылки с главной карточек открывались
+  const projects = getProjects();
   return projects.map((project) => ({
     params: { slug: project.id },
     props: { project },
@@ -35,15 +36,27 @@ const creditsRows = (project.creditsList && project.creditsList.length > 0
       }));
 const projectLinks = (project.links || []).filter((item) => item && (item.text || item.url));
 const textBlockHtml = (content: string) => content.replace(/\n/g, '<br>');
-const bgColor = project.backgroundColor || '#FBFBFB';
-const bgNorm = (bgColor || '').replace(/^#/, '').toLowerCase();
-const isDarkBg = bgNorm === '000' || bgNorm === '000000';
+function normalizeProjectBg(raw?: string): string {
+  let s = String(raw || '').trim();
+  if (!s) return '#FBFBFB';
+  s = s.replace(/^#+/, '#');
+  if (s[0] !== '#') s = `#${s}`;
+  if (/^#[0-9a-fA-F]{3}$/.test(s)) {
+    s = `#${s[1]}${s[1]}${s[2]}${s[2]}${s[3]}${s[3]}`;
+  }
+  if (!/^#[0-9a-fA-F]{6}$/.test(s)) return '#FBFBFB';
+  return `#${s.slice(1).toUpperCase()}`;
+}
+
+const bgColor = normalizeProjectBg(project.backgroundColor);
+const bgNorm = bgColor.slice(1).toLowerCase();
+const isDarkBg = bgNorm === '000000';
 const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
 ---
 
 <BaseLayout title={project.title} variant="inner" bodyClass={bodyClass} hideHeader themeColor={bgColor}>
-  <div class="inner-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
-    <main class="project-page" style={bgColor !== '#FBFBFB' ? `background-color: ${bgColor}` : undefined}>
+  <div class="inner-page">
+    <main class="project-page">
       <div class="project-page__grid">
         <InnerPageHeader activePage="project" />
         <h1 class="project-title">{project.title}</h1>
@@ -188,11 +201,12 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     background-color: var(--projectBg);
   }
 
-    /* Футер прижат к низу при ресайзе */
+  /* Один фон на отступы и контент — без шва по тону */
   :global(body.page-project .inner-page) {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: var(--page-bg);
   }
 
   .project-page {
@@ -201,7 +215,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     flex-direction: column;
     min-height: 0;
     padding: 0 0 4rem;
-    background: #FBFBFB;
+    background-color: var(--page-bg);
   }
 
   .project-page__grid {
@@ -406,6 +420,16 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     text-decoration: underline;
   }
 
+  /* Картинки/видео — на всю ширину экрана; текст остаётся с --grid-margin */
+  .content-block--image,
+  .content-block--split,
+  .content-block--video {
+    width: calc(100% + 2 * var(--grid-margin));
+    max-width: none;
+    margin-left: calc(-1 * var(--grid-margin));
+    box-sizing: border-box;
+  }
+
   .content-block--image {
     grid-column: 1 / -1;
     margin-top: 50px;
@@ -454,7 +478,6 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
 
   .content-block--video {
-    width: 100%;
     grid-column: 1 / -1;
     margin-top: 50px;
     margin-bottom: 50px;
@@ -557,6 +580,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     font-weight: 500;
     color: black;
     line-height: 1;
+    white-space: nowrap;
   }
   :global(body.page-project .project-page__footer .index-footer__links) {
     grid-column: 12;
@@ -568,6 +592,7 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
     color: black;
     text-align: right;
     line-height: 1;
+    white-space: nowrap;
   }
 
   /* Если фон чёрный — текст белый */
@@ -692,11 +717,6 @@ const bodyClass = isDarkBg ? 'page-project page-project--dark' : 'page-project';
   }
 
   @media (max-width: 768px) {
-    :global(body.page-project .inner-page) {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-
     .project-page__grid {
       grid-template-columns: repeat(8, minmax(0, 1fr));
       gap: 0 8px;

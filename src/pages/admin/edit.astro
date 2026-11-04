@@ -29,6 +29,12 @@ const base = import.meta.env.BASE_URL;
           <input type="text" id="editYear" />
           <label>Точная дата для сортировки</label>
           <input type="date" id="editSortDate" />
+          <label>Группа на Index (Participation / Concepts)</label>
+          <select id="editIndexGroup">
+            <option value="concept">Concepts — личный проект</option>
+            <option value="participation">Participation — соучастие</option>
+          </select>
+          <p class="admin-hint">Работает в режиме Index «Participation / Concepts». Хвост названия (W/ Dotorg и т.п.) по-прежнему берётся из полного названия минус короткое.</p>
           <label>Цвет фона страницы</label>
           <div class="admin-color-row">
             <input type="color" id="editBackgroundColor" value="#FBFBFB" title="Выберите цвет" />
@@ -672,6 +678,7 @@ const base = import.meta.env.BASE_URL;
         const awards = collectAwards();
         const links = collectLinks();
         const creditsList = collectCreditsList();
+        const indexGroupRaw = document.getElementById('editIndexGroup').value;
         const edited = {
           id: project.id,
           title: document.getElementById('editTitle').value.trim(),
@@ -679,6 +686,7 @@ const base = import.meta.env.BASE_URL;
           type: document.getElementById('editType').value.trim(),
           year: document.getElementById('editYear').value.trim(),
           sortDate: document.getElementById('editSortDate').value.trim() || undefined,
+          indexGroup: indexGroupRaw === 'participation' ? 'participation' : 'concept',
           description: project.description || '',
           images: project.images || [],
           contentBlocks: rewriteBlocks(contentBlocks),
@@ -740,6 +748,8 @@ const base = import.meta.env.BASE_URL;
           document.getElementById('editType').value = project.type || '';
           document.getElementById('editYear').value = project.year || '';
           document.getElementById('editSortDate').value = project.sortDate || '';
+          document.getElementById('editIndexGroup').value =
+            project.indexGroup === 'participation' ? 'participation' : 'concept';
           document.getElementById('editCover').value = toWebpPath(project.cover || '');
           document.getElementById('editHidden').checked = Boolean(project.hidden);
           renderAwards(project.awards && project.awards.length ? project.awards : []);

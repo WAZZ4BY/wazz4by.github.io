@@ -1,7 +1,7 @@
 [
   {
     "id": "de-stul-furniture-brand",
-    "title": "De Stul. Furniture Brand",
+    "title": "De Stul Furniture Brand",
     "shortTitle": "De Stul",
     "type": "Identity, 3D motion",
     "year": "2023",
@@ -110,7 +110,7 @@
         "src": "/images/destul/18.webp"
       }
     ],
-    "backgroundColor": "##ffffff",
+    "backgroundColor": "#ffffff",
     "cover": "/images/destul/cover.webp",
     "awards": [
       {
@@ -118,7 +118,8 @@
         "festival": "World Brand Design Awards 23-24",
         "nomination": "Student Identity: Brand Design Creation"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   },
   {
     "id": "phenomenon-interior-psychologism",
@@ -250,7 +251,7 @@
         "content": "Analyzing the interior of a room can give some insight into a person: his lifestyle, tastes, preferences and perhaps even some aspects of his personality.\nCan analysis of a person's interior give a complete picture of a person? No.\nTo fully understand personality, it is necessary to consider the interior in the context of other factors, such as behavior, relationships with other people."
       }
     ],
-    "backgroundColor": "##ffffff",
+    "backgroundColor": "#ffffff",
     "cover": "/images/interior/cover.webp",
     "links": [
       {
@@ -265,11 +266,12 @@
         "url": "https://pro-sche.ru/"
       }
     ],
-    "hidden": true
+    "hidden": true,
+    "indexGroup": "concept"
   },
   {
     "id": "boop-pet-shampoo-packaging",
-    "title": "Boop. Pet Shampoo Packaging",
+    "title": "Boop Pet Shampoo Packaging",
     "shortTitle": "Boop",
     "type": "Package, Illustration",
     "year": "2024",
@@ -347,7 +349,7 @@
         "src": "/images/boop/15.gif"
       }
     ],
-    "backgroundColor": "##ffffff",
+    "backgroundColor": "#ffffff",
     "cover": "/images/boop/cover.webp",
     "awards": [
       {
@@ -381,7 +383,8 @@
         "name": "Polina Dmitrieva",
         "url": "https://www.behance.net/4266e1b4"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   },
   {
     "id": "photoelectric-effect-calendar-2025",
@@ -454,7 +457,7 @@
         "src": "/images/calendar/12.webp"
       }
     ],
-    "backgroundColor": "##ffffff",
+    "backgroundColor": "#ffffff",
     "cover": "/images/calendar/cover.webp",
     "awards": [
       {
@@ -462,11 +465,14 @@
         "festival": "Sreda New Design Festival 2025",
         "nomination": "Print design concept"
       }
-    ]
+    ],
+    "hidden": true,
+    "indexGroup": "concept"
   },
   {
     "id": "bioart-lab-foundation",
-    "title": "Bioart Lab Foundation",
+    "title": "Bioart",
+    "shortTitle": "Lab Foundation",
     "type": "Identity, Generative, Typeface",
     "year": "2024",
     "sortDate": "2025-01-07",
@@ -565,7 +571,7 @@
         "embed": "<iframe src=\"https://player.vimeo.com/video/1042425480?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
       }
     ],
-    "backgroundColor": "##ffffff",
+    "backgroundColor": "#ffffff",
     "cover": "/images/bioart/cover.webp",
     "awards": [
       {
@@ -578,11 +584,12 @@
         "festival": "Sreda New Design Festival 2025",
         "nomination": "Open Jury — Identity concept"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   },
   {
     "id": "snve-pereodical",
-    "title": "SNVE. Pereodical",
+    "title": "SNVE Pereodical",
     "shortTitle": "SNVE",
     "type": "Identity, Typeface",
     "year": "2025",
@@ -724,12 +731,13 @@
         "embed": "<iframe src=\"https://player.vimeo.com/video/1069488352?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
       }
     ],
-    "backgroundColor": "##ffffff",
-    "cover": "/images/snve/cover.webp"
+    "backgroundColor": "#ffffff",
+    "cover": "/images/snve/cover.webp",
+    "indexGroup": "concept"
   },
   {
     "id": "last-days-of-sababa",
-    "title": "The Last Days of Sababa",
+    "title": "Sababa The Last Days",
     "shortTitle": "Sababa",
     "type": "Photo Zine",
     "year": "2025",
@@ -1037,7 +1045,8 @@
         "name": "Igor Mukhin",
         "url": "https://igormukhin.ru/"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   },
   {
     "id": "crypto-anarchist-manifesto",
@@ -1075,7 +1084,8 @@
     ],
     "backgroundColor": "#000000",
     "cover": "/images/ctypto/cover.webp",
-    "hidden": true
+    "hidden": true,
+    "indexGroup": "concept"
   },
   {
     "id": "chaos-construction-demoscene-fest",
@@ -1198,7 +1208,7 @@
         "src": "/images/cc25/12.webp"
       }
     ],
-    "backgroundColor": "##000000",
+    "backgroundColor": "#000000",
     "cover": "/images/cc25/cover.webp",
     "awards": [
       {
@@ -1206,13 +1216,14 @@
         "festival": "World Brand Design Awards 25-26",
         "nomination": "Student Identity: Brand Design Creation"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   },
   {
     "id": "trash-aesthetics-visual-culture-of-waste",
-    "title": "Trash Aesthetics. Visual Culture of Waste",
+    "title": "Trash Aesthetics Visual Culture of Waste",
     "shortTitle": "Trash Aesthetics",
-    "type": "Type design, Book, Visual Research",
+    "type": "Type design, Visual Research",
     "year": "2025",
     "sortDate": "2025-12-25",
     "description": "",
@@ -1369,11 +1380,12 @@
         "text": "Calameo",
         "url": "https://www.calameo.com/read/0072628113e8132eb9390"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   },
   {
     "id": "w-dotorg-dymshits-partners-rebranding",
-    "title": "Dymshits and Partners. W/ Dotorg",
+    "title": "Dymshits W/ Dotorg",
     "shortTitle": "Dymshits",
     "type": "Identity, Generative",
     "year": "2025",
@@ -1442,7 +1454,7 @@
         "embed": "<iframe src=\"https://player.vimeo.com/video/1110109674?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
       }
     ],
-    "backgroundColor": "##FBFBFB",
+    "backgroundColor": "#FBFBFB",
     "cover": "/images/dym/cover.webp",
     "links": [
       {
@@ -1479,11 +1491,12 @@
         "role": "Programmer",
         "name": "Pavel Markov"
       }
-    ]
+    ],
+    "indexGroup": "participation"
   },
   {
     "id": "w-dotorg-css-rebranding",
-    "title": "CSS. W/ Dotorg",
+    "title": "CSS W/ Dotorg",
     "shortTitle": "CSS",
     "type": "Identity, Motion",
     "year": "2025",
@@ -1548,7 +1561,7 @@
         "embed": "<iframe src=\"https://player.vimeo.com/video/1120810907?background=1&amp;%20;autoplay=1&amp;loop=1&amp;%20muted=1&amp;title=0&amp;%20byline=0&amp;portrait=0&amp;%20autopause=0\" width=\"1920\" height=\"1080\" frameborder=\"0\" allow=\"autoplay\" allowfullscreen sandbox=\"allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox\"></iframe>"
       }
     ],
-    "backgroundColor": "##ffffff",
+    "backgroundColor": "#ffffff",
     "cover": "/images/css/cover.webp",
     "awards": [
       {
@@ -1620,7 +1633,8 @@
         "role": "Programmer",
         "name": "Pavel Markov"
       }
-    ]
+    ],
+    "indexGroup": "participation"
   },
   {
     "id": "museum-of-garbage",
@@ -1793,6 +1807,7 @@
         "name": "Aleksandr Petukhov",
         "url": "https://www.behance.net/selectamilo"
       }
-    ]
+    ],
+    "indexGroup": "concept"
   }
 ]

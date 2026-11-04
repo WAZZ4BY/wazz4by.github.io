@@ -28,6 +28,12 @@ const base = import.meta.env.BASE_URL;
           <input type="text" id="addYear" placeholder="2025" />
           <label>Точная дата для сортировки</label>
           <input type="date" id="addSortDate" />
+          <label>Группа на Index (Participation / Concepts)</label>
+          <select id="addIndexGroup">
+            <option value="concept">Concepts — личный проект</option>
+            <option value="participation">Participation — соучастие</option>
+          </select>
+          <p class="admin-hint">Работает в режиме Index «Participation / Concepts».</p>
           <label class="admin-checkbox-label">
             <input type="checkbox" id="addHidden" />
             Скрыть проект с сайта
@@ -560,6 +566,7 @@ const base = import.meta.env.BASE_URL;
             creditsList.push({ role: role || '—', name: name || '—', url: url || undefined });
           }
         });
+        const indexGroupRaw = document.getElementById('addIndexGroup').value;
         const newProject = {
           id: slugify(title),
           title,
@@ -568,6 +575,7 @@ const base = import.meta.env.BASE_URL;
           type: document.getElementById('addType').value.trim(),
           year: document.getElementById('addYear').value.trim(),
           sortDate: document.getElementById('addSortDate').value.trim() || undefined,
+          indexGroup: indexGroupRaw === 'participation' ? 'participation' : 'concept',
           images: [],
           contentBlocks: rewriteBlocks(contentBlocks),
           backgroundColor: addBgHex || addBgColor || undefined,

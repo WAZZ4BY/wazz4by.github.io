@@ -1,0 +1,32 @@
+---
+interface Props {
+  href: string;
+  year?: string;
+  sortDate?: string;
+  cover?: string;
+  projectId: string;
+  indexGroup: 'participation' | 'concept';
+  shortName: string;
+  tail: string;
+  type?: string;
+}
+
+const { href, year = '', sortDate = '', cover = '', projectId, indexGroup, shortName, tail, type = '' } = Astro.props;
+---
+
+<a
+  href={href}
+  class="index-list__row"
+  data-year={year}
+  data-sort-date={sortDate}
+  data-cover={cover}
+  data-project-id={projectId}
+  data-index-group={indexGroup}
+>
+  <span class="index-list__lead">
+    <span class="index-list__year">{year}</span>
+    <span class="index-list__name">{shortName}</span>
+  </span>
+  <span class="index-list__name-tail" data-full={tail}>{tail}</span>
+  <span class="index-list__type">{type}</span>
+</a>

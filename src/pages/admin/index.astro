@@ -25,6 +25,15 @@ const base = import.meta.env.BASE_URL;
 
       <section class="admin-section admin-pane" id="projectsPane">
         <h2>Список проектов</h2>
+        <div class="admin-index-layout" style="margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid #eee;">
+          <label style="margin-bottom:0.5rem;">Вариант Index</label>
+          <p class="admin-hint">Переключает раскладку вкладки Index на сайте. Сохраняется вместе с проектами в GitHub (`site-settings.json`).</p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+            <button type="button" id="indexLayoutFlatBtn" class="primary">Список</button>
+            <button type="button" id="indexLayoutGroupedBtn" class="secondary">Participation / Concepts</button>
+            <span id="indexLayoutStatus" class="status" style="margin:0;"></span>
+          </div>
+        </div>
         <ul class="project-list" id="projectList"></ul>
         <p class="mb-2"><a href={`${base}admin/add/`}>+ Добавить проект</a></p>
       </section>
@@ -74,7 +83,7 @@ const base = import.meta.env.BASE_URL;
 
       <section class="admin-section admin-pane" id="githubPane">
         <h2>Сохранение в GitHub</h2>
-        <p>Чтобы изменения автоматически попадали в репозиторий, укажите репозиторий и токен. После нажатия «Сохранить в GitHub» файл <code>public/data/projects.json</code> будет закоммичен в ветку <code>main</code>; деплой выполнит GitHub Actions.</p>
+        <p>Чтобы изменения автоматически попадали в репозиторий, укажите репозиторий и токен. После нажатия «Сохранить в GitHub» файлы <code>public/data/projects.json</code> и <code>public/data/site-settings.json</code> будут закоммичены в ветку <code>main</code>; деплой выполнит GitHub Actions.</p>
         <label>Репозиторий (owner/repo)</label>
         <input type="text" id="ghRepo" placeholder="wazz4by/wazz4by.github.io" />
         <label>GitHub Personal Access Token (права repo)</label>
@@ -156,6 +165,8 @@ const base = import.meta.env.BASE_URL;
       }
 
       let projects = [];
+      let siteSettings = { indexLayout: 'flat' };
+      const SITE_SETTINGS_KEY = 'admin_site_settings';
       let homeMediaCards = [];
       let homeMediaCardsView = 'editor';
       let draggedHomeIndex = null;
@@ -179,10 +190,94 @@ const base = import.meta.env.BASE_URL;
         return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/projects.json';
       }
 
+      function dataUrlSiteSettings() {
+        const path = window.location.pathname;
+        const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
+        return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/site-settings.json';
+      }
+
       function dataUrlHomeMediaCards() {
         const path = window.location.pathname;
         const basePath = path.replace(/\/admin\/?.*$/, '') || '/';
         return (basePath.endsWith('/') ? basePath : basePath + '/') + 'data/home-media-cards.json';
+      }
+
+      function normalizeSiteSettings(raw) {
+        const layout = raw && raw.indexLayout === 'grouped' ? 'grouped' : 'flat';
+        return { indexLayout: layout };
+      }
+
+      function syncIndexLayoutButtons() {
+        const flatBtn = document.getElementById('indexLayoutFlatBtn');
+        const groupedBtn = document.getElementById('indexLayoutGroupedBtn');
+        const statusEl = document.getElementById('indexLayoutStatus');
+        const isGrouped = siteSettings.indexLayout === 'grouped';
+        if (flatBtn) flatBtn.className = isGrouped ? 'secondary' : 'primary';
+        if (groupedBtn) groupedBtn.className = isGrouped ? 'primary' : 'secondary';
+        if (statusEl) {
+          statusEl.textContent = isGrouped ? 'Сейчас: Participation / Concepts' : 'Сейчас: список';
+          statusEl.className = 'status';
+        }
+      }
+
+      function setIndexLayout(layout) {
+        siteSettings = normalizeSiteSettings({ indexLayout: layout });
+        sessionStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(siteSettings));
+        syncIndexLayoutButtons();
+      }
+
+      async function loadSiteSettings() {
+        try {
+          const draftRaw = sessionStorage.getItem(SITE_SETTINGS_KEY);
+          if (draftRaw) {
+            siteSettings = normalizeSiteSettings(JSON.parse(draftRaw));
+            syncIndexLayoutButtons();
+            return;
+          }
+          const res = await fetch(dataUrlSiteSettings(), { cache: 'no-store' });
+          if (res.ok) {
+            siteSettings = normalizeSiteSettings(await res.json());
+          } else {
+            siteSettings = { indexLayout: 'flat' };
+          }
+        } catch (_) {
+          siteSettings = { indexLayout: 'flat' };
+        }
+        syncIndexLayoutButtons();
+      }
+
+      async function putGitHubJsonFile(owner, repoName, token, path, contentObj, message) {
+        const getRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
+          headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token }
+        });
+        let sha = null;
+        if (getRes.ok) {
+          const data = await getRes.json();
+          sha = data.sha;
+        } else if (getRes.status !== 404) {
+          const err = await getRes.json().catch(() => ({}));
+          throw new Error(err.message || getRes.statusText);
+        }
+        const content = JSON.stringify(contentObj, null, 2);
+        const body = {
+          message: message,
+          content: btoa(unescape(encodeURIComponent(content))),
+          branch: 'main'
+        };
+        if (sha) body.sha = sha;
+        const putRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': 'token ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(() => ({}));
+          throw new Error(err.message || putRes.statusText);
+        }
       }
 
       function dataUrlResearchCards() {
@@ -253,9 +348,12 @@ const base = import.meta.env.BASE_URL;
           if (p.hidden) li.className = 'project-list__item--hidden';
           const base = getBase();
           const hiddenBadge = p.hidden ? '<span class="project-list__badge">скрыт</span>' : '';
+          const groupBadge = p.indexGroup === 'participation'
+            ? '<span class="project-list__badge">Participation</span>'
+            : '<span class="project-list__badge">Concepts</span>';
           const toggleLabel = p.hidden ? 'Показать' : 'Скрыть';
           li.innerHTML =
-            '<span class="project-list__title"><span>' + (p.title || p.id) + '</span>' + hiddenBadge + '</span>' +
+            '<span class="project-list__title"><span>' + (p.title || p.id) + '</span>' + groupBadge + hiddenBadge + '</span>' +
             '<span class="project-list__actions">' +
               '<a href="' + base + 'admin/edit/?id=' + encodeURIComponent(p.id) + '">Редактировать</a>' +
               '<button type="button" class="secondary toggle-project-hidden" data-id="' + p.id + '" style="padding:0.25rem 0.5rem;font-size:0.85rem;">' + toggleLabel + '</button>' +
@@ -303,7 +401,7 @@ const base = import.meta.env.BASE_URL;
         const as = c.as === 'video' || c.as === 'vimeo' || c.as === 'kinescope' ? c.as : 'image';
         const src = typeof c.src === 'string' ? c.src : '';
         return {
-          href: typeof c.href === 'string' ? c.href : '/index/',
+          href: typeof c.href === 'string' ? c.href.trim() : '',
           src: as === 'image' ? toWebpPath(src) : src,
           alt: typeof c.alt === 'string' ? c.alt : '',
           ratio: ratio,
@@ -1114,7 +1212,8 @@ const base = import.meta.env.BASE_URL;
                 '<input type="file" class="home-card-video-file" data-i="' + i + '" accept="video/mp4,video/webm,.mp4,.webm" style="display:none;" />' +
               '</div>' +
               '<label>Ссылка (href)</label>' +
-              '<input type="text" class="home-card-href" data-i="' + i + '" value="' + esc(item.href) + '" placeholder="/index/" />' +
+              '<input type="text" class="home-card-href" data-i="' + i + '" value="' + esc(item.href) + '" placeholder="Пусто = без ссылки, например /project/id/" />' +
+              '<p class="admin-hint">Оставьте пустым, если карточка не должна быть кликабельной.</p>' +
               '<label>Alt</label>' +
               '<input type="text" class="home-card-alt" data-i="' + i + '" value="' + esc(item.alt) + '" placeholder="Описание изображения" />' +
               '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.5rem;">' +
@@ -1151,7 +1250,7 @@ const base = import.meta.env.BASE_URL;
         container.querySelectorAll('.home-card-href').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const i = parseInt(this.getAttribute('data-i'), 10);
-            homeMediaCards[i].href = this.value.trim() || '/index/';
+            homeMediaCards[i].href = this.value.trim();
             refreshHomeMediaCardsVisualViews();
           });
         });
@@ -2212,38 +2311,38 @@ const base = import.meta.env.BASE_URL;
         statusEl.className = 'status';
         try {
           sessionStorage.setItem(REPO_KEY, repo);
-          const path = 'public/data/projects.json';
-          const getRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
-            headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token }
-          });
-          let sha = null;
-          if (getRes.ok) {
-            const data = await getRes.json();
-            sha = data.sha;
-          } else if (getRes.status !== 404) {
-            const err = await getRes.json().catch(() => ({}));
-            throw new Error(err.message || getRes.statusText);
-          }
-          const content = JSON.stringify(projects.map(rewriteProjectImagePaths), null, 2);
-          const body = { message: 'Update projects.json from admin', content: btoa(unescape(encodeURIComponent(content))), branch: 'main' };
-          if (sha) body.sha = sha;
-          const putRes = await fetch('https://api.github.com/repos/' + owner + '/' + repoName + '/contents/' + path, {
-            method: 'PUT',
-            headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          });
-          if (!putRes.ok) {
-            const err = await putRes.json().catch(() => ({}));
-            throw new Error(err.message || putRes.statusText);
-          }
-          statusEl.textContent = 'Сохранено. Деплой запустится по push в main.';
+          await putGitHubJsonFile(
+            owner,
+            repoName,
+            token,
+            'public/data/projects.json',
+            projects.map(rewriteProjectImagePaths),
+            'Update projects.json from admin'
+          );
+          await putGitHubJsonFile(
+            owner,
+            repoName,
+            token,
+            'public/data/site-settings.json',
+            normalizeSiteSettings(siteSettings),
+            'Update site-settings.json from admin'
+          );
+          statusEl.textContent = 'Сохранено (проекты + Index layout). Деплой запустится по push в main.';
           statusEl.className = 'status ok';
           sessionStorage.removeItem('admin_new_project');
           sessionStorage.removeItem('admin_edited_projects');
+          sessionStorage.removeItem(SITE_SETTINGS_KEY);
         } catch (e) {
           statusEl.textContent = 'Ошибка: ' + e.message;
           statusEl.className = 'status err';
         }
+      });
+
+      document.getElementById('indexLayoutFlatBtn').addEventListener('click', function () {
+        setIndexLayout('flat');
+      });
+      document.getElementById('indexLayoutGroupedBtn').addEventListener('click', function () {
+        setIndexLayout('grouped');
       });
 
       document.getElementById('downloadBtn').addEventListener('click', function () {
@@ -2273,7 +2372,7 @@ const base = import.meta.env.BASE_URL;
 
       document.getElementById('addHomeMediaCardBtn').addEventListener('click', function () {
         homeMediaCards.push({
-          href: '/index/',
+          href: '',
           src: '',
           alt: '',
           ratio: 'aspect-16-9',
@@ -2309,7 +2408,7 @@ const base = import.meta.env.BASE_URL;
           const payload = homeMediaCards.map(function (card) {
             const normalized = normalizeHomeMediaCard(card);
             return {
-              href: normalized.href || '/index/',
+              href: normalized.href || '',
               src: normalized.src || '',
               alt: normalized.alt || '',
               ratio: normalized.ratio || 'aspect-16-9',
@@ -2351,7 +2450,7 @@ const base = import.meta.env.BASE_URL;
         const payload = homeMediaCards.map(function (card) {
           const normalized = normalizeHomeMediaCard(card);
           return {
-            href: normalized.href || '/index/',
+            href: normalized.href || '',
             src: normalized.src || '',
             alt: normalized.alt || '',
             ratio: normalized.ratio || 'aspect-16-9',
@@ -2488,6 +2587,7 @@ const base = import.meta.env.BASE_URL;
         initAdminNav();
         setActivePane('projectsPane');
         loadProjects();
+        loadSiteSettings();
         loadHomeMediaCards();
         loadResearchCards();
       }

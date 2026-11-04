@@ -219,7 +219,7 @@ body.is-home {
   right: 0;
   z-index: 1000;
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 0 var(--grid-gutter);
   background: transparent;
   padding: 30px var(--grid-margin) 12px;
@@ -231,10 +231,29 @@ body.is-home {
   box-sizing: border-box;
   align-items: center;
 }
-.page-header__vasilii { grid-column: 1; padding-top: 0; }
-.page-header__nav { grid-column: 7 / 12; padding-top: 5px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.page-header__vasilii {
+  grid-column: 1;
+  padding-top: 0;
+  min-width: 0;
+  overflow: visible;
+}
+.page-header__nav {
+  grid-column: 7 / 12;
+  padding-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
 .page-header__nav-item { display: inline-flex; }
-.page-header__schk { grid-column: 12; justify-self: end; padding-top: 5px; text-align: right; }
+.page-header__schk {
+  grid-column: 12;
+  justify-self: end;
+  padding-top: 5px;
+  text-align: right;
+  min-width: 0;
+}
 .page-header a { color: inherit; text-decoration: none; opacity: 1; }
 /* Mouthwash-style nav buttons — keep local font / size / radius */
 .page-header__nav-item > a,

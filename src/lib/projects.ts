@@ -49,6 +49,8 @@ export interface Project {
   credits?: string;
   /** Скрыт с сайта, но сохранён в данных */
   hidden?: boolean;
+  /** Группа на Index в режиме Participation / Concepts */
+  indexGroup?: 'participation' | 'concept';
 }
 
 export function isProjectHidden(project: Pick<Project, 'hidden'>): boolean {

@@ -52,7 +52,7 @@ export function getHomeMediaCards(): HomeMediaCard[] {
       const c = card || {};
       const src = typeof c.src === 'string' ? c.src.trim() : '';
       return {
-        href: typeof c.href === 'string' ? c.href : '/index/',
+        href: typeof c.href === 'string' ? c.href.trim() : '',
         src: src || '/images/main/1.webp',
         alt: typeof c.alt === 'string' ? c.alt : '',
         ratio: normalizeRatio(c.ratio),
