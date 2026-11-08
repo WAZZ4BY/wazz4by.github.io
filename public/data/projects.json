@@ -1390,6 +1390,7 @@
     "type": "Identity, Generative",
     "year": "2025",
     "sortDate": "2025-08-18",
+    "indexGroup": "participation",
     "description": "",
     "images": [],
     "contentBlocks": [
@@ -1456,6 +1457,68 @@
     ],
     "backgroundColor": "#FBFBFB",
     "cover": "/images/dym/cover.webp",
+    "awards": [
+      {
+        "place": "Grand Prix",
+        "festival": "G8 2025",
+        "nomination": "—"
+      },
+      {
+        "place": "Gold",
+        "festival": "G8 2025",
+        "nomination": "Reformist Branding"
+      },
+      {
+        "place": "Silver",
+        "festival": "ADCR Awards 2025",
+        "nomination": "Rebranding"
+      },
+      {
+        "place": "Bronze",
+        "festival": "Sreda 2025",
+        "nomination": "Identity Rebranding"
+      },
+      {
+        "place": "Project of the Year",
+        "festival": "Dprofile Fest Awards 2025",
+        "nomination": "—"
+      },
+      {
+        "place": "Gold",
+        "festival": "White Square 2026",
+        "nomination": "Rebrand / Refresh of an Еxisting Brand"
+      },
+      {
+        "place": "Gold",
+        "festival": "Jolbors Awards International",
+        "nomination": "Rebrand of an existing brand"
+      },
+      {
+        "place": "Silver",
+        "festival": "Workspace Awards 2026",
+        "nomination": "Corporate Branding"
+      },
+      {
+        "place": "Shortlist",
+        "festival": "Award360° 2026",
+        "nomination": "—"
+      },
+      {
+        "place": "Shortlist",
+        "festival": "Red Apple 2026",
+        "nomination": "—"
+      },
+      {
+        "place": "Bronze",
+        "festival": "Osnova 2026",
+        "nomination": "Brand Transformation"
+      },
+      {
+        "place": "Gold",
+        "festival": "Na Urovne Idei 2026",
+        "nomination": "Rebranding"
+      }
+    ],
     "links": [
       {
         "text": "Original case",
@@ -1491,8 +1554,7 @@
         "role": "Programmer",
         "name": "Pavel Markov"
       }
-    ],
-    "indexGroup": "participation"
+    ]
   },
   {
     "id": "w-dotorg-css-rebranding",
